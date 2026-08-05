@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The repository is in documentation bootstrap. The component pages and foundation pages listed below are the approved v0.1 scope but are not active until their source evidence and evaluation fixtures are committed.
+The v0.1 source set is being locked and the component/foundation pages below are not active yet. The pinned Gallery revision and initial Microsoft Learn pages are recorded in `sources/manifest.yaml`. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -96,6 +96,8 @@ Use the following order when evidence differs:
 3. Component structure and visual states from the pinned Windows Design Kit revision.
 4. Fluent 2 supplemental guidance that is not platform-specific.
 5. A rule marked `derived`, with its reasoning and limits.
+
+The exact source set and evidence status are in `sources/manifest.yaml`. A source marked inspection-pending cannot support an active `ui-kit` rule.
 
 Do not import implementation rules from another Fluent platform merely because the component has the same name.
 
