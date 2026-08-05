@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source set is being locked and the component/foundation pages below are not active yet. The pinned Gallery revision and initial Microsoft Learn pages are recorded in `sources/manifest.yaml`. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
+The v0.1 source manifest and five shared foundation drafts are present. The eight component pages are still planned and no component-specific rule is active yet. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -81,11 +81,13 @@ These are repository operating defaults. Component pages must replace them with 
 
 | Foundation | Reference status |
 |---|---|
-| Text and localization | planned |
-| Sizing and spacing | planned |
-| Icons | planned |
-| States and themes | planned |
-| Accessibility basics | planned |
+| Text and localization | draft-reviewed |
+| Sizing and spacing | draft-reviewed |
+| Icons | draft-reviewed |
+| States and themes | draft-reviewed |
+| Accessibility basics | draft-reviewed |
+
+`draft-reviewed` means the page has source IDs, no unresolved authoring markers, and has been checked for scope and internal consistency. It does not mean rendered or environment verification has occurred.
 
 ## Source authority
 
