@@ -54,6 +54,8 @@ LazyDesign uses four source classes:
 
 A rule records both its requirement level (`MUST`, `SHOULD`, or `MAY`) and its evidence type (`official-doc`, `gallery`, `ui-kit`, or `derived`). Derived guidance must never be presented as an explicit Microsoft requirement.
 
+Exact URLs, retrieval dates, revisions, licenses, and evidence limits are recorded in [`sources/manifest.yaml`](sources/manifest.yaml). Source-specific extraction limits are recorded under [`sources/notes/`](sources/notes/).
+
 ## v0.1 vertical slice
 
 The first release covers eight representative controls:
@@ -97,19 +99,18 @@ LazyDesign/
 ## Documents
 
 - [`DESIGN.md`](DESIGN.md) — agent-facing entry point and usage contract.
+- [`sources/manifest.yaml`](sources/manifest.yaml) — pinned evidence set and source status.
 - [`docs/superpowers/specs/2026-08-06-winui3-component-reference-design.md`](docs/superpowers/specs/2026-08-06-winui3-component-reference-design.md) — product and information architecture.
 - [`docs/superpowers/plans/2026-08-06-winui3-component-reference-v0.1.md`](docs/superpowers/plans/2026-08-06-winui3-component-reference-v0.1.md) — v0.1 implementation plan.
 
 ## Authoritative starting sources
 
-- Windows controls and patterns: <https://learn.microsoft.com/windows/apps/develop/ui/controls/>
+- Windows controls and patterns: <https://learn.microsoft.com/windows/apps/design/controls/>
 - Windows design resources: <https://learn.microsoft.com/windows/apps/design/downloads/>
 - WinUI 3 overview: <https://learn.microsoft.com/windows/apps/winui/winui3/>
 - WinUI 3 Gallery: <https://github.com/microsoft/WinUI-Gallery>
 - Fluent 2 design resources: <https://fluent2.microsoft.design/get-started/design>
 
-Exact retrieval dates, document URLs, and Gallery revisions are pinned in the source manifest when component research begins.
-
 ## Status
 
-The repository is in documentation bootstrap. No component rule is active until its source evidence and evaluation fixtures are committed.
+The repository is in v0.1 source-lock and reference-authoring work. The Gallery revision and initial official-document set are pinned. Windows Design Kit identity is pinned, but component-level Figma inspection is still pending. No component rule is active until its source evidence and evaluation fixtures are committed.
