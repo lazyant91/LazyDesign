@@ -1,0 +1,118 @@
+schema_version: 1
+reference_version: v0.1
+retrieved_at: '2026-08-06'
+source_policy:
+  authority_order:
+    - official-doc
+    - gallery
+    - ui-kit
+    - fluent-supplement
+  rules:
+    - Runtime behavior is governed by current Windows and WinUI documentation.
+    - Gallery evidence is scoped to the pinned commit and is not automatically normative.
+    - UI-kit evidence describes visual composition, not runtime behavior.
+    - Derived guidance must cite the evidence and state its limits.
+
+sources:
+  - id: MS-WIN-CONTROLS-INDEX
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/controls/
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared]
+    notes: Index of Windows controls, design guidance, examples, and patterns.
+
+  - id: MS-WIN-DESIGN-DOWNLOADS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/downloads/
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, windows-design-kit]
+    notes: Official entry point for the Windows Design Kit and WinUI 3 Gallery.
+
+  - id: MS-WINUI3-OVERVIEW
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/winui/winui3/
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared]
+    notes: Defines WinUI 3 and its relationship to the Windows App SDK.
+
+  - id: MS-WIN-CONTROLS-BUTTONS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/buttons
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [button]
+    notes: Button roles, content model, specialized button types, and examples.
+
+  - id: MS-WIN-CONTROLS-TEXTBOX
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/text-box
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [textbox]
+    notes: TextBox behavior, input configuration, read-only behavior, and examples.
+
+  - id: MS-WIN-CONTROLS-COMMANDBAR
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/command-bar
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [commandbar]
+    notes: CommandBar anatomy, commands, content, placement, and open states.
+
+  - id: MS-WIN-CONTROLS-LISTVIEW
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/listview-and-gridview
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [listview]
+    notes: ListView and GridView item presentation, selection, invocation, and templates.
+
+  - id: MS-WIN-CONTROLS-FORMS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/forms
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [textbox, toggleswitch, combobox, listview]
+    notes: Cross-control form guidance and concise control-purpose summaries.
+
+  - id: MS-WIN-CONTROLS-ICONS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/icons
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, button, commandbar, infobar]
+    notes: Native icon types and icon-bearing control properties.
+
+  - id: MS-WIN-KEYBOARD-INTERACTIONS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/input/keyboard-interactions
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared]
+    notes: Keyboard activation, focus movement, text-input priority, and control groups.
+
+  - id: WINUI-GALLERY-V2-9-3
+    kind: gallery
+    url: https://github.com/microsoft/WinUI-Gallery/tree/v2.9.3
+    retrieved_at: '2026-08-06'
+    revision: 14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7
+    release_date: '2025-05-19'
+    license: MIT
+    environment:
+      target_framework: net9.0-windows10.0.22621.0
+      windows_app_sdk_package: 2.0.1
+      target_windows_sdk: 10.0.22621.756
+    scope: [shared, button, textbox, toggleswitch, combobox, commandbar, listview, infobar, contentdialog]
+    notes: Pinned executable and source reference. Package versions describe the Gallery build, not a LazyDesign minimum requirement.
+
+  - id: MS-WINDOWS-DESIGN-KIT-FIGMA
+    kind: ui-kit
+    url: https://www.figma.com/community/file/1440832812269040007
+    retrieved_at: '2026-08-06'
+    revision: community-file-1440832812269040007-retrieved-2026-08-06
+    scope: [shared, button, textbox, toggleswitch, combobox, commandbar, listview, infobar, contentdialog]
+    status: identity-verified-content-inspection-pending
+    notes: Official Windows Design Kit community-file identity. Semantic component inspection is required before UI-kit evidence becomes active.
