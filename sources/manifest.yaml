@@ -38,6 +38,70 @@ sources:
     scope: [shared]
     notes: Defines WinUI 3 and its relationship to the Windows App SDK.
 
+  - id: MS-WIN-DESIGN-CONTENT
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/basics/content-basics
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, text, spacing, lists]
+    notes: Windows content hierarchy, grouping, spacing, gutters, and list composition.
+
+  - id: MS-WIN-DESIGN-TYPOGRAPHY
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/signature-experiences/typography
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, text]
+    notes: Windows typography hierarchy and Fluent type usage.
+
+  - id: MS-WIN-ACCESSIBLE-TEXT
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/accessibility/accessible-text-requirements
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, text, accessibility]
+    notes: Text contrast, correct UI Automation roles, graphics text, and text scaling.
+
+  - id: MS-WIN-ACCESSIBILITY-CHECKLIST
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/accessibility/accessibility-checklist
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, accessibility]
+    notes: Windows app accessibility review and verification checklist.
+
+  - id: MS-WIN-ACCESSIBILITY-TESTING
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/accessibility/accessibility-testing
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, accessibility]
+    notes: Tools and procedures for testing Windows app accessibility.
+
+  - id: MS-WIN-XAML-THEME-RESOURCES
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/platform/xaml/xaml-theme-resources
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, themes]
+    notes: Light, Dark, HighContrast, system color, and theme-dependent XAML resources.
+
+  - id: MS-WIN-THEMING
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/theming
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, themes]
+    notes: Windows app theme behavior, accent color, and runtime theme response.
+
+  - id: MS-WIN-CONTRAST-THEMES
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/design/accessibility/high-contrast-themes
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [shared, themes, accessibility]
+    notes: Contrast-theme behavior, system color resources, and HighContrastAdjustment.
+
   - id: MS-WIN-CONTROLS-BUTTONS
     kind: official-doc
     url: https://learn.microsoft.com/windows/apps/develop/ui/controls/buttons
