@@ -156,6 +156,30 @@ Before the first run:
 
 The local phase must not alter baseline artifacts after generation. Any corrected implementation belongs outside the scored run directories.
 
+## Controlled run packets
+
+`evaluation/run-matrix.json` pins the evaluation fixture commit, prompt path, constrained width, and exact guided reference set for each scenario. Validate it before preparing any run:
+
+```powershell
+python scripts/evaluation_harness.py validate
+```
+
+Prepare each run into a new ignored workspace directory. The command refuses to reuse or modify an existing packet:
+
+```powershell
+python scripts/evaluation_harness.py prepare --condition baseline --scenario connection-settings --destination evaluation/.runs/baseline/connection-settings
+```
+
+A packet contains:
+
+- `project/` reconstructed from fixture commit `b73babad19d0153707a49e5ba1ed9fb0a42c33ef`;
+- byte-identical `PROMPT.md`;
+- `context/` only for guided runs, containing exactly the matrix-listed reference files;
+- `PACKET.json` with prompt and reference SHA-256 values;
+- `RUN.template.md` for the required execution metadata.
+
+Use one newly prepared packet in one fresh model context. Do not add files to a baseline context, change `PROMPT.md`, change the guided context set, or reuse a context between runs. The packet tool does not invoke a model, repair generated output, or treat a build as rendered verification.
+
 ## Scoring and gate
 
 Score every artifact with `rubric.md`. Every category score requires file/line evidence or a rendered observation. The gate is evaluated only after all six immutable artifacts are available.

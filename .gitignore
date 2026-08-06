@@ -4,3 +4,4 @@
 *.pyc
 .vs/
 evaluation/.remote-temp/
+evaluation/.runs/
