@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source manifest, five shared foundation drafts, and five component drafts are present. Button, TextBox, ToggleSwitch, ComboBox, and ListView rules are active as source-backed draft guidance. CommandBar, InfoBar, and ContentDialog remain planned. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
+The v0.1 source manifest, five shared foundation drafts, and six component drafts are present. Button, TextBox, ToggleSwitch, ComboBox, CommandBar, and ListView rules are active as source-backed draft guidance. InfoBar and ContentDialog remain planned. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -72,7 +72,7 @@ These are repository operating defaults. Component pages must replace them with 
 | TextBox | draft-reviewed | header/placeholder/helper confusion, text fit, validation |
 | ToggleSwitch | draft-reviewed | state labeling, immediate setting behavior, accessibility |
 | ComboBox | draft-reviewed | placeholder and selection content, popup width, long items |
-| CommandBar | planned | icon/label composition, priority, overflow behavior |
+| CommandBar | draft-reviewed | icon/label composition, priority, overflow behavior |
 | ListView | draft-reviewed | item information density, selection states, long content |
 | InfoBar | planned | title/message/action composition, severity, dismissal |
 | ContentDialog | planned | title/body/button composition, long content, focus |
