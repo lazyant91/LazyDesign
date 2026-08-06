@@ -11,6 +11,30 @@ from test_evaluation_gate import passing_metrics
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _reference_path(reference: str) -> str:
+    head, separator, tail = reference.rpartition(":")
+    if separator and tail.replace("-", "").isdigit():
+        return head
+    return reference
+
+
+def materialize_evidence(root: Path, metrics: dict) -> None:
+    references: set[str] = set()
+    for scenario in metrics["scenarios"].values():
+        for result in scenario.values():
+            for item in result["score_evidence"]:
+                references.update(item["evidence"])
+    for trace in metrics["traceable_improvements"]:
+        references.update(trace["evidence"])
+    for items in metrics["findings"].values():
+        for item in items:
+            references.update(item["evidence"])
+    for reference in references:
+        path = root / _reference_path(reference)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("line 1\nline 2\nline 3\nline 4\nline 5\n", encoding="utf-8")
+
+
 class EvaluationReportTests(unittest.TestCase):
     def test_generate_reports_contains_scores_findings_and_gate(self) -> None:
         metrics = passing_metrics()
@@ -48,13 +72,73 @@ class EvaluationReportTests(unittest.TestCase):
             )
         }
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
-            output = Path(temp) / "results"
-            result = write_reports(ROOT, metrics, output)
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            output = evaluation_root / "results"
+            result = write_reports(
+                ROOT, metrics, output, require_complete_results=False
+            )
             self.assertEqual("PASS", result["overall"])
             self.assertEqual(
                 {"scores.md", "findings.md", "gate-decision.md"},
                 {path.name for path in output.iterdir()},
             )
+
+    def test_write_reports_rejects_missing_score_evidence_file(self) -> None:
+        metrics = passing_metrics()
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            missing = evaluation_root / "guided/device-list/evidence/category-1.txt"
+            missing.unlink()
+            with self.assertRaises(ValueError):
+                write_reports(
+                    ROOT,
+                    metrics,
+                    evaluation_root / "results",
+                    require_complete_results=False,
+                )
+
+    def test_write_reports_rejects_cross_scenario_score_evidence(self) -> None:
+        metrics = passing_metrics()
+        metrics["scenarios"]["device-list"]["guided"]["score_evidence"][0][
+            "evidence"
+        ] = ["guided/connection-settings/evidence/category-1.txt"]
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            with self.assertRaises(ValueError):
+                write_reports(
+                    ROOT,
+                    metrics,
+                    evaluation_root / "results",
+                    require_complete_results=False,
+                )
+
+    def test_write_reports_rejects_out_of_range_line_evidence(self) -> None:
+        metrics = passing_metrics()
+        metrics["scenarios"]["device-list"]["guided"]["score_evidence"][0][
+            "evidence"
+        ] = ["guided/device-list/evidence/category-1.txt:1-99"]
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            with self.assertRaises(ValueError):
+                write_reports(
+                    ROOT,
+                    metrics,
+                    evaluation_root / "results",
+                    require_complete_results=False,
+                )
+
+    def test_write_reports_requires_complete_captured_results_by_default(self) -> None:
+        metrics = passing_metrics()
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            with self.assertRaises(ValueError):
+                write_reports(ROOT, metrics, evaluation_root / "results")
+            self.assertFalse((evaluation_root / "results").exists())
 
     def test_missing_findings_are_rejected(self) -> None:
         metrics = passing_metrics()

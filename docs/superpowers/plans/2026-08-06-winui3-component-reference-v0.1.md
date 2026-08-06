@@ -1065,7 +1065,7 @@ Record the ten category scores with matching evidence, defect counts, traceable 
 python scripts/evaluation_report.py evaluation/results/metrics.json --output-dir evaluation/results
 ```
 
-The command must write `scores.md`, `findings.md`, and `gate-decision.md` from the same validated input. Exit code 0 means PASS, 2 means a valid FAIL decision, and 1 means invalid or incomplete metrics.
+Before writing reports, the command must rerun six-result validation, verify post-capture hashes, and resolve every score, trace, and finding evidence path inside the allowed baseline or guided scenario. Text line ranges must exist. The command writes `scores.md`, `findings.md`, and `gate-decision.md` from the same validated input. Exit code 0 means PASS, 2 means a valid FAIL decision, and 1 means invalid or incomplete results or metrics.
 
 - [ ] **Step 5: Update repository status**
 

@@ -71,7 +71,7 @@ def passing_metrics() -> dict:
                     "scenario": scenario,
                     "category": category,
                     "rule_ids": ["WINUI-BUTTON-CONTENT-001"],
-                    "evidence": [f"{scenario}/generated/MainWindow.xaml:1-5"],
+                    "evidence": [f"guided/{scenario}/generated/MainWindow.xaml:1-5"],
                 }
             )
     return {

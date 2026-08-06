@@ -473,6 +473,7 @@ def capture_run(
         evidence = packet_dir / "evidence"
         if evidence.is_dir():
             shutil.copytree(evidence, temp / "evidence")
+        evidence_files = _file_hashes(temp / "evidence") if (temp / "evidence").is_dir() else []
         for item in changed:
             source = packet_dir / "project" / item["path"]
             target = temp / "generated" / item["path"]
@@ -482,8 +483,12 @@ def capture_run(
             "schema_version": 1,
             "condition": packet["condition"],
             "scenario": packet["scenario"],
+            "prompt_sha256": _sha256(temp / "PROMPT.md"),
+            "packet_sha256": _sha256(temp / "PACKET.json"),
+            "run_sha256": _sha256(temp / "RUN.md"),
             "generated_files": changed,
             "deleted_files": deleted,
+            "evidence_files": evidence_files,
         }
         (temp / "CAPTURE.json").write_text(
             json.dumps(capture, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -515,6 +520,15 @@ def _validate_result(
         errors.append(f"{prefix}: CAPTURE.json identity mismatch")
     if packet.get("input_commit") != input_commit:
         errors.append(f"{prefix}: input commit mismatch")
+    prompt_path = result_dir / "PROMPT.md"
+    packet_path = result_dir / "PACKET.json"
+    run_path = result_dir / "RUN.md"
+    if not prompt_path.is_file() or capture.get("prompt_sha256") != _sha256(prompt_path):
+        errors.append(f"{prefix}: captured prompt differs")
+    if not packet_path.is_file() or capture.get("packet_sha256") != _sha256(packet_path):
+        errors.append(f"{prefix}: captured packet metadata differs")
+    if not run_path.is_file() or capture.get("run_sha256") != _sha256(run_path):
+        errors.append(f"{prefix}: captured run record differs")
     if packet.get("start_project_commit") != start["commit"]:
         errors.append(f"{prefix}: start project SHA mismatch")
     expected_project_files = _git_project_file_hashes(
@@ -536,10 +550,22 @@ def _validate_result(
         reference_bytes = _git_file_bytes(repo_root, input_commit, item["path"])
         if item.get("sha256") != hashlib.sha256(reference_bytes).hexdigest():
             errors.append(f"{prefix}: reference hash differs for {item['path']}")
-    for item in capture.get("generated_files", []):
-        generated = result_dir / "generated" / item.get("path", "")
-        if not generated.is_file() or _sha256(generated) != item.get("sha256"):
-            errors.append(f"{prefix}: captured generated file differs: {item.get('path')}")
+    captured_generated = capture.get("generated_files")
+    actual_generated = (
+        _file_hashes(result_dir / "generated")
+        if (result_dir / "generated").is_dir()
+        else []
+    )
+    if captured_generated != actual_generated:
+        errors.append(f"{prefix}: captured generated files differ")
+    captured_evidence = capture.get("evidence_files")
+    actual_evidence = (
+        _file_hashes(result_dir / "evidence")
+        if (result_dir / "evidence").is_dir()
+        else []
+    )
+    if captured_evidence != actual_evidence:
+        errors.append(f"{prefix}: captured evidence files differ")
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)
     verification_errors = load_and_validate(result_dir / "evidence/verification.json")

@@ -185,23 +185,28 @@ class EvaluationHarnessTests(unittest.TestCase):
             self.assertEqual(["app.manifest"], capture["deleted_files"])
             self.assertFalse((result / "generated/bin/ignored.txt").exists())
 
+    def _create_complete_results(self, root: Path) -> Path:
+        results = root / "results"
+        for condition in ("baseline", "guided"):
+            for scenario in SCENARIOS:
+                packet = root / "packets" / condition / scenario
+                result = results / condition / scenario
+                prepare_run_packet(ROOT, condition, scenario, packet)
+                complete_run(packet)
+                main_window = packet / "project/MainWindow.xaml"
+                main_window.write_text(
+                    main_window.read_text(encoding="utf-8") + f"\n<!-- {condition}-{scenario} -->\n",
+                    encoding="utf-8",
+                )
+                (packet / "evidence/notes.txt").write_text(
+                    f"{condition}/{scenario} evidence\n", encoding="utf-8"
+                )
+                capture_run(ROOT, packet, result)
+        return results
+
     def test_validate_results_enforces_identical_run_conditions(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
-            root = Path(temp)
-            results = root / "results"
-            for condition in ("baseline", "guided"):
-                for scenario in SCENARIOS:
-                    packet = root / "packets" / condition / scenario
-                    result = results / condition / scenario
-                    prepare_run_packet(ROOT, condition, scenario, packet)
-                    complete_run(packet)
-                    main_window = packet / "project/MainWindow.xaml"
-                    main_window.write_text(
-                        main_window.read_text(encoding="utf-8") + f"\n<!-- {condition}-{scenario} -->\n",
-                        encoding="utf-8",
-                    )
-                    capture_run(ROOT, packet, result)
-
+            results = self._create_complete_results(Path(temp))
             self.assertEqual([], validate_results(ROOT, results))
             run_path = results / "guided/device-list/RUN.md"
             run_path.write_text(
@@ -210,6 +215,45 @@ class EvaluationHarnessTests(unittest.TestCase):
             )
             errors = validate_results(ROOT, results)
             self.assertTrue(any("Model identifier differs" in error for error in errors))
+
+    def test_validate_results_rejects_modified_captured_evidence(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            results = self._create_complete_results(Path(temp))
+            notes = results / "guided/device-list/evidence/notes.txt"
+            notes.write_text("modified after capture\n", encoding="utf-8")
+            errors = validate_results(ROOT, results)
+            self.assertTrue(any("captured evidence files differ" in error for error in errors))
+
+    def test_validate_results_rejects_added_generated_file(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            results = self._create_complete_results(Path(temp))
+            added = results / "guided/device-list/generated/AddedAfterCapture.xaml"
+            added.write_text("<Page />\n", encoding="utf-8")
+            errors = validate_results(ROOT, results)
+            self.assertTrue(any("captured generated files differ" in error for error in errors))
+
+    def test_validate_results_rejects_modified_run_record(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            results = self._create_complete_results(Path(temp))
+            run_path = results / "guided/device-list/RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace(
+                    "Notes: test fixture", "Notes: modified after capture"
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_results(ROOT, results)
+            self.assertTrue(any("captured run record differs" in error for error in errors))
+
+    def test_validate_results_rejects_modified_packet_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            results = self._create_complete_results(Path(temp))
+            packet_path = results / "guided/device-list/PACKET.json"
+            packet = json.loads(packet_path.read_text(encoding="utf-8"))
+            packet["post_capture_note"] = "modified"
+            packet_path.write_text(json.dumps(packet, indent=2) + "\n", encoding="utf-8")
+            errors = validate_results(ROOT, results)
+            self.assertTrue(any("captured packet metadata differs" in error for error in errors))
 
 
 if __name__ == "__main__":

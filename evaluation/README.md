@@ -204,7 +204,7 @@ After generation, copy `RUN.template.md` to `RUN.md`, replace every record place
 python scripts/evaluation_harness.py capture --packet evaluation/.runs/baseline/connection-settings --destination evaluation/baseline/connection-settings
 ```
 
-Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md` or invalid `verification.json`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. Failed or empty generations may still be captured when their completion status and every unperformed verification have concrete reasons.
+Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md` or invalid `verification.json`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. It also records SHA-256 values for `PROMPT.md`, `PACKET.json`, `RUN.md`, every generated file, and every evidence file. Failed or empty generations may still be captured when their completion status and every unperformed verification have concrete reasons.
 
 After all six results are captured, verify the controlled conditions mechanically:
 
@@ -212,13 +212,13 @@ After all six results are captured, verify the controlled conditions mechanicall
 python scripts/evaluation_harness.py validate-results --root evaluation
 ```
 
-The result validator requires all six directories, exact prompt and reference hashes, the same start SHA, model, reasoning level, stopping condition, operating environment, tool access, and network policy, plus `Fresh context: yes` and `Generation intervention: none` for every scored run.
+The result validator requires all six directories, exact prompt and reference hashes, the same start SHA, model, reasoning level, stopping condition, operating environment, tool access, and network policy, plus `Fresh context: yes` and `Generation intervention: none` for every scored run. It rejects any post-capture change, addition, or removal in `RUN.md`, `PACKET.json`, `generated/`, or `evidence/`.
 
 ## Scoring and gate
 
 Score every artifact with `rubric.md`. Every category score requires file/line evidence or a rendered observation. The gate is evaluated only after all six immutable artifacts are available.
 
-Record the ten category scores, ten matching `score_evidence` entries, seven defect counts, rule traces, and all six findings sections in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Each score-evidence entry must repeat its category and score, provide one or more evidence locations, and record evaluator uncertainty. Every category whose guided score is higher than its baseline score also requires a matching `traceable_improvements` entry with at least one existing LazyDesign rule ID and one evidence location.
+Record the ten category scores, ten matching `score_evidence` entries, seven defect counts, rule traces, and all six findings sections in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Each score-evidence entry must repeat its category and score, provide one or more evidence locations, and record evaluator uncertainty. Evidence paths are relative to `evaluation/`; score evidence must remain inside its own `baseline|guided/<scenario>/` result, and a traceable improvement must point to its guided scenario. A UTF-8 text reference may append `:<start>-<end>`, and the range must exist in the referenced file. Every category whose guided score is higher than its baseline score also requires a matching `traceable_improvements` entry with at least one existing LazyDesign rule ID and one evidence location.
 
 Generate the three Task 11 reports without editing them by hand:
 
@@ -226,6 +226,6 @@ Generate the three Task 11 reports without editing them by hand:
 python scripts/evaluation_report.py evaluation/results/metrics.json --output-dir evaluation/results
 ```
 
-The command writes `scores.md`, `findings.md`, and `gate-decision.md`. It returns exit code 0 for PASS, 2 for a valid FAIL decision, and 1 for invalid or incomplete metrics. A zero baseline denominator is `not demonstrated`, not an automatic pass. Anatomy and accessibility defect counts must each decrease; unnecessary `ControlTemplate` and complexity defect counts must not increase.
+Before writing anything, the command reruns six-result validation and verifies that every score, trace, and finding evidence path exists in the allowed scenario directory; invalid or out-of-range references stop report generation. It then writes `scores.md`, `findings.md`, and `gate-decision.md`. It returns exit code 0 for PASS, 2 for a valid FAIL decision, and 1 for invalid or incomplete results or metrics. A zero baseline denominator is `not demonstrated`, not an automatic pass. Anatomy and accessibility defect counts must each decrease; unnecessary `ControlTemplate` and complexity defect counts must not increase.
 
 Do not mark v0.1 validated or approve precision expansion before the mechanical gate in the implementation plan passes.

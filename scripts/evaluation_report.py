@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 try:
@@ -27,6 +27,11 @@ except ModuleNotFoundError:
         evaluate_gate,
         render_gate_markdown,
     )
+
+try:
+    from scripts.evaluation_harness import validate_results
+except ModuleNotFoundError:
+    from evaluation_harness import validate_results
 
 CATEGORY_LABELS = (
     "Content length and overflow",
@@ -62,6 +67,99 @@ FINDING_LABELS = {
     "ignored_rules": "Rules the model ignored",
     "unnecessary_output": "Rules or guidance that caused unnecessary output",
 }
+
+
+def _parse_evidence_reference(reference: str) -> tuple[PurePosixPath, int | None, int | None]:
+    path_text = reference
+    start: int | None = None
+    end: int | None = None
+    head, separator, tail = reference.rpartition(":")
+    if separator:
+        pieces = tail.split("-", maxsplit=1)
+        if all(piece.isdigit() for piece in pieces):
+            path_text = head
+            start = int(pieces[0])
+            end = int(pieces[-1])
+    path = PurePosixPath(path_text)
+    return path, start, end
+
+
+def _validate_reference(
+    evaluation_root: Path,
+    reference: str,
+    label: str,
+    expected_prefix: tuple[str, str] | None,
+) -> list[str]:
+    errors: list[str] = []
+    path, start, end = _parse_evidence_reference(reference)
+    if path.is_absolute() or ".." in path.parts or not path.parts:
+        return [f"{label}: evidence path must remain inside the evaluation directory"]
+    if expected_prefix and path.parts[:2] != expected_prefix:
+        errors.append(
+            f"{label}: evidence must reference {expected_prefix[0]}/{expected_prefix[1]}"
+        )
+    if path.parts[0] not in CONDITIONS or len(path.parts) < 3 or path.parts[1] not in SCENARIOS:
+        errors.append(f"{label}: evidence must reference a baseline or guided scenario result")
+    target = evaluation_root.joinpath(*path.parts).resolve()
+    if not target.is_relative_to(evaluation_root.resolve()):
+        errors.append(f"{label}: evidence path escapes the evaluation directory")
+        return errors
+    if not target.is_file():
+        errors.append(f"{label}: missing evidence file {path.as_posix()}")
+        return errors
+    if start is not None:
+        if start < 1 or end is None or end < start:
+            errors.append(f"{label}: invalid line range in {reference}")
+        else:
+            try:
+                line_count = len(target.read_text(encoding="utf-8-sig").splitlines())
+            except UnicodeDecodeError:
+                errors.append(f"{label}: line range requires a UTF-8 text file")
+            else:
+                if end > line_count:
+                    errors.append(
+                        f"{label}: line range {start}-{end} exceeds {path.as_posix()} ({line_count} lines)"
+                    )
+    return errors
+
+
+def validate_metric_evidence(evaluation_root: Path, metrics: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for scenario in SCENARIOS:
+        for condition in CONDITIONS:
+            entries = metrics["scenarios"][scenario][condition]["score_evidence"]
+            for entry in entries:
+                for reference in entry["evidence"]:
+                    errors.extend(
+                        _validate_reference(
+                            evaluation_root,
+                            reference,
+                            f"{condition}/{scenario} category {entry['category']}",
+                            (condition, scenario),
+                        )
+                    )
+    for index, trace in enumerate(metrics["traceable_improvements"]):
+        for reference in trace["evidence"]:
+            errors.extend(
+                _validate_reference(
+                    evaluation_root,
+                    reference,
+                    f"traceable_improvements[{index}]",
+                    ("guided", trace["scenario"]),
+                )
+            )
+    for section in FINDING_SECTIONS:
+        for index, finding in enumerate(metrics["findings"][section]):
+            for reference in finding["evidence"]:
+                errors.extend(
+                    _validate_reference(
+                        evaluation_root,
+                        reference,
+                        f"findings.{section}[{index}]",
+                        None,
+                    )
+                )
+    return errors
 
 
 def _cell(value: Any) -> str:
@@ -191,12 +289,23 @@ def generate_reports(repo_root: Path, metrics: dict[str, Any]) -> dict[str, str]
 
 
 def write_reports(
-    repo_root: Path, metrics: dict[str, Any], output_dir: Path
+    repo_root: Path,
+    metrics: dict[str, Any],
+    output_dir: Path,
+    require_complete_results: bool = True,
 ) -> dict[str, Any]:
     resolved = output_dir.resolve()
     if not resolved.is_relative_to(repo_root.resolve()):
         raise ValueError("report output directory must remain inside the repository workspace")
+    evaluation_root = resolved.parent
     reports = generate_reports(repo_root, metrics)
+    if require_complete_results:
+        result_errors = validate_results(repo_root, evaluation_root)
+        if result_errors:
+            raise ValueError("invalid evaluation results: " + "; ".join(result_errors))
+    evidence_errors = validate_metric_evidence(evaluation_root, metrics)
+    if evidence_errors:
+        raise ValueError("invalid metric evidence: " + "; ".join(evidence_errors))
     resolved.mkdir(parents=True, exist_ok=True)
     for filename, content in reports.items():
         (resolved / filename).write_text(content, encoding="utf-8")
