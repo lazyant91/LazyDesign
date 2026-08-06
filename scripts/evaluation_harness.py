@@ -21,9 +21,35 @@ except ModuleNotFoundError:
     from evaluation_evidence import load_and_validate, verification_template
 
 MATRIX_PATH = Path("evaluation/run-matrix.json")
+PACKET_SCHEMA_VERSION = 2
+CAPTURE_SCHEMA_VERSION = 2
 EXPECTED_SCENARIOS = {"connection-settings", "device-list", "failure-confirmation"}
 EXPECTED_WIDTHS = {"connection-settings": 420, "device-list": 520, "failure-confirmation": None}
 IGNORED_PROJECT_PARTS = {"bin", "obj", ".vs"}
+PACKET_FIELDS = {
+    "schema_version",
+    "condition",
+    "scenario",
+    "input_commit",
+    "start_project_commit",
+    "start_project_path",
+    "content_width_dip",
+    "prompt_path",
+    "prompt_sha256",
+    "references",
+    "project_files",
+}
+CAPTURE_FIELDS = {
+    "schema_version",
+    "condition",
+    "scenario",
+    "prompt_sha256",
+    "packet_sha256",
+    "run_sha256",
+    "generated_files",
+    "deleted_files",
+    "evidence_files",
+}
 RUN_FIELDS = (
     "Condition",
     "Scenario",
@@ -290,7 +316,7 @@ def prepare_run_packet(
                 )
 
         manifest: dict[str, Any] = {
-            "schema_version": 1,
+            "schema_version": PACKET_SCHEMA_VERSION,
             "condition": condition,
             "scenario": scenario_name,
             "input_commit": input_commit,
@@ -356,6 +382,17 @@ def _validate_packet(repo_root: Path, packet_dir: Path) -> tuple[dict[str, Any],
     except (OSError, json.JSONDecodeError) as exc:
         return {}, [f"cannot load packet: {exc}"]
 
+    if not isinstance(packet, dict):
+        return {}, ["packet must be a JSON object"]
+    if set(packet) != PACKET_FIELDS:
+        errors.append("packet must contain exactly the current contract fields")
+    if packet.get("schema_version") != PACKET_SCHEMA_VERSION:
+        errors.append(
+            f"packet schema_version must be {PACKET_SCHEMA_VERSION}"
+        )
+    if errors:
+        return packet, errors
+
     condition = packet.get("condition")
     scenario_name = packet.get("scenario")
     if condition not in {"baseline", "guided"}:
@@ -411,6 +448,22 @@ def _validate_packet(repo_root: Path, packet_dir: Path) -> tuple[dict[str, Any],
             errors.append(f"packet reference hash differs from source: {relative}")
         if not context_file.is_file() or _sha256(context_file) != source_hash:
             errors.append(f"packet reference content changed: {relative}")
+
+    run_template = packet_dir / "RUN.template.md"
+    expected_run_template = _run_template(packet)
+    if (
+        not run_template.is_file()
+        or run_template.read_text(encoding="utf-8-sig") != expected_run_template
+    ):
+        errors.append("packet RUN.template.md differs from the current contract")
+    verification_path = packet_dir / "evidence/verification.template.json"
+    try:
+        actual_verification = _load_json(verification_path)
+    except (OSError, json.JSONDecodeError):
+        errors.append("packet verification template is missing or invalid")
+    else:
+        if actual_verification != verification_template(scenario_name):
+            errors.append("packet verification template differs from the current contract")
     return packet, errors
 
 
@@ -433,6 +486,107 @@ def _parse_run_record(path: Path) -> tuple[dict[str, str], list[str]]:
         elif any(fragment in values[field] for fragment in PLACEHOLDER_FRAGMENTS):
             errors.append(f"unresolved RUN.md field: {field}")
     return values, errors
+
+
+def _packet_activity(packet_dir: Path, packet: dict[str, Any]) -> list[str]:
+    activity: list[str] = []
+    project = packet_dir / "project"
+    if _file_hashes(project) != packet.get("project_files", []):
+        activity.append("project files changed")
+    build_files = [
+        path
+        for path in project.rglob("*")
+        if path.is_file()
+        and any(part in IGNORED_PROJECT_PARTS for part in path.relative_to(project).parts)
+    ]
+    if build_files:
+        activity.append("build artifacts present")
+    if (packet_dir / "RUN.md").is_file():
+        activity.append("RUN.md present")
+    if (packet_dir / "evidence/verification.json").is_file():
+        activity.append("verification.json present")
+    evidence_root = packet_dir / "evidence"
+    if evidence_root.is_dir():
+        additional = [
+            path
+            for path in evidence_root.rglob("*")
+            if path.is_file()
+            and path.relative_to(evidence_root).as_posix()
+            not in {"verification.template.json", "verification.json"}
+        ]
+        if additional:
+            activity.append("additional evidence present")
+    return activity
+
+
+def inspect_packet(
+    repo_root: Path,
+    packet_dir: Path,
+    expected_condition: str,
+    expected_scenario: str,
+) -> dict[str, Any]:
+    packet_dir = _require_workspace_path(repo_root, packet_dir, "run packet")
+    relative = packet_dir.relative_to(repo_root.resolve()).as_posix()
+    result: dict[str, Any] = {
+        "condition": expected_condition,
+        "scenario": expected_scenario,
+        "path": relative,
+        "status": "missing",
+        "activity": [],
+        "errors": [],
+    }
+    if not packet_dir.is_dir():
+        return result
+
+    packet, errors = _validate_packet(repo_root, packet_dir)
+    if packet:
+        if packet.get("condition") != expected_condition:
+            errors.append("packet condition differs from expected directory")
+        if packet.get("scenario") != expected_scenario:
+            errors.append("packet scenario differs from expected directory")
+        result["activity"] = _packet_activity(packet_dir, packet)
+    if errors:
+        result["status"] = "stale"
+        result["errors"] = errors
+        return result
+
+    activity = result["activity"]
+    run_path = packet_dir / "RUN.md"
+    verification_path = packet_dir / "evidence/verification.json"
+    if run_path.is_file() and verification_path.is_file():
+        run_values, completion_errors = _parse_run_record(run_path)
+        completion_errors.extend(
+            f"verification: {error}" for error in load_and_validate(verification_path)
+        )
+        if run_values.get("Condition") != expected_condition:
+            completion_errors.append("RUN.md condition differs from packet")
+        if run_values.get("Scenario") != expected_scenario:
+            completion_errors.append("RUN.md scenario differs from packet")
+        if packet.get("start_project_commit", "") not in run_values.get(
+            "Starting project repository and SHA", ""
+        ):
+            completion_errors.append("RUN.md start project SHA differs from packet")
+        if not completion_errors:
+            result["status"] = "capture_ready"
+            return result
+        result["completion_errors"] = completion_errors
+
+    result["status"] = "in_progress" if activity else "ready"
+    return result
+
+
+def inspect_packets(repo_root: Path, packets_root: Path) -> list[dict[str, Any]]:
+    packets_root = _require_workspace_path(repo_root, packets_root, "packet root")
+    return [
+        inspect_packet(
+            repo_root,
+            packets_root / condition / scenario,
+            condition,
+            scenario,
+        )
+        for condition in ("baseline", "guided")
+        for scenario in sorted(EXPECTED_SCENARIOS)
+    ]
 
 
 def capture_run(
@@ -480,7 +634,7 @@ def capture_run(
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, target)
         capture: dict[str, Any] = {
-            "schema_version": 1,
+            "schema_version": CAPTURE_SCHEMA_VERSION,
             "condition": packet["condition"],
             "scenario": packet["scenario"],
             "prompt_sha256": _sha256(temp / "PROMPT.md"),
@@ -510,10 +664,27 @@ def _validate_result(
         matrix = _load_matrix(repo_root)
     except (OSError, json.JSONDecodeError) as exc:
         return {}, [f"{condition}/{scenario_name}: cannot load result metadata: {exc}"]
+    prefix = f"{condition}/{scenario_name}"
+    if not isinstance(packet, dict):
+        return {}, [f"{prefix}: PACKET.json must be an object"]
+    if not isinstance(capture, dict):
+        return {}, [f"{prefix}: CAPTURE.json must be an object"]
+    if set(packet) != PACKET_FIELDS:
+        errors.append(f"{prefix}: PACKET.json contract fields differ")
+    if packet.get("schema_version") != PACKET_SCHEMA_VERSION:
+        errors.append(
+            f"{prefix}: PACKET.json schema_version must be {PACKET_SCHEMA_VERSION}"
+        )
+    if set(capture) != CAPTURE_FIELDS:
+        errors.append(f"{prefix}: CAPTURE.json contract fields differ")
+    if capture.get("schema_version") != CAPTURE_SCHEMA_VERSION:
+        errors.append(
+            f"{prefix}: CAPTURE.json schema_version must be {CAPTURE_SCHEMA_VERSION}"
+        )
+
     scenario = matrix["scenarios"][scenario_name]
     input_commit = matrix["input_commit"]
     start = matrix["start_project"]
-    prefix = f"{condition}/{scenario_name}"
     if packet.get("condition") != condition or packet.get("scenario") != scenario_name:
         errors.append(f"{prefix}: PACKET.json identity mismatch")
     if capture.get("condition") != condition or capture.get("scenario") != scenario_name:
@@ -619,6 +790,16 @@ def main() -> int:
     capture = subparsers.add_parser("capture")
     capture.add_argument("--packet", type=Path, required=True)
     capture.add_argument("--destination", type=Path, required=True)
+    inspect_one = subparsers.add_parser("inspect-packet")
+    inspect_one.add_argument("--packet", type=Path, required=True)
+    inspect_one.add_argument(
+        "--condition", choices=("baseline", "guided"), required=True
+    )
+    inspect_one.add_argument(
+        "--scenario", choices=tuple(sorted(EXPECTED_SCENARIOS)), required=True
+    )
+    inspect = subparsers.add_parser("inspect-packets")
+    inspect.add_argument("--root", type=Path, default=Path("evaluation/.runs"))
     validate_completed = subparsers.add_parser("validate-results")
     validate_completed.add_argument("--root", type=Path, default=Path("evaluation"))
     args = parser.parse_args()
@@ -627,14 +808,50 @@ def main() -> int:
         errors = validate_matrix(repo_root)
         success = "evaluation run matrix passed"
     elif args.command == "validate-results":
-        errors = validate_results(repo_root, args.root)
+        results_root = args.root if args.root.is_absolute() else repo_root / args.root
+        errors = validate_results(repo_root, results_root)
         success = "evaluation results passed"
+    elif args.command == "inspect-packet":
+        packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
+        status = inspect_packet(
+            repo_root, packet, args.condition, args.scenario
+        )
+        print(json.dumps(status, ensure_ascii=False, indent=2))
+        return 1 if status["status"] in {"stale", "missing"} else 0
+    elif args.command == "inspect-packets":
+        packets_root = args.root if args.root.is_absolute() else repo_root / args.root
+        statuses = inspect_packets(repo_root, packets_root)
+        counts = {
+            status: sum(item["status"] == status for item in statuses)
+            for status in ("ready", "in_progress", "capture_ready", "stale", "missing")
+        }
+        print(
+            json.dumps(
+                {"schema_version": 1, "summary": counts, "packets": statuses},
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return 1 if counts["stale"] or counts["missing"] else 0
     elif args.command == "prepare":
-        manifest = prepare_run_packet(repo_root, args.condition, args.scenario, args.destination)
+        destination = (
+            args.destination
+            if args.destination.is_absolute()
+            else repo_root / args.destination
+        )
+        manifest = prepare_run_packet(
+            repo_root, args.condition, args.scenario, destination
+        )
         print(json.dumps(manifest, ensure_ascii=False, indent=2))
         return 0
     else:
-        capture_manifest = capture_run(repo_root, args.packet, args.destination)
+        packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
+        destination = (
+            args.destination
+            if args.destination.is_absolute()
+            else repo_root / args.destination
+        )
+        capture_manifest = capture_run(repo_root, packet, destination)
         print(json.dumps(capture_manifest, ensure_ascii=False, indent=2))
         return 0
     if errors:

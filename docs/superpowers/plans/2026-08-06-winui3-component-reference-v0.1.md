@@ -883,6 +883,15 @@ Create a minimal WinUI 3 project using the Windows App SDK version pinned from G
 
 The project contains no LazyDesign component or foundation content.
 
+Use evaluation packet contract v2 and a new ignored root under `evaluation/.runs/v2/`. Do not reuse or modify any earlier v1 packet. Before each baseline run, prepare and inspect that one packet:
+
+```bash
+python scripts/evaluation_harness.py prepare --condition baseline --scenario connection-settings --destination evaluation/.runs/v2/baseline/connection-settings
+python scripts/evaluation_harness.py inspect-packet --packet evaluation/.runs/v2/baseline/connection-settings --condition baseline --scenario connection-settings
+```
+
+The inspection must report `ready` before generation and `capture_ready` before capture. Use the corresponding scenario name for Scenarios B and C.
+
 - [ ] **Step 2: Run Scenario A in a fresh context**
 
 Use the exact contents of `evaluation/prompts/connection-settings.md`. Do not add design advice or repair the prompt.
@@ -932,6 +941,15 @@ git commit -m "test: record unguided WinUI baseline"
 - [ ] **Step 1: Reset to the exact evaluation project snapshot**
 
 Use the same starting SHA recorded in every baseline `RUN.md`.
+
+Prepare each guided packet under the same v2 root immediately before its fresh-context run, then inspect it:
+
+```bash
+python scripts/evaluation_harness.py prepare --condition guided --scenario connection-settings --destination evaluation/.runs/v2/guided/connection-settings
+python scripts/evaluation_harness.py inspect-packet --packet evaluation/.runs/v2/guided/connection-settings --condition guided --scenario connection-settings
+```
+
+The inspection must report `ready` before generation and `capture_ready` before capture. Never migrate or patch a v1 packet into v2.
 
 - [ ] **Step 2: Provide the fixed reference set**
 

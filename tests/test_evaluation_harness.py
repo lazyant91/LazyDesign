@@ -3,12 +3,17 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.evaluation_harness import (
+    CAPTURE_SCHEMA_VERSION,
+    PACKET_SCHEMA_VERSION,
     capture_run,
+    inspect_packet,
+    inspect_packets,
     prepare_run_packet,
     validate_matrix,
     validate_results,
@@ -61,6 +66,45 @@ def complete_run(packet: Path, model: str = "gpt-5.6-test") -> None:
 class EvaluationHarnessTests(unittest.TestCase):
     def test_matrix_is_valid(self) -> None:
         self.assertEqual([], validate_matrix(ROOT))
+
+    def test_prepare_writes_current_packet_contract_version(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            manifest = prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            self.assertEqual(2, PACKET_SCHEMA_VERSION)
+            self.assertEqual(PACKET_SCHEMA_VERSION, manifest["schema_version"])
+
+    def test_inspect_fresh_packet_is_ready(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "guided", "device-list", packet)
+            status = inspect_packet(ROOT, packet, "guided", "device-list")
+            self.assertEqual("ready", status["status"])
+            self.assertEqual([], status["errors"])
+
+    def test_inspect_packet_cli_reports_ready(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "baseline", "failure-confirmation", packet)
+            process = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/evaluation_harness.py",
+                    "inspect-packet",
+                    "--packet",
+                    str(packet),
+                    "--condition",
+                    "baseline",
+                    "--scenario",
+                    "failure-confirmation",
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(0, process.returncode, process.stderr)
+            self.assertEqual("ready", json.loads(process.stdout)["status"])
 
     def test_prepare_baseline_uses_exact_prompt_and_no_references(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
@@ -115,6 +159,40 @@ class EvaluationHarnessTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 prepare_run_packet(ROOT, "baseline", "connection-settings", destination)
 
+    def test_inspect_legacy_packet_is_stale(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "baseline", "device-list", packet)
+            manifest_path = packet / "PACKET.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["schema_version"] = 1
+            del manifest["input_commit"]
+            del manifest["project_files"]
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+            artifact = packet / "project/bin/legacy-build.txt"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_text("legacy\n", encoding="utf-8")
+            status = inspect_packet(ROOT, packet, "baseline", "device-list")
+            self.assertEqual("stale", status["status"])
+            self.assertEqual(
+                [
+                    "packet must contain exactly the current contract fields",
+                    "packet schema_version must be 2",
+                ],
+                status["errors"],
+            )
+            self.assertIn("build artifacts present", status["activity"])
+
+    def test_inspect_modified_packet_is_in_progress(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "guided", "connection-settings", packet)
+            main_window = packet / "project/MainWindow.xaml"
+            main_window.write_text(main_window.read_text(encoding="utf-8") + "\n<!-- work -->\n", encoding="utf-8")
+            status = inspect_packet(ROOT, packet, "guided", "connection-settings")
+            self.assertEqual("in_progress", status["status"])
+            self.assertIn("project files changed", status["activity"])
+
     def test_prepare_reads_guided_inputs_from_pinned_commit(self) -> None:
         source = ROOT / "components/button.md"
         original = source.read_bytes()
@@ -167,6 +245,25 @@ class EvaluationHarnessTests(unittest.TestCase):
                 capture_run(ROOT, packet, result)
             self.assertFalse(result.exists())
 
+    def test_inspect_completed_packet_is_capture_ready(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "guided", "failure-confirmation", packet)
+            complete_run(packet)
+            status = inspect_packet(ROOT, packet, "guided", "failure-confirmation")
+            self.assertEqual("capture_ready", status["status"])
+            self.assertEqual([], status["errors"])
+
+    def test_inspect_packets_returns_exact_matrix_entries(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            statuses = inspect_packets(ROOT, Path(temp))
+            self.assertEqual(6, len(statuses))
+            self.assertEqual({"missing"}, {item["status"] for item in statuses})
+            self.assertEqual(
+                {(condition, scenario) for condition in ("baseline", "guided") for scenario in SCENARIOS},
+                {(item["condition"], item["scenario"]) for item in statuses},
+            )
+
     def test_capture_preserves_changed_and_deleted_project_files(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
             packet = Path(temp) / "packet"
@@ -181,6 +278,8 @@ class EvaluationHarnessTests(unittest.TestCase):
 
             capture = capture_run(ROOT, packet, result)
 
+            self.assertEqual(2, CAPTURE_SCHEMA_VERSION)
+            self.assertEqual(CAPTURE_SCHEMA_VERSION, capture["schema_version"])
             self.assertEqual(changed.read_bytes(), (result / "generated/MainWindow.xaml").read_bytes())
             self.assertEqual(["app.manifest"], capture["deleted_files"])
             self.assertFalse((result / "generated/bin/ignored.txt").exists())

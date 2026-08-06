@@ -166,18 +166,35 @@ The local phase must not alter baseline artifacts after generation. Any correcte
 python scripts/evaluation_harness.py validate
 ```
 
-Prepare each run into a new ignored workspace directory. The command refuses to reuse or modify an existing packet:
+Inspect any existing packet root before using it:
 
 ```powershell
-python scripts/evaluation_harness.py prepare --condition baseline --scenario connection-settings --destination evaluation/.runs/baseline/connection-settings
+python scripts/evaluation_harness.py inspect-packets --root evaluation/.runs/v2
 ```
+
+The command reports exactly six entries with one of these states:
+
+- `missing` — the expected packet directory does not exist;
+- `stale` — its contract version, fixed inputs, or templates are invalid;
+- `ready` — it is a clean current-contract packet with no execution activity;
+- `in_progress` — it is valid but contains generated changes, build artifacts, metadata, or evidence that are not capture-ready;
+- `capture_ready` — `RUN.md` and `verification.json` are complete and valid.
+
+It exits 1 when any packet is `missing` or `stale`. Existing packet directories are never modified. Prepare each run into a new ignored workspace directory. The command refuses to reuse or modify an existing packet:
+
+```powershell
+python scripts/evaluation_harness.py prepare --condition baseline --scenario connection-settings --destination evaluation/.runs/v2/baseline/connection-settings
+python scripts/evaluation_harness.py inspect-packet --packet evaluation/.runs/v2/baseline/connection-settings --condition baseline --scenario connection-settings
+```
+
+The single-packet inspection must report `ready` before generation. After `RUN.md`, `verification.json`, generated changes, and evidence are complete, run it again and require `capture_ready` before capture.
 
 A packet contains:
 
 - `project/` reconstructed from fixture commit `b73babad19d0153707a49e5ba1ed9fb0a42c33ef`;
 - byte-identical `PROMPT.md` extracted from input commit `7d01aae3cdc0241a7aa7ede7ee09738a6d5ee7cc`;
 - `context/` only for guided runs, containing exactly the matrix-listed reference files;
-- `PACKET.json` with prompt and reference SHA-256 values;
+- `PACKET.json` using packet contract `schema_version: 2`, with prompt, reference, and starting-project SHA-256 values;
 - `RUN.template.md` for the required execution metadata;
 - `evidence/verification.template.json` with the exact scenario verification checklist.
 
@@ -195,16 +212,16 @@ After generation and verification, copy `evidence/verification.template.json` to
 The scenario-specific check set is fixed. It includes ComboBox popup, CommandBar overflow, ListView selection, InfoBar actions, ContentDialog actions, keyboard/focus, Narrator, and Accessibility Insights where relevant. Validate the record before capture:
 
 ```powershell
-python scripts/evaluation_evidence.py evaluation/.runs/baseline/connection-settings/evidence/verification.json
+python scripts/evaluation_evidence.py evaluation/.runs/v2/baseline/connection-settings/evidence/verification.json
 ```
 
 After generation, copy `RUN.template.md` to `RUN.md`, replace every record placeholder, and keep generated work inside `project/`. Capture the immutable result without repairing it:
 
 ```powershell
-python scripts/evaluation_harness.py capture --packet evaluation/.runs/baseline/connection-settings --destination evaluation/baseline/connection-settings
+python scripts/evaluation_harness.py capture --packet evaluation/.runs/v2/baseline/connection-settings --destination evaluation/baseline/connection-settings
 ```
 
-Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md` or invalid `verification.json`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. It also records SHA-256 values for `PROMPT.md`, `PACKET.json`, `RUN.md`, every generated file, and every evidence file. Failed or empty generations may still be captured when their completion status and every unperformed verification have concrete reasons.
+Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md` or invalid `verification.json`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. The capture manifest uses `schema_version: 2` and records SHA-256 values for `PROMPT.md`, `PACKET.json`, `RUN.md`, every generated file, and every evidence file. Failed or empty generations may still be captured when their completion status and every unperformed verification have concrete reasons.
 
 After all six results are captured, verify the controlled conditions mechanically:
 
