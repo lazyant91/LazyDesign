@@ -1059,6 +1059,14 @@ Record counts for:
 
 The overall result is `PASS` only if all six conditions pass.
 
+Record the ten category scores with matching evidence, defect counts, traceable improvements, and all six findings sections in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Then generate all three result documents together:
+
+```bash
+python scripts/evaluation_report.py evaluation/results/metrics.json --output-dir evaluation/results
+```
+
+The command must write `scores.md`, `findings.md`, and `gate-decision.md` from the same validated input. Exit code 0 means PASS, 2 means a valid FAIL decision, and 1 means invalid or incomplete metrics.
+
 - [ ] **Step 5: Update repository status**
 
 If the gate passes:

@@ -202,4 +202,4 @@ The mechanical evaluator also applies these fixed interpretations:
 - irrelevant XAML or complexity counts must not increase;
 - every rubric category with a positive guided score delta must have a trace entry naming an existing LazyDesign rule ID and evidence location.
 
-Use `evaluation/gate-metrics.schema.json` for the structured input and `scripts/evaluation_gate.py` to produce `evaluation/results/gate-decision.md`. Do not change these interpretations after seeing the generated outputs.
+Use `evaluation/gate-metrics.schema.json` for the structured input. The same metrics file must include the six findings sections required by the implementation plan: attributable improvements, unchanged defects, regressions, ambiguous decisions, ignored rules, and unnecessary output. Run `scripts/evaluation_report.py` to produce `scores.md`, `findings.md`, and `gate-decision.md` together. Do not change these interpretations after seeing the generated outputs.

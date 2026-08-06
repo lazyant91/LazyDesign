@@ -4,7 +4,7 @@
   "title": "LazyDesign v0.1 gate metrics",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "scenarios", "traceable_improvements"],
+  "required": ["schema_version", "scenarios", "traceable_improvements", "findings"],
   "properties": {
     "schema_version": {"const": 1},
     "scenarios": {
@@ -20,6 +20,44 @@
     "traceable_improvements": {
       "type": "array",
       "items": {"$ref": "#/$defs/trace"}
+    },
+    "findings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attributable_improvements",
+        "unchanged_defects",
+        "regressions",
+        "ambiguous_decisions",
+        "ignored_rules",
+        "unnecessary_output"
+      ],
+      "properties": {
+        "attributable_improvements": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/findingWithRules"}
+        },
+        "unchanged_defects": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/finding"}
+        },
+        "regressions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/finding"}
+        },
+        "ambiguous_decisions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/finding"}
+        },
+        "ignored_rules": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/findingWithRules"}
+        },
+        "unnecessary_output": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/finding"}
+        }
+      }
     }
   },
   "$defs": {
@@ -109,6 +147,33 @@
           "items": {"type": "string", "minLength": 1}
         }
       }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "evidence", "rule_ids"],
+      "properties": {
+        "summary": {"type": "string", "minLength": 1},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "findingWithRules": {
+      "allOf": [
+        {"$ref": "#/$defs/finding"},
+        {
+          "properties": {
+            "rule_ids": {"minItems": 1}
+          }
+        }
+      ]
     }
   }
 }

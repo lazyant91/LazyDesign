@@ -12,6 +12,14 @@ from typing import Any
 
 SCENARIOS = ("connection-settings", "device-list", "failure-confirmation")
 CONDITIONS = ("baseline", "guided")
+FINDING_SECTIONS = (
+    "attributable_improvements",
+    "unchanged_defects",
+    "regressions",
+    "ambiguous_decisions",
+    "ignored_rules",
+    "unnecessary_output",
+)
 DEFECT_KEYS = (
     "overflow",
     "anatomy",
@@ -46,6 +54,17 @@ def _is_nonnegative_int(value: Any) -> bool:
 
 def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    if not isinstance(metrics, dict):
+        return ["metrics must be a JSON object"]
+    if set(metrics) != {
+        "schema_version",
+        "scenarios",
+        "traceable_improvements",
+        "findings",
+    }:
+        errors.append(
+            "metrics must contain exactly schema_version, scenarios, traceable_improvements, and findings"
+        )
     if metrics.get("schema_version") != 1:
         errors.append("schema_version must be 1")
     scenarios = metrics.get("scenarios")
@@ -170,6 +189,46 @@ def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
             not isinstance(item, str) or not item.strip() for item in evidence
         ):
             errors.append(f"{label} must contain one or more evidence entries")
+
+    findings = metrics.get("findings")
+    if not isinstance(findings, dict) or set(findings) != set(FINDING_SECTIONS):
+        errors.append("findings must contain exactly the six fixed sections")
+        findings = {}
+    for section in FINDING_SECTIONS:
+        items = findings.get(section, [])
+        if not isinstance(items, list):
+            errors.append(f"findings.{section} must be a list")
+            continue
+        for index, item in enumerate(items):
+            label = f"findings.{section}[{index}]"
+            if not isinstance(item, dict) or set(item) != {
+                "summary",
+                "evidence",
+                "rule_ids",
+            }:
+                errors.append(
+                    f"{label} must contain exactly summary, evidence, and rule_ids"
+                )
+                continue
+            summary = item.get("summary")
+            if not isinstance(summary, str) or not summary.strip():
+                errors.append(f"{label} summary must be a non-empty string")
+            evidence = item.get("evidence")
+            if not isinstance(evidence, list) or not evidence or any(
+                not isinstance(entry, str) or not entry.strip() for entry in evidence
+            ):
+                errors.append(f"{label} must contain one or more evidence entries")
+            rule_ids = item.get("rule_ids")
+            if not isinstance(rule_ids, list) or any(
+                not isinstance(rule_id, str) or not rule_id for rule_id in rule_ids
+            ):
+                errors.append(f"{label} rule_ids must be a list of non-empty strings")
+                continue
+            if section in {"attributable_improvements", "ignored_rules"} and not rule_ids:
+                errors.append(f"{label} requires one or more rule_ids")
+            for rule_id in rule_ids:
+                if rule_id not in known_rules:
+                    errors.append(f"{label} references unknown rule ID {rule_id}")
     return errors
 
 

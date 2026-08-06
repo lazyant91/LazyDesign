@@ -78,6 +78,17 @@ def passing_metrics() -> dict:
         "schema_version": 1,
         "scenarios": scenarios,
         "traceable_improvements": traces,
+        "findings": {
+            key: []
+            for key in (
+                "attributable_improvements",
+                "unchanged_defects",
+                "regressions",
+                "ambiguous_decisions",
+                "ignored_rules",
+                "unnecessary_output",
+            )
+        },
     }
 
 
@@ -127,6 +138,10 @@ class EvaluationGateTests(unittest.TestCase):
         del metrics["scenarios"]["device-list"]["guided"]["score_evidence"]
         with self.assertRaises(ValueError):
             evaluate_gate(ROOT, metrics)
+
+    def test_non_object_metrics_are_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            evaluate_gate(ROOT, [])
 
     def test_invalid_score_is_rejected(self) -> None:
         metrics = passing_metrics()
