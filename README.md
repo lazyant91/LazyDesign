@@ -58,7 +58,7 @@ Exact URLs, retrieval dates, revisions, licenses, and evidence limits are record
 
 ## v0.1 vertical slice
 
-The first release covers eight representative controls:
+The candidate reference covers eight representative controls:
 
 - Button
 - TextBox
@@ -77,7 +77,9 @@ It also defines five shared foundations:
 - states and themes;
 - accessibility basics.
 
-The same three UI tasks are generated without and with LazyDesign guidance. The v0.1 gate passes only when the guided output shows a meaningful reduction in clipping, content overflow, missing anatomy, lost native states, accessibility omissions, and unnecessary template customization.
+All thirteen pages are currently `v0.1-candidate`. This means their source IDs and authoring structure are present; it does not mean the controlled evaluation, WinUI build, rendered states, text scaling, contrast themes, keyboard behavior, or assistive-technology checks have passed.
+
+The same three UI tasks will be generated without and with LazyDesign guidance. The v0.1 gate passes only when the guided output shows a meaningful reduction in clipping, content overflow, missing anatomy, lost native states, accessibility omissions, and unnecessary template customization without adding material complexity.
 
 ## Repository layout
 
@@ -86,10 +88,11 @@ LazyDesign/
 ├─ README.md
 ├─ AGENTS.md
 ├─ DESIGN.md
-├─ components/                 # Component reference pages, added during v0.1
-├─ foundations/                # Cross-component guidance, added during v0.1
-├─ evaluation/                 # Fixed prompts, rubric, and recorded results
+├─ components/                 # Eight v0.1 component candidates
+├─ foundations/                # Five shared foundation candidates
+├─ evaluation/                 # Fixed prompts, rubric, run rules, and later results
 ├─ sources/                    # Source manifest and extraction notes
+├─ scripts/                    # Structural reference checks
 └─ docs/
    └─ superpowers/
       ├─ specs/                # Approved design specifications
@@ -98,7 +101,11 @@ LazyDesign/
 
 ## Documents
 
-- [`DESIGN.md`](DESIGN.md) — agent-facing entry point and usage contract.
+- [`DESIGN.md`](DESIGN.md) — agent-facing entry point, reference status, and usage contract.
+- [`components/`](components/) — the eight component candidates.
+- [`foundations/`](foundations/) — the five shared foundation candidates.
+- [`evaluation/README.md`](evaluation/README.md) — controlled run procedure and local Windows execution boundary.
+- [`evaluation/rubric.md`](evaluation/rubric.md) — fixed 60-point scoring rubric.
 - [`sources/manifest.yaml`](sources/manifest.yaml) — pinned evidence set and source status.
 - [`docs/superpowers/specs/2026-08-06-winui3-component-reference-design.md`](docs/superpowers/specs/2026-08-06-winui3-component-reference-design.md) — product and information architecture.
 - [`docs/superpowers/plans/2026-08-06-winui3-component-reference-v0.1.md`](docs/superpowers/plans/2026-08-06-winui3-component-reference-v0.1.md) — v0.1 implementation plan.
@@ -111,6 +118,26 @@ LazyDesign/
 - WinUI 3 Gallery: <https://github.com/microsoft/WinUI-Gallery>
 - Fluent 2 design resources: <https://fluent2.microsoft.design/get-started/design>
 
-## Status
+## Current status
 
-The repository is in v0.1 source-lock and reference-authoring work. The Gallery revision and initial official-document set are pinned. Windows Design Kit identity is pinned, but component-level Figma inspection is still pending. No component rule is active until its source evidence and evaluation fixtures are committed.
+Completed in the current v0.1 branch:
+
+- source manifest and source notes;
+- component/foundation document contract;
+- structural checker source;
+- five shared foundations;
+- eight component candidates;
+- fixed evaluation procedure;
+- three immutable scenario prompts;
+- 10-category scoring rubric.
+
+Pending in the local Windows phase:
+
+- run the structural checker against the checked-out branch;
+- create and record the clean WinUI evaluation project snapshot;
+- generate three baseline and three guided artifacts in fresh contexts;
+- build and render the generated pages;
+- verify constrained widths, Light, Dark, contrast theme, text scaling, keyboard, focus, and accessibility evidence;
+- score the six artifacts and apply the mechanical gate.
+
+The approved local workspace is `Z:\workspace\LazyDesign`. Precision expansion remains blocked until the v0.1 gate passes.
