@@ -107,6 +107,8 @@ Scenario:
 Run date and local time:
 Model identifier:
 Reasoning level:
+Fresh context:
+Generation stopping condition:
 Starting project repository and SHA:
 Operating system:
 .NET SDK:
@@ -158,7 +160,7 @@ The local phase must not alter baseline artifacts after generation. Any correcte
 
 ## Controlled run packets
 
-`evaluation/run-matrix.json` pins the evaluation fixture commit, prompt path, constrained width, and exact guided reference set for each scenario. Validate it before preparing any run:
+`evaluation/run-matrix.json` pins the input-document commit, evaluation fixture commit, prompt path, constrained width, and exact guided reference set for each scenario. Validate it before preparing any run:
 
 ```powershell
 python scripts/evaluation_harness.py validate
@@ -173,12 +175,28 @@ python scripts/evaluation_harness.py prepare --condition baseline --scenario con
 A packet contains:
 
 - `project/` reconstructed from fixture commit `b73babad19d0153707a49e5ba1ed9fb0a42c33ef`;
-- byte-identical `PROMPT.md`;
+- byte-identical `PROMPT.md` extracted from input commit `7d01aae3cdc0241a7aa7ede7ee09738a6d5ee7cc`;
 - `context/` only for guided runs, containing exactly the matrix-listed reference files;
 - `PACKET.json` with prompt and reference SHA-256 values;
 - `RUN.template.md` for the required execution metadata.
 
 Use one newly prepared packet in one fresh model context. Do not add files to a baseline context, change `PROMPT.md`, change the guided context set, or reuse a context between runs. The packet tool does not invoke a model, repair generated output, or treat a build as rendered verification.
+
+After generation, copy `RUN.template.md` to `RUN.md`, replace every record placeholder, and keep generated work inside `project/`. Capture the immutable result without repairing it:
+
+```powershell
+python scripts/evaluation_harness.py capture --packet evaluation/.runs/baseline/connection-settings --destination evaluation/baseline/connection-settings
+```
+
+Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. Failed or empty generations may still be captured when their completion status and missing checks are recorded accurately.
+
+After all six results are captured, verify the controlled conditions mechanically:
+
+```powershell
+python scripts/evaluation_harness.py validate-results --root evaluation
+```
+
+The result validator requires all six directories, exact prompt and reference hashes, the same start SHA, model, reasoning level, stopping condition, operating environment, tool access, and network policy, plus `Fresh context: yes` and `Generation intervention: none` for every scored run.
 
 ## Scoring and gate
 
