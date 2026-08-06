@@ -62,6 +62,25 @@ def run_artifact_metadata(packet: Path) -> tuple[str, str]:
     return reference_metadata, generated_metadata
 
 
+def run_verification_metadata(verification: dict) -> tuple[str, str]:
+    checks = verification["checks"]
+    performed = sorted(
+        check_id
+        for check_id, check in checks.items()
+        if check_id not in {"static_review", "build"}
+        and check["status"] in {"pass", "fail"}
+    )
+    not_performed = sorted(
+        check_id
+        for check_id, check in checks.items()
+        if check["status"] == "not_run"
+    )
+    return (
+        json.dumps(performed, separators=(",", ":")),
+        json.dumps(not_performed, separators=(",", ":")),
+    )
+
+
 def complete_run(
     packet: Path, model: str = "gpt-5.6-test", build: dict | None = None
 ) -> None:
@@ -72,6 +91,26 @@ def complete_run(
     if build is not None:
         build_command = build["harness_command"]
         build_result = f"exit {build['exit_code']}"
+
+    template = packet / "evidence/verification.template.json"
+    verification = packet / "evidence/verification.json"
+    verification_data = json.loads(template.read_text(encoding="utf-8"))
+    for check in verification_data["checks"].values():
+        check["reason"] = "test fixture does not perform runtime verification"
+    if build is not None:
+        build_check = verification_data["checks"]["build"]
+        build_check["status"] = "pass" if build["exit_code"] == 0 else "fail"
+        build_check["evidence"] = [
+            {
+                "path": "build.txt",
+                "detail": f"controlled build exited {build['exit_code']}",
+            }
+        ]
+        build_check["reason"] = ""
+    rendered_checks, checks_not_performed = run_verification_metadata(
+        verification_data
+    )
+
     values = {
         "Condition": manifest["condition"],
         "Scenario": manifest["scenario"],
@@ -92,27 +131,14 @@ def complete_run(
         "Generation completion status": "completed",
         "Build command": build_command,
         "Build result": build_result,
-        "Rendered checks performed": "not performed",
-        "Checks not performed": "render, theme, input, accessibility",
+        "Rendered checks performed": rendered_checks,
+        "Checks not performed": checks_not_performed,
         "Notes": "test fixture",
     }
-    text = "# Evaluation Run Record\n\n" + "\n".join(f"{key}: {value}" for key, value in values.items()) + "\n"
+    text = "# Evaluation Run Record\n\n" + "\n".join(
+        f"{key}: {value}" for key, value in values.items()
+    ) + "\n"
     (packet / "RUN.md").write_text(text, encoding="utf-8")
-    template = packet / "evidence/verification.template.json"
-    verification = packet / "evidence/verification.json"
-    verification_data = json.loads(template.read_text(encoding="utf-8"))
-    for check in verification_data["checks"].values():
-        check["reason"] = "test fixture does not perform runtime verification"
-    if build is not None:
-        build_check = verification_data["checks"]["build"]
-        build_check["status"] = "pass" if build["exit_code"] == 0 else "fail"
-        build_check["evidence"] = [
-            {
-                "path": "build.txt",
-                "detail": f"controlled build exited {build['exit_code']}",
-            }
-        ]
-        build_check["reason"] = ""
     verification.write_text(
         json.dumps(verification_data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -138,6 +164,10 @@ class EvaluationHarnessTests(unittest.TestCase):
             template = (packet / "RUN.template.md").read_text(encoding="utf-8")
             self.assertIn(".NET SDK: 9.0.313", template)
             self.assertIn("Windows App SDK package: 2.0.1", template)
+            self.assertIn(
+                "Rendered checks performed: record after verification", template
+            )
+            self.assertIn("Checks not performed: record after verification", template)
 
     def test_build_packet_uses_pinned_sdk_and_writes_evidence(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
@@ -257,6 +287,66 @@ class EvaluationHarnessTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 capture_run(ROOT, packet, result)
             self.assertFalse(result.exists())
+
+    def test_capture_refuses_runtime_check_metadata_that_differs_from_verification(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "guided", "connection-settings", packet)
+            complete_run(packet)
+            (packet / "evidence/render.txt").write_text(
+                "rendered runtime observed\n", encoding="utf-8"
+            )
+            verification_path = packet / "evidence/verification.json"
+            verification = json.loads(verification_path.read_text(encoding="utf-8"))
+            rendered = verification["checks"]["rendered_runtime"]
+            rendered["status"] = "pass"
+            rendered["evidence"] = [
+                {"path": "render.txt", "detail": "window rendered successfully"}
+            ]
+            rendered["reason"] = ""
+            verification_path.write_text(
+                json.dumps(verification, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_inspect_reports_copyable_expected_verification_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "guided", "connection-settings", packet)
+            complete_run(packet)
+            (packet / "evidence/render.txt").write_text(
+                "rendered runtime observed\n", encoding="utf-8"
+            )
+            verification_path = packet / "evidence/verification.json"
+            verification = json.loads(verification_path.read_text(encoding="utf-8"))
+            rendered = verification["checks"]["rendered_runtime"]
+            rendered["status"] = "pass"
+            rendered["evidence"] = [
+                {"path": "render.txt", "detail": "window rendered successfully"}
+            ]
+            rendered["reason"] = ""
+            verification_path.write_text(
+                json.dumps(verification, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            not_run = sorted(
+                check_id
+                for check_id, check in verification["checks"].items()
+                if check["status"] == "not_run"
+            )
+            status = inspect_packet(ROOT, packet, "guided", "connection-settings")
+            self.assertEqual(
+                '["rendered_runtime"]',
+                status["expected_run_metadata"]["Rendered checks performed"],
+            )
+            self.assertEqual(
+                json.dumps(not_run, separators=(",", ":")),
+                status["expected_run_metadata"]["Checks not performed"],
+            )
 
     def test_capture_refuses_build_command_for_another_packet(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:

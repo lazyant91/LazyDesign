@@ -513,6 +513,59 @@ def _validate_run_artifact_metadata(
     return errors
 
 
+def _expected_run_verification_metadata(
+    verification: dict[str, Any],
+) -> dict[str, str]:
+    checks = verification.get("checks", {})
+    if not isinstance(checks, dict):
+        return {}
+    performed = sorted(
+        check_id
+        for check_id, check in checks.items()
+        if check_id not in {"static_review", "build"}
+        and isinstance(check, dict)
+        and check.get("status") in {"pass", "fail"}
+    )
+    not_performed = sorted(
+        check_id
+        for check_id, check in checks.items()
+        if isinstance(check, dict) and check.get("status") == "not_run"
+    )
+    return {
+        "Rendered checks performed": json.dumps(
+            performed, ensure_ascii=False, separators=(",", ":")
+        ),
+        "Checks not performed": json.dumps(
+            not_performed, ensure_ascii=False, separators=(",", ":")
+        ),
+    }
+
+
+def _verification_run_metadata(path: Path) -> dict[str, str]:
+    try:
+        verification = _load_json(path)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(verification, dict):
+        return {}
+    return _expected_run_verification_metadata(verification)
+
+
+def _validate_run_verification_metadata(
+    run_values: dict[str, str], verification_path: Path, prefix: str = ""
+) -> list[str]:
+    label = f"{prefix}: " if prefix else ""
+    expected = _verification_run_metadata(verification_path)
+    if not expected:
+        return []
+    errors: list[str] = []
+    if run_values.get("Rendered checks performed") != expected["Rendered checks performed"]:
+        errors.append(f"{label}RUN.md rendered-check metadata differs from verification")
+    if run_values.get("Checks not performed") != expected["Checks not performed"]:
+        errors.append(f"{label}RUN.md not-performed metadata differs from verification")
+    return errors
+
+
 def _git_project_file_hashes(
     repo_root: Path, commit: str, project_path: str
 ) -> list[dict[str, str]]:
@@ -638,7 +691,7 @@ Generated file list: record after generation
 Generation completion status: record after generation
 Build command: not performed
 Build result: not performed
-Rendered checks performed: not performed
+Rendered checks performed: record after verification
 Checks not performed: record after verification
 Notes: packet hashes are recorded in PACKET.json
 """
@@ -827,6 +880,9 @@ def inspect_packet(
     activity = result["activity"]
     run_path = packet_dir / "RUN.md"
     verification_path = packet_dir / "evidence/verification.json"
+    result["expected_run_metadata"].update(
+        _verification_run_metadata(verification_path)
+    )
     if run_path.is_file() and verification_path.is_file():
         run_values, completion_errors = _parse_run_record(run_path)
         completion_errors.extend(_validate_run_environment(repo_root, run_values))
@@ -834,6 +890,9 @@ def inspect_packet(
             _validate_run_artifact_metadata(
                 run_values, packet, changed, deleted
             )
+        )
+        completion_errors.extend(
+            _validate_run_verification_metadata(run_values, verification_path)
         )
         completion_errors.extend(
             f"verification: {error}" for error in load_and_validate(verification_path)
@@ -995,6 +1054,9 @@ def capture_run(
         _validate_run_artifact_metadata(run_values, packet, changed, deleted)
     )
     verification_path = packet_dir / "evidence/verification.json"
+    errors.extend(
+        _validate_run_verification_metadata(run_values, verification_path)
+    )
     verification_errors = load_and_validate(verification_path)
     errors.extend(f"verification: {error}" for error in verification_errors)
     errors.extend(
@@ -1150,6 +1212,9 @@ def _validate_result(
         )
     )
     verification_path = result_dir / "evidence/verification.json"
+    errors.extend(
+        _validate_run_verification_metadata(run_values, verification_path, prefix)
+    )
     verification_errors = load_and_validate(verification_path)
     errors.extend(f"{prefix}: verification: {error}" for error in verification_errors)
     errors.extend(

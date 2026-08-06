@@ -126,7 +126,7 @@ Checks not performed:
 Notes:
 ```
 
-Do not leave a field blank. Use `not performed`, `not available`, or `not applicable` when necessary.
+Do not leave a field blank. Use `not performed`, `not available`, or `not applicable` only for free-text fields where the contract permits them. The four artifact/verification fields supplied by `expected_run_metadata` must use those exact values instead.
 
 ## Verification layers
 
@@ -187,7 +187,7 @@ python scripts/evaluation_harness.py prepare --condition baseline --scenario con
 python scripts/evaluation_harness.py inspect-packet --packet evaluation/.runs/v2/baseline/connection-settings --condition baseline --scenario connection-settings
 ```
 
-The single-packet inspection must report `ready` before generation. For every valid packet it also returns `expected_run_metadata` with the exact `Reference files supplied` and `Generated file list` values required by the current project state. After generation and the controlled build, run inspection before completing `RUN.md`, copy those two values exactly, then run it again and require `capture_ready` before capture.
+The single-packet inspection must report `ready` before generation. For every valid packet it returns artifact-derived `expected_run_metadata`. After generation and the controlled build, complete `verification.json` and its evidence first. Inspection then returns all four exact RUN values: `Reference files supplied`, `Generated file list`, `Rendered checks performed`, and `Checks not performed`. Copy them into `RUN.md`, then inspect again and require `capture_ready` before capture.
 
 A packet contains:
 
@@ -221,7 +221,16 @@ Reference files supplied: none
 Generated file list: {"changed":["MainWindow.xaml"],"deleted":["app.manifest"]}
 ```
 
-Baseline must use `none`; guided runs must use `see PACKET.json`. `Generated file list` is compact JSON with sorted repository-relative paths for every non-build-output file changed or added and every starting-project file deleted. `bin`, `obj`, and `.vs` are excluded. Copy both exact values from `inspect-packet`'s `expected_run_metadata`; inspection, capture, and result validation reject a mismatch.
+Baseline must use `none`; guided runs must use `see PACKET.json`. `Generated file list` is compact JSON with sorted repository-relative paths for every non-build-output file changed or added and every starting-project file deleted. `bin`, `obj`, and `.vs` are excluded. Inspection, capture, and result validation reject a mismatch.
+
+RUN verification metadata is also mechanical:
+
+```text
+Rendered checks performed: ["dark_theme","rendered_runtime"]
+Checks not performed: ["accessibility_insights","high_contrast","narrator"]
+```
+
+`Rendered checks performed` is a sorted compact JSON array of non-build, non-static verification check IDs whose status is `pass` or `fail`; a failed check was still performed. `Checks not performed` is a sorted compact JSON array of every check whose status is `not_run`, including `build` or `static_review` when applicable. Prose summaries such as `render and theme` or `not performed` are invalid. After `verification.json` and referenced evidence are complete, copy both exact arrays from `inspect-packet`'s `expected_run_metadata`. Inspection, capture, and result validation reject any contradiction with verification statuses.
 
 After generation and verification, copy `evidence/verification.template.json` to `evidence/verification.json`. For every check:
 
