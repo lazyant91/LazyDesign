@@ -192,3 +192,12 @@ Overflow reduction percent = ((baseline overflow defects - guided overflow defec
 ```
 
 When the baseline denominator is zero, mark the percentage condition `not demonstrated` rather than treating it as automatically passed. The overall gate passes only when every required condition has affirmative evidence.
+
+The mechanical evaluator also applies these fixed interpretations:
+
+- missing anatomy and accessibility counts must each be strictly lower in guided results;
+- unnecessary local `ControlTemplate` counts must not increase;
+- irrelevant XAML or complexity counts must not increase;
+- every rubric category with a positive guided score delta must have a trace entry naming an existing LazyDesign rule ID and evidence location.
+
+Use `evaluation/gate-metrics.schema.json` for the structured input and `scripts/evaluation_gate.py` to produce `evaluation/results/gate-decision.md`. Do not change these interpretations after seeing the generated outputs.

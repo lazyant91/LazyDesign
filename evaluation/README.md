@@ -202,4 +202,14 @@ The result validator requires all six directories, exact prompt and reference ha
 
 Score every artifact with `rubric.md`. Every category score requires file/line evidence or a rendered observation. The gate is evaluated only after all six immutable artifacts are available.
 
+Record the ten category scores, seven defect counts, and rule traces in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Every category whose guided score is higher than its baseline score requires a matching `traceable_improvements` entry with at least one existing LazyDesign rule ID and one evidence location.
+
+Generate the mechanical gate decision without editing the result by hand:
+
+```powershell
+python scripts/evaluation_gate.py evaluation/results/metrics.json --output evaluation/results/gate-decision.md
+```
+
+The command returns exit code 0 for PASS, 2 for a valid FAIL decision, and 1 for invalid or incomplete metrics. A zero baseline denominator is `not demonstrated`, not an automatic pass. Anatomy and accessibility defect counts must each decrease; unnecessary `ControlTemplate` and complexity defect counts must not increase.
+
 Do not mark v0.1 validated or approve precision expansion before the mechanical gate in the implementation plan passes.
