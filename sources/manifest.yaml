@@ -150,6 +150,22 @@ sources:
     scope: [listview]
     notes: ListView and GridView item presentation, selection, invocation, and templates.
 
+  - id: MS-WIN-CONTROLS-INFOBAR
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/infobar
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [infobar]
+    notes: InfoBar purpose, severity, title and message content, actions, visibility, and dismissal.
+
+  - id: MS-WIN-CONTROLS-DIALOGS
+    kind: official-doc
+    url: https://learn.microsoft.com/windows/apps/develop/ui/controls/dialogs-and-flyouts/dialogs
+    retrieved_at: '2026-08-06'
+    revision: retrieved-2026-08-06
+    scope: [contentdialog]
+    notes: ContentDialog creation, XamlRoot requirement, built-in buttons, default button, and modal behavior.
+
   - id: MS-WIN-CONTROLS-FORMS
     kind: official-doc
     url: https://learn.microsoft.com/windows/apps/develop/ui/controls/forms
