@@ -1,0 +1,193 @@
+# ListView
+
+## 1. Purpose and characteristic
+
+Use `ListView` to display and interact with a vertical collection of data items. It supports data binding, virtualization, selection, invocation, and item templates.
+
+### WINUI-LISTVIEW-PURPOSE-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** choosing a list without defining selection or invocation behavior
+
+Define whether the list is display-only, single-select, multi-select, or item-invoking. Configure `SelectionMode` and interaction behavior to match that purpose.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`
+
+## 2. Anatomy
+
+A list contains the `ListView` viewport, generated `ListViewItem` containers, item content from a data template, selection and focus states, and optional headers or empty-state content outside the list.
+
+### WINUI-LISTVIEW-ANATOMY-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** data items and containers being treated as the same object
+
+Bind business data through `ItemsSource` and use `ItemTemplate` for presentation. Do not depend on visual child traversal to read or update data state.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`
+
+## 3. Content rules
+
+### WINUI-LISTVIEW-CONTENT-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** items being ignored because both population mechanisms are used
+
+Populate the list using either direct `Items` or `ItemsSource`, not both.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`
+
+### WINUI-LISTVIEW-CONTENT-002
+
+**Level:** SHOULD  
+**Evidence:** derived  
+**Prevents:** dense items with no visual hierarchy
+
+Give each item a clear primary label and only the secondary information required for scanning or deciding. Keep repeated item structure consistent.
+
+**Sources:** `MS-WIN-DESIGN-CONTENT`, `MS-WIN-CONTROLS-LISTVIEW`
+
+### WINUI-LISTVIEW-CONTENT-003
+
+**Level:** MUST  
+**Evidence:** derived  
+**Prevents:** nested buttons conflicting with item invocation or selection
+
+When an item contains interactive children, define whether the row itself remains invokable and verify pointer and keyboard behavior for both the row and nested controls.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`, `MS-WIN-KEYBOARD-INTERACTIONS`
+
+## 4. Sizing and layout
+
+### WINUI-LISTVIEW-SIZE-001
+
+**Level:** MUST  
+**Evidence:** derived  
+**Prevents:** variable content clipping or uncontrolled row growth
+
+Define wrapping, trimming, and maximum content for primary and secondary text. Test long Korean and English strings at constrained widths and text scaling.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`, `MS-WIN-ACCESSIBLE-TEXT`
+
+### WINUI-LISTVIEW-LAYOUT-001
+
+**Level:** SHOULD  
+**Evidence:** official-doc  
+**Prevents:** large collections losing virtualization through unnecessary outer scrolling
+
+Let the list own its scrolling viewport for large collections. Avoid placing it in an unconstrained parent scroller unless the resulting measurement and virtualization behavior are verified.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`
+
+## 5. States and interaction
+
+### WINUI-LISTVIEW-STATE-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** selected, focused, and invoked states being conflated
+
+Treat selection and invocation as separate concepts. Configure and handle each explicitly.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`
+
+### WINUI-LISTVIEW-STATE-002
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** custom item visuals removing native state feedback
+
+Preserve native pointer-over, pressed, selected, focused, and disabled states when customizing item content.
+
+**Sources:** `MS-WIN-CONTROLS-LISTVIEW`, `MS-WIN-XAML-THEME-RESOURCES`
+
+### WINUI-LISTVIEW-KEYBOARD-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** pointer-only navigation and selection
+
+Verify keyboard entry, directional navigation, selection, invocation, and focus movement into and out of nested interactive controls.
+
+**Sources:** `MS-WIN-KEYBOARD-INTERACTIONS`
+
+## 6. Theme, accessibility, and localization
+
+### WINUI-LISTVIEW-A11Y-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** list items announced without meaningful identity or selection state
+
+Ensure each item exposes a meaningful accessible name and relevant state. Do not use color alone to communicate selection, status, or errors.
+
+**Sources:** `MS-WIN-ACCESSIBILITY-CHECKLIST`, `MS-WIN-CONTROLS-LISTVIEW`
+
+### WINUI-LISTVIEW-THEME-001
+
+**Level:** MUST  
+**Evidence:** official-doc  
+**Prevents:** selected or focused items disappearing across themes
+
+Use theme resources for item foregrounds, backgrounds, separators, and state visuals. Verify Light, Dark, and contrast themes after customization.
+
+**Sources:** `MS-WIN-XAML-THEME-RESOURCES`, `MS-WIN-CONTRAST-THEMES`
+
+## 7. Common failures
+
+- Mixing `Items` and `ItemsSource`.
+- Leaving `SelectionMode` at a default that does not match product behavior.
+- Treating selection as activation.
+- Dense item templates without a primary information hierarchy.
+- Nested buttons that steal or duplicate row invocation.
+- Fixed row heights that clip localized or scaled text.
+- Removing native selected and focus states with a custom template.
+- Wrapping a large list in another unconstrained scroll viewer.
+
+## 8. Minimal native XAML
+
+```xml
+<ListView ItemsSource="{x:Bind ViewModel.Devices}"
+          SelectedItem="{x:Bind ViewModel.SelectedDevice, Mode=TwoWay}"
+          SelectionMode="Single"
+          IsItemClickEnabled="True"
+          ItemClick="DeviceList_ItemClick">
+    <ListView.ItemTemplate>
+        <DataTemplate x:DataType="local:DeviceViewModel">
+            <StackPanel Padding="12,8">
+                <TextBlock Text="{x:Bind Name}" />
+                <TextBlock Text="{x:Bind Status}"
+                           Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView>
+```
+
+## 9. Verification checklist
+
+- [ ] Display, selection, and invocation behavior are explicitly defined.
+- [ ] Only one population mechanism is used.
+- [ ] Item templates present a consistent information hierarchy.
+- [ ] Long Korean and English text and text scaling were checked.
+- [ ] Large-list scrolling and virtualization behavior were considered.
+- [ ] Pointer, selected, focused, pressed, and disabled states remain visible.
+- [ ] Keyboard navigation, selection, invocation, and nested controls work.
+- [ ] Accessible item names and relevant states are exposed.
+- [ ] Light, Dark, and contrast themes were checked after customization.
+
+## 10. Sources
+
+- `MS-WIN-CONTROLS-LISTVIEW`
+- `MS-WIN-DESIGN-CONTENT`
+- `MS-WIN-ACCESSIBLE-TEXT`
+- `MS-WIN-KEYBOARD-INTERACTIONS`
+- `MS-WIN-ACCESSIBILITY-CHECKLIST`
+- `MS-WIN-XAML-THEME-RESOURCES`
+- `MS-WIN-CONTRAST-THEMES`
+- `WINUI-GALLERY-V2-9-3`
+
+Windows Design Kit evidence remains inactive because component-level inspection has not been completed.
