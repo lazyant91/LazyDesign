@@ -200,6 +200,18 @@ A packet contains:
 
 Use one newly prepared packet in one fresh model context. Do not add files to a baseline context, change `PROMPT.md`, change the guided context set, or reuse a context between runs. The packet tool does not invoke a model, repair generated output, or treat a build as rendered verification.
 
+`RUN.template.md` pins `.NET SDK: 9.0.313` and `Windows App SDK package: 2.0.1` from the starting-project commit. Do not replace these values with the SDK selected from the repository root. SDK selection depends on the process working directory, so a root-level `dotnet build <project-path>` may select a different installed SDK.
+
+Build each generated packet only through the controlled helper:
+
+```powershell
+python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/baseline/connection-settings
+```
+
+The helper reconstructs the pinned `global.json` in a temporary workspace directory, verifies that `dotnet --version` resolves to `9.0.313`, then builds the packet project with Debug/x64. It writes immutable pre-capture evidence to `evidence/build.txt` and never overwrites an existing build record. Exit code 0 means build success, 2 means the build ran and failed, and 1 means the packet or build environment was invalid. Build failure remains a valid scored result and must not be repaired before capture.
+
+When build was performed, `verification.json` must mark `build` as `pass` or `fail` and reference `build.txt`; `RUN.md` must record the harness command and `exit <code>` matching the evidence. When build was not performed, the verification check, RUN command, and RUN result must all say so consistently. Capture rejects uncontrolled or contradictory build metadata.
+
 After generation and verification, copy `evidence/verification.template.json` to `evidence/verification.json`. For every check:
 
 - use `pass` or `fail` only when at least one referenced evidence file exists under `evidence/`;
@@ -229,7 +241,7 @@ After all six results are captured, verify the controlled conditions mechanicall
 python scripts/evaluation_harness.py validate-results --root evaluation
 ```
 
-The result validator requires all six directories, exact prompt and reference hashes, the same start SHA, model, reasoning level, stopping condition, operating environment, tool access, and network policy, plus `Fresh context: yes` and `Generation intervention: none` for every scored run. It rejects any post-capture change, addition, or removal in `RUN.md`, `PACKET.json`, `generated/`, or `evidence/`.
+The result validator requires all six directories, exact prompt and reference hashes, the same start SHA, model, reasoning level, stopping condition, operating environment, tool access, and network policy, plus `Fresh context: yes` and `Generation intervention: none` for every scored run. It rejects any post-capture change, addition, or removal in `RUN.md`, `PACKET.json`, `generated/`, or `evidence/`. Capture and result validation also reject `.NET SDK` or Windows App SDK metadata that differs from the pinned starting-project values.
 
 ## Scoring and gate
 

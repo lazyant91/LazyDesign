@@ -11,9 +11,11 @@ from pathlib import Path
 from scripts.evaluation_harness import (
     CAPTURE_SCHEMA_VERSION,
     PACKET_SCHEMA_VERSION,
+    build_packet,
     capture_run,
     inspect_packet,
     inspect_packets,
+    pinned_build_environment,
     prepare_run_packet,
     validate_matrix,
     validate_results,
@@ -25,7 +27,17 @@ START_SHA = "b73babad19d0153707a49e5ba1ed9fb0a42c33ef"
 SCENARIOS = ("connection-settings", "device-list", "failure-confirmation")
 
 
-def complete_run(packet: Path, model: str = "gpt-5.6-test") -> None:
+def complete_run(
+    packet: Path, model: str = "gpt-5.6-test", build: dict | None = None
+) -> None:
+    build_command = "not performed"
+    build_result = "not performed"
+    if build is not None:
+        relative_packet = packet.relative_to(ROOT).as_posix()
+        build_command = (
+            "python scripts/evaluation_harness.py build --packet " + relative_packet
+        )
+        build_result = f"exit {build['exit_code']}"
     values = {
         "Condition": json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))["condition"],
         "Scenario": json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))["scenario"],
@@ -44,8 +56,8 @@ def complete_run(packet: Path, model: str = "gpt-5.6-test") -> None:
         "Generation intervention": "none",
         "Generated file list": "captured automatically",
         "Generation completion status": "completed",
-        "Build command": "dotnet build -c Debug -p:Platform=x64",
-        "Build result": "exit 0",
+        "Build command": build_command,
+        "Build result": build_result,
         "Rendered checks performed": "not performed",
         "Checks not performed": "render, theme, input, accessibility",
         "Notes": "test fixture",
@@ -57,6 +69,16 @@ def complete_run(packet: Path, model: str = "gpt-5.6-test") -> None:
     verification_data = json.loads(template.read_text(encoding="utf-8"))
     for check in verification_data["checks"].values():
         check["reason"] = "test fixture does not perform runtime verification"
+    if build is not None:
+        build_check = verification_data["checks"]["build"]
+        build_check["status"] = "pass" if build["exit_code"] == 0 else "fail"
+        build_check["evidence"] = [
+            {
+                "path": "build.txt",
+                "detail": f"controlled build exited {build['exit_code']}",
+            }
+        ]
+        build_check["reason"] = ""
     verification.write_text(
         json.dumps(verification_data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -67,12 +89,42 @@ class EvaluationHarnessTests(unittest.TestCase):
     def test_matrix_is_valid(self) -> None:
         self.assertEqual([], validate_matrix(ROOT))
 
+    def test_pinned_build_environment_matches_fixture_contract(self) -> None:
+        environment = pinned_build_environment(ROOT)
+        self.assertEqual("9.0.313", environment["dotnet_sdk"])
+        self.assertEqual("2.0.1", environment["windows_app_sdk"])
+        self.assertEqual("10.0.26100.4948", environment["windows_sdk_build_tools"])
+
     def test_prepare_writes_current_packet_contract_version(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
             packet = Path(temp) / "packet"
             manifest = prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
             self.assertEqual(2, PACKET_SCHEMA_VERSION)
             self.assertEqual(PACKET_SCHEMA_VERSION, manifest["schema_version"])
+            template = (packet / "RUN.template.md").read_text(encoding="utf-8")
+            self.assertIn(".NET SDK: 9.0.313", template)
+            self.assertIn("Windows App SDK package: 2.0.1", template)
+
+    def test_build_packet_uses_pinned_sdk_and_writes_evidence(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            (packet / "project/global.json").write_text(
+                '{"sdk":{"version":"10.0.302"}}\n', encoding="utf-8"
+            )
+            result = build_packet(ROOT, packet)
+            self.assertEqual("9.0.313", result["selected_sdk"])
+            self.assertEqual("9.0.313", result["expected_sdk"])
+            self.assertEqual(0, result["exit_code"])
+            evidence = packet / "evidence/build.txt"
+            self.assertTrue(evidence.is_file())
+            self.assertIn("Selected .NET SDK: 9.0.313", evidence.read_text(encoding="utf-8"))
+            complete_run(packet, build=result)
+            status = inspect_packet(ROOT, packet, "baseline", "connection-settings")
+            self.assertEqual("capture_ready", status["status"])
+            captured = Path(temp) / "captured"
+            capture_run(ROOT, packet, captured)
+            self.assertTrue((captured / "evidence/build.txt").is_file())
 
     def test_inspect_fresh_packet_is_ready(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
@@ -241,6 +293,40 @@ class EvaluationHarnessTests(unittest.TestCase):
             data = json.loads(packet_path.read_text(encoding="utf-8"))
             data["project_files"][0]["sha256"] = "0" * 64
             packet_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_capture_refuses_wrong_pinned_sdk_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "device-list", packet)
+            complete_run(packet)
+            run_path = packet / "RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace(
+                    ".NET SDK: 9.0.313", ".NET SDK: 10.0.302"
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_capture_refuses_uncontrolled_build_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "device-list", packet)
+            complete_run(packet)
+            run_path = packet / "RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8")
+                .replace("Build command: not performed", "Build command: dotnet build")
+                .replace("Build result: not performed", "Build result: exit 0"),
+                encoding="utf-8",
+            )
             with self.assertRaises(ValueError):
                 capture_run(ROOT, packet, result)
             self.assertFalse(result.exists())

@@ -7,11 +7,14 @@ import argparse
 import hashlib
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
 import tarfile
 import uuid
+import xml.etree.ElementTree as ET
+from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -132,6 +135,141 @@ def _git_file_bytes(repo_root: Path, commit: str, relative: str) -> bytes:
         ["git", "show", f"{commit}:{relative}"],
         cwd=repo_root,
     )
+
+
+def pinned_build_environment(repo_root: Path) -> dict[str, str]:
+    matrix = _load_matrix(repo_root)
+    start = matrix["start_project"]
+    commit = start["commit"]
+    project_path = start["path"].rstrip("/")
+    global_data = json.loads(
+        _git_file_bytes(repo_root, commit, f"{project_path}/global.json").decode(
+            "utf-8-sig"
+        )
+    )
+    project_xml = ET.fromstring(
+        _git_file_bytes(
+            repo_root,
+            commit,
+            f"{project_path}/LazyDesign.EvaluationApp.csproj",
+        ).decode("utf-8-sig")
+    )
+    packages = {
+        item.attrib.get("Include", ""): item.attrib.get("Version", "")
+        for item in project_xml.findall(".//PackageReference")
+    }
+    return {
+        "dotnet_sdk": global_data["sdk"]["version"],
+        "windows_app_sdk": packages["Microsoft.WindowsAppSDK"],
+        "windows_sdk_build_tools": packages["Microsoft.Windows.SDK.BuildTools"],
+        "start_commit": commit,
+        "start_project_path": project_path,
+    }
+
+
+def _validate_run_environment(
+    repo_root: Path, values: dict[str, str], prefix: str = ""
+) -> list[str]:
+    environment = pinned_build_environment(repo_root)
+    label = f"{prefix}: " if prefix else ""
+    errors: list[str] = []
+    if values.get(".NET SDK") != environment["dotnet_sdk"]:
+        errors.append(
+            f"{label}.NET SDK must be pinned value {environment['dotnet_sdk']}"
+        )
+    if values.get("Windows App SDK package") != environment["windows_app_sdk"]:
+        errors.append(
+            f"{label}Windows App SDK package must be pinned value "
+            f"{environment['windows_app_sdk']}"
+        )
+    return errors
+
+
+def _build_evidence_values(path: Path) -> tuple[dict[str, str], list[str]]:
+    required = {
+        "Expected .NET SDK",
+        "Selected .NET SDK",
+        "Starting Windows App SDK package",
+        "Starting Windows SDK BuildTools",
+        "Command",
+        "Exit code",
+    }
+    if not path.is_file():
+        return {}, ["build: missing controlled evidence/build.txt"]
+    values: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        for key in required:
+            prefix = f"{key}:"
+            if line.startswith(prefix):
+                values[key] = line[len(prefix) :].strip()
+                break
+    missing = sorted(required - set(values))
+    return values, [f"build: build.txt missing field {key}" for key in missing]
+
+
+def _validate_controlled_build(
+    repo_root: Path,
+    result_root: Path,
+    run_values: dict[str, str],
+    verification_path: Path,
+    prefix: str = "",
+) -> list[str]:
+    label = f"{prefix}: " if prefix else ""
+    try:
+        verification = _load_json(verification_path)
+    except (OSError, json.JSONDecodeError):
+        return []
+    build_check = verification.get("checks", {}).get("build", {})
+    status = build_check.get("status")
+    build_path = result_root / "evidence/build.txt"
+    errors: list[str] = []
+    if status == "not_run":
+        if build_path.exists():
+            errors.append(f"{label}build: build.txt exists while check is not_run")
+        if run_values.get("Build command") != "not performed":
+            errors.append(f"{label}build: RUN.md command must be not performed")
+        if run_values.get("Build result") != "not performed":
+            errors.append(f"{label}build: RUN.md result must be not performed")
+        return errors
+    if status not in {"pass", "fail"}:
+        return errors
+
+    evidence_paths = {
+        item.get("path")
+        for item in build_check.get("evidence", [])
+        if isinstance(item, dict)
+    }
+    if "build.txt" not in evidence_paths:
+        errors.append(f"{label}build: completed check must reference build.txt")
+    values, evidence_errors = _build_evidence_values(build_path)
+    errors.extend(f"{label}{error}" for error in evidence_errors)
+    if evidence_errors:
+        return errors
+
+    environment = pinned_build_environment(repo_root)
+    if values["Expected .NET SDK"] != environment["dotnet_sdk"]:
+        errors.append(f"{label}build: expected SDK differs from pinned value")
+    if values["Selected .NET SDK"] != environment["dotnet_sdk"]:
+        errors.append(f"{label}build: selected SDK differs from pinned value")
+    if values["Starting Windows App SDK package"] != environment["windows_app_sdk"]:
+        errors.append(f"{label}build: Windows App SDK differs from pinned value")
+    if values["Starting Windows SDK BuildTools"] != environment["windows_sdk_build_tools"]:
+        errors.append(f"{label}build: Windows SDK BuildTools differs from pinned value")
+    try:
+        exit_code = int(values["Exit code"])
+    except ValueError:
+        errors.append(f"{label}build: exit code must be an integer")
+        return errors
+    if status == "pass" and exit_code != 0:
+        errors.append(f"{label}build: pass requires exit code 0")
+    if status == "fail" and exit_code == 0:
+        errors.append(f"{label}build: fail requires a nonzero exit code")
+    command = run_values.get("Build command", "")
+    if not command.startswith("python scripts/evaluation_harness.py build --packet "):
+        errors.append(f"{label}build: RUN.md must record the controlled harness command")
+    if run_values.get("Build result") != f"exit {exit_code}":
+        errors.append(f"{label}build: RUN.md result must match build.txt exit code")
+    return errors
 
 
 def validate_matrix(repo_root: Path) -> list[str]:
@@ -331,7 +469,10 @@ def prepare_run_packet(
         (temp / "PACKET.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
-        (temp / "RUN.template.md").write_text(_run_template(manifest), encoding="utf-8")
+        (temp / "RUN.template.md").write_text(
+            _run_template(manifest, pinned_build_environment(repo_root)),
+            encoding="utf-8",
+        )
         evidence_dir = temp / "evidence"
         evidence_dir.mkdir()
         (evidence_dir / "verification.template.json").write_text(
@@ -345,7 +486,9 @@ def prepare_run_packet(
         raise
 
 
-def _run_template(manifest: dict[str, Any]) -> str:
+def _run_template(
+    manifest: dict[str, Any], environment: dict[str, str]
+) -> str:
     supplied = "none" if not manifest["references"] else "see PACKET.json"
     return f"""# Evaluation Run Record
 
@@ -358,8 +501,8 @@ Fresh context: record before generation
 Generation stopping condition: record before generation
 Starting project repository and SHA: lazyant91/LazyDesign {manifest['start_project_commit']}
 Operating system: record before generation
-.NET SDK: record before generation
-Windows App SDK package: 2.0.1
+.NET SDK: {environment['dotnet_sdk']}
+Windows App SDK package: {environment['windows_app_sdk']}
 Tool access: record before generation
 Network access: record before generation
 Reference files supplied: {supplied}
@@ -450,7 +593,7 @@ def _validate_packet(repo_root: Path, packet_dir: Path) -> tuple[dict[str, Any],
             errors.append(f"packet reference content changed: {relative}")
 
     run_template = packet_dir / "RUN.template.md"
-    expected_run_template = _run_template(packet)
+    expected_run_template = _run_template(packet, pinned_build_environment(repo_root))
     if (
         not run_template.is_file()
         or run_template.read_text(encoding="utf-8-sig") != expected_run_template
@@ -555,8 +698,14 @@ def inspect_packet(
     verification_path = packet_dir / "evidence/verification.json"
     if run_path.is_file() and verification_path.is_file():
         run_values, completion_errors = _parse_run_record(run_path)
+        completion_errors.extend(_validate_run_environment(repo_root, run_values))
         completion_errors.extend(
             f"verification: {error}" for error in load_and_validate(verification_path)
+        )
+        completion_errors.extend(
+            _validate_controlled_build(
+                repo_root, packet_dir, run_values, verification_path
+            )
         )
         if run_values.get("Condition") != expected_condition:
             completion_errors.append("RUN.md condition differs from packet")
@@ -589,6 +738,100 @@ def inspect_packets(repo_root: Path, packets_root: Path) -> list[dict[str, Any]]
     ]
 
 
+def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
+    packet_dir = _require_workspace_path(repo_root, packet_dir, "run packet")
+    packet, errors = _validate_packet(repo_root, packet_dir)
+    if errors:
+        raise ValueError("invalid run packet: " + "; ".join(errors))
+
+    evidence_path = packet_dir / "evidence/build.txt"
+    if evidence_path.exists():
+        raise FileExistsError(f"build evidence already exists: {evidence_path}")
+
+    projects = sorted((packet_dir / "project").glob("*.csproj"))
+    if len(projects) != 1:
+        raise ValueError("packet project must contain exactly one top-level .csproj")
+    project = projects[0]
+    environment = pinned_build_environment(repo_root)
+    control_root = repo_root / "evaluation/.remote-temp" / f"sdk-{uuid.uuid4().hex}"
+    control_root.mkdir(parents=True, exist_ok=False)
+    try:
+        global_bytes = _git_file_bytes(
+            repo_root,
+            environment["start_commit"],
+            f"{environment['start_project_path']}/global.json",
+        )
+        (control_root / "global.json").write_bytes(global_bytes)
+        process_environment = os.environ.copy()
+        process_environment["DOTNET_CLI_UI_LANGUAGE"] = "en-US"
+        process_environment["DOTNET_NOLOGO"] = "1"
+        selected_sdk = subprocess.run(
+            ["dotnet", "--version"],
+            cwd=control_root,
+            env=process_environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        ).stdout.decode("utf-8", errors="replace").strip()
+        if selected_sdk != environment["dotnet_sdk"]:
+            raise ValueError(
+                f"selected .NET SDK {selected_sdk!r} differs from pinned "
+                f"{environment['dotnet_sdk']}"
+            )
+
+        command = [
+            "dotnet",
+            "build",
+            str(project.resolve()),
+            "-c",
+            "Debug",
+            "-p:Platform=x64",
+        ]
+        completed = subprocess.run(
+            command,
+            cwd=control_root,
+            env=process_environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+        output = completed.stdout.decode("utf-8", errors="replace")
+        relative_project = project.relative_to(repo_root).as_posix()
+        evidence = "\n".join(
+            (
+                "# Evaluation Build Evidence",
+                "",
+                f"Recorded at: {datetime.now().astimezone().isoformat(timespec='seconds')}",
+                f"Packet: {packet['condition']}/{packet['scenario']}",
+                f"Pinned start: {environment['start_commit']}:{environment['start_project_path']}",
+                f"Expected .NET SDK: {environment['dotnet_sdk']}",
+                f"Selected .NET SDK: {selected_sdk}",
+                f"Starting Windows App SDK package: {environment['windows_app_sdk']}",
+                f"Starting Windows SDK BuildTools: {environment['windows_sdk_build_tools']}",
+                f"Command: dotnet build {relative_project} -c Debug -p:Platform=x64",
+                f"Exit code: {completed.returncode}",
+                "",
+                "## Output",
+                "",
+                output.rstrip(),
+                "",
+            )
+        )
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        evidence_path.write_text(evidence, encoding="utf-8")
+        return {
+            "condition": packet["condition"],
+            "scenario": packet["scenario"],
+            "expected_sdk": environment["dotnet_sdk"],
+            "selected_sdk": selected_sdk,
+            "windows_app_sdk": environment["windows_app_sdk"],
+            "exit_code": completed.returncode,
+            "evidence": evidence_path.relative_to(repo_root).as_posix(),
+        }
+    finally:
+        shutil.rmtree(control_root, ignore_errors=True)
+
+
 def capture_run(
     repo_root: Path, packet_dir: Path, destination: Path
 ) -> dict[str, Any]:
@@ -599,8 +842,15 @@ def capture_run(
     packet, errors = _validate_packet(repo_root, packet_dir)
     run_values, run_errors = _parse_run_record(packet_dir / "RUN.md")
     errors.extend(run_errors)
-    verification_errors = load_and_validate(packet_dir / "evidence/verification.json")
+    errors.extend(_validate_run_environment(repo_root, run_values))
+    verification_path = packet_dir / "evidence/verification.json"
+    verification_errors = load_and_validate(verification_path)
     errors.extend(f"verification: {error}" for error in verification_errors)
+    errors.extend(
+        _validate_controlled_build(
+            repo_root, packet_dir, run_values, verification_path
+        )
+    )
     if run_values:
         if run_values.get("Condition") != packet.get("condition"):
             errors.append("RUN.md condition differs from PACKET.json")
@@ -739,8 +989,15 @@ def _validate_result(
         errors.append(f"{prefix}: captured evidence files differ")
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)
-    verification_errors = load_and_validate(result_dir / "evidence/verification.json")
+    errors.extend(_validate_run_environment(repo_root, run_values, prefix))
+    verification_path = result_dir / "evidence/verification.json"
+    verification_errors = load_and_validate(verification_path)
     errors.extend(f"{prefix}: verification: {error}" for error in verification_errors)
+    errors.extend(
+        _validate_controlled_build(
+            repo_root, result_dir, run_values, verification_path, prefix
+        )
+    )
     if run_values:
         if run_values.get("Condition") != condition:
             errors.append(f"{prefix}: RUN.md condition differs")
@@ -787,6 +1044,8 @@ def main() -> int:
     prepare.add_argument("--condition", choices=("baseline", "guided"), required=True)
     prepare.add_argument("--scenario", choices=tuple(sorted(EXPECTED_SCENARIOS)), required=True)
     prepare.add_argument("--destination", type=Path, required=True)
+    build = subparsers.add_parser("build")
+    build.add_argument("--packet", type=Path, required=True)
     capture = subparsers.add_parser("capture")
     capture.add_argument("--packet", type=Path, required=True)
     capture.add_argument("--destination", type=Path, required=True)
@@ -811,6 +1070,11 @@ def main() -> int:
         results_root = args.root if args.root.is_absolute() else repo_root / args.root
         errors = validate_results(repo_root, results_root)
         success = "evaluation results passed"
+    elif args.command == "build":
+        packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
+        build_result = build_packet(repo_root, packet)
+        print(json.dumps(build_result, ensure_ascii=False, indent=2))
+        return 0 if build_result["exit_code"] == 0 else 2
     elif args.command == "inspect-packet":
         packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
         status = inspect_packet(

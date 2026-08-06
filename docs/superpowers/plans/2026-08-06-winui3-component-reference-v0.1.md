@@ -908,6 +908,14 @@ Copy the prompt into `PROMPT.md`. Record in `RUN.md`:
 - build command and result;
 - rendered checks actually performed.
 
+Keep the prefilled `.NET SDK: 9.0.313` and `Windows App SDK package: 2.0.1` values. Build through the harness so SDK selection is independent of the repository-root SDK:
+
+```bash
+python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/baseline/connection-settings
+```
+
+Use `evidence/build.txt` for the build verification entry. Exit 0 is a successful build, exit 2 is a preserved build failure, and exit 1 means the packet or pinned build environment is invalid. Do not run a root-level `dotnet build <packet-project>` as scored build evidence.
+
 - [ ] **Step 3: Run Scenarios B and C identically**
 
 Repeat from fresh contexts using the exact prompt files.
@@ -1001,7 +1009,13 @@ Do not provide unrelated component pages.
 
 Use the exact task text from the prompt files. The only experimental difference is the supplied LazyDesign reference set.
 
-Record the same metadata and verification evidence required by Task 9.
+Record the same metadata and verification evidence required by Task 9. Keep the prefilled pinned SDK/package values and build every guided packet through the same harness command, for example:
+
+```bash
+python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/guided/connection-settings
+```
+
+Use the generated `evidence/build.txt` record and preserve exit 2 build failures without repair.
 
 - [ ] **Step 4: Preserve failures and commit**
 
