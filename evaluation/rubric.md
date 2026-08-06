@@ -17,6 +17,8 @@ Uncertainty: none | <specific reason>
 
 Static source evidence must identify a file and line range. Runtime evidence must state the environment and observed state. Do not infer rendered behavior from XAML alone.
 
+In `evaluation/results/metrics.json`, every baseline and guided result must contain exactly ten `score_evidence` entries. Categories 1 through 10 must each appear once, the repeated score must match the corresponding `scores` array value, evidence must be non-empty, and uncertainty must be recorded even when it is `none`.
+
 ## 1. Content length and overflow
 
 ### 0

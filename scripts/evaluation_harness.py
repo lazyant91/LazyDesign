@@ -15,6 +15,11 @@ import uuid
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+try:
+    from scripts.evaluation_evidence import load_and_validate, verification_template
+except ModuleNotFoundError:
+    from evaluation_evidence import load_and_validate, verification_template
+
 MATRIX_PATH = Path("evaluation/run-matrix.json")
 EXPECTED_SCENARIOS = {"connection-settings", "device-list", "failure-confirmation"}
 EXPECTED_WIDTHS = {"connection-settings": 420, "device-list": 520, "failure-confirmation": None}
@@ -301,6 +306,12 @@ def prepare_run_packet(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         (temp / "RUN.template.md").write_text(_run_template(manifest), encoding="utf-8")
+        evidence_dir = temp / "evidence"
+        evidence_dir.mkdir()
+        (evidence_dir / "verification.template.json").write_text(
+            json.dumps(verification_template(scenario_name), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
         temp.rename(destination)
         return manifest
     except Exception:
@@ -434,6 +445,8 @@ def capture_run(
     packet, errors = _validate_packet(repo_root, packet_dir)
     run_values, run_errors = _parse_run_record(packet_dir / "RUN.md")
     errors.extend(run_errors)
+    verification_errors = load_and_validate(packet_dir / "evidence/verification.json")
+    errors.extend(f"verification: {error}" for error in verification_errors)
     if run_values:
         if run_values.get("Condition") != packet.get("condition"):
             errors.append("RUN.md condition differs from PACKET.json")
@@ -529,6 +542,8 @@ def _validate_result(
             errors.append(f"{prefix}: captured generated file differs: {item.get('path')}")
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)
+    verification_errors = load_and_validate(result_dir / "evidence/verification.json")
+    errors.extend(f"{prefix}: verification: {error}" for error in verification_errors)
     if run_values:
         if run_values.get("Condition") != condition:
             errors.append(f"{prefix}: RUN.md condition differs")

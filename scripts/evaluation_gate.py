@@ -59,6 +59,15 @@ def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
             continue
         for condition in CONDITIONS:
             result = scenario_data.get(condition, {})
+            if not isinstance(result, dict) or set(result) != {
+                "scores",
+                "score_evidence",
+                "defects",
+            }:
+                errors.append(
+                    f"{scenario}/{condition} must contain exactly scores, score_evidence, and defects"
+                )
+                result = result if isinstance(result, dict) else {}
             scores = result.get("scores")
             if not isinstance(scores, list) or len(scores) != 10:
                 errors.append(f"{scenario}/{condition} scores must contain 10 values")
@@ -70,6 +79,60 @@ def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
                 for score in scores
             ):
                 errors.append(f"{scenario}/{condition} scores must be integers from 0 to 2")
+            score_evidence = result.get("score_evidence")
+            if not isinstance(score_evidence, list) or len(score_evidence) != 10:
+                errors.append(
+                    f"{scenario}/{condition} score_evidence must contain 10 entries"
+                )
+            else:
+                categories: list[int] = []
+                for index, entry in enumerate(score_evidence):
+                    label = f"{scenario}/{condition} score_evidence[{index}]"
+                    if not isinstance(entry, dict) or set(entry) != {
+                        "category",
+                        "score",
+                        "evidence",
+                        "uncertainty",
+                    }:
+                        errors.append(
+                            f"{label} must contain exactly category, score, evidence, and uncertainty"
+                        )
+                        continue
+                    category = entry.get("category")
+                    score = entry.get("score")
+                    if (
+                        not isinstance(category, int)
+                        or isinstance(category, bool)
+                        or not 1 <= category <= 10
+                    ):
+                        errors.append(f"{label} category must be an integer from 1 to 10")
+                    else:
+                        categories.append(category)
+                        if (
+                            isinstance(scores, list)
+                            and len(scores) == 10
+                            and score != scores[category - 1]
+                        ):
+                            errors.append(f"{label} score differs from scores[{category - 1}]")
+                    if (
+                        not isinstance(score, int)
+                        or isinstance(score, bool)
+                        or score < 0
+                        or score > 2
+                    ):
+                        errors.append(f"{label} score must be an integer from 0 to 2")
+                    evidence = entry.get("evidence")
+                    if not isinstance(evidence, list) or not evidence or any(
+                        not isinstance(item, str) or not item.strip() for item in evidence
+                    ):
+                        errors.append(f"{label} must contain one or more evidence entries")
+                    uncertainty = entry.get("uncertainty")
+                    if not isinstance(uncertainty, str) or not uncertainty.strip():
+                        errors.append(f"{label} uncertainty must be a non-empty string")
+                if sorted(categories) != list(range(1, 11)):
+                    errors.append(
+                        f"{scenario}/{condition} score_evidence categories must be exactly 1 through 10"
+                    )
             defects = result.get("defects")
             if not isinstance(defects, dict) or set(defects) != set(DEFECT_KEYS):
                 errors.append(

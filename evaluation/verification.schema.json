@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lazyant91/LazyDesign/evaluation/verification.schema.json",
+  "title": "LazyDesign v0.1 runtime verification evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scenario", "parameters", "checks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scenario": {
+      "enum": ["connection-settings", "device-list", "failure-confirmation"]
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_width_dip",
+        "text_scale_percent",
+        "languages",
+        "contrast_theme"
+      ],
+      "properties": {
+        "content_width_dip": {"type": ["integer", "null"]},
+        "text_scale_percent": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 1},
+          "uniqueItems": true
+        },
+        "languages": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "contrast_theme": {"type": "string"}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "minProperties": 18,
+      "maxProperties": 18,
+      "propertyNames": {
+        "enum": [
+          "static_review",
+          "build",
+          "rendered_runtime",
+          "light_theme",
+          "dark_theme",
+          "high_contrast",
+          "text_scaling",
+          "korean_long_content",
+          "english_long_content",
+          "keyboard_navigation",
+          "focus_visual",
+          "narrator",
+          "accessibility_insights",
+          "content_width",
+          "textbox_validation",
+          "combobox_popup",
+          "toggleswitch_state",
+          "save_button_activation",
+          "commandbar_overflow",
+          "listview_selection",
+          "empty_state",
+          "remove_command_state",
+          "infobar_retry_action",
+          "infobar_dismissal",
+          "contentdialog_default_action",
+          "contentdialog_close_action",
+          "focus_return"
+        ]
+      },
+      "additionalProperties": {"$ref": "#/$defs/check"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"scenario": {"const": "connection-settings"}}},
+      "then": {
+        "properties": {
+          "parameters": {
+            "properties": {"content_width_dip": {"const": 420}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"scenario": {"const": "device-list"}}},
+      "then": {
+        "properties": {
+          "parameters": {
+            "properties": {"content_width_dip": {"const": 520}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"scenario": {"const": "failure-confirmation"}}},
+      "then": {
+        "properties": {
+          "parameters": {
+            "properties": {"content_width_dip": {"type": "null"}}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "detail"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "detail": {"type": "string", "minLength": 1}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "reason"],
+      "properties": {
+        "status": {"enum": ["pass", "fail", "not_run"]},
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "reason": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "not_run"}}},
+          "then": {
+            "properties": {
+              "evidence": {"maxItems": 0},
+              "reason": {"minLength": 1}
+            }
+          },
+          "else": {
+            "properties": {"evidence": {"minItems": 1}}
+          }
+        }
+      ]
+    }
+  }
+}

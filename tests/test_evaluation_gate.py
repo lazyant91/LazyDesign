@@ -23,12 +23,24 @@ DEFECTS = (
 def passing_metrics() -> dict:
     scenarios = {}
     traces = []
+
+    def score_evidence(condition: str, scenario: str, scores: list[int]) -> list[dict]:
+        return [
+            {
+                "category": category,
+                "score": score,
+                "evidence": [f"{condition}/{scenario}/evidence/category-{category}.txt"],
+                "uncertainty": "none",
+            }
+            for category, score in enumerate(scores, start=1)
+        ]
     for scenario in SCENARIOS:
         baseline_scores = [1] * 10
         guided_scores = [2] * 6 + [1] * 4
         scenarios[scenario] = {
             "baseline": {
                 "scores": baseline_scores,
+                "score_evidence": score_evidence("baseline", scenario, baseline_scores),
                 "defects": {
                     "overflow": 2,
                     "anatomy": 2,
@@ -41,6 +53,7 @@ def passing_metrics() -> dict:
             },
             "guided": {
                 "scores": guided_scores,
+                "score_evidence": score_evidence("guided", scenario, guided_scores),
                 "defects": {
                     "overflow": 1,
                     "anatomy": 1,
@@ -96,6 +109,24 @@ class EvaluationGateTests(unittest.TestCase):
         traceability = next(item for item in result["conditions"] if item["id"] == "rule-traceability")
         self.assertEqual("fail", traceability["status"])
         self.assertIn("failure-confirmation category 6", traceability["detail"])
+
+    def test_missing_score_evidence_is_rejected(self) -> None:
+        metrics = passing_metrics()
+        for scenario in SCENARIOS:
+            for condition in ("baseline", "guided"):
+                scores = metrics["scenarios"][scenario][condition]["scores"]
+                metrics["scenarios"][scenario][condition]["score_evidence"] = [
+                    {
+                        "category": category,
+                        "score": score,
+                        "evidence": [f"{condition}/{scenario}/evidence/category-{category}.txt"],
+                        "uncertainty": "none",
+                    }
+                    for category, score in enumerate(scores, start=1)
+                ]
+        del metrics["scenarios"]["device-list"]["guided"]["score_evidence"]
+        with self.assertRaises(ValueError):
+            evaluate_gate(ROOT, metrics)
 
     def test_invalid_score_is_rejected(self) -> None:
         metrics = passing_metrics()

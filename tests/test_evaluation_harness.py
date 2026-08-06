@@ -47,6 +47,15 @@ def complete_run(packet: Path, model: str = "gpt-5.6-test") -> None:
     }
     text = "# Evaluation Run Record\n\n" + "\n".join(f"{key}: {value}" for key, value in values.items()) + "\n"
     (packet / "RUN.md").write_text(text, encoding="utf-8")
+    template = packet / "evidence/verification.template.json"
+    verification = packet / "evidence/verification.json"
+    verification_data = json.loads(template.read_text(encoding="utf-8"))
+    for check in verification_data["checks"].values():
+        check["reason"] = "test fixture does not perform runtime verification"
+    verification.write_text(
+        json.dumps(verification_data, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 class EvaluationHarnessTests(unittest.TestCase):
@@ -121,6 +130,17 @@ class EvaluationHarnessTests(unittest.TestCase):
                 self.assertEqual(pinned, (destination / "context/components/button.md").read_bytes())
         finally:
             source.write_bytes(original)
+
+    def test_capture_refuses_missing_verification_record(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            complete_run(packet)
+            (packet / "evidence/verification.json").unlink()
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
 
     def test_capture_refuses_tampered_prompt(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:

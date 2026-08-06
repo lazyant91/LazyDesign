@@ -178,9 +178,25 @@ A packet contains:
 - byte-identical `PROMPT.md` extracted from input commit `7d01aae3cdc0241a7aa7ede7ee09738a6d5ee7cc`;
 - `context/` only for guided runs, containing exactly the matrix-listed reference files;
 - `PACKET.json` with prompt and reference SHA-256 values;
-- `RUN.template.md` for the required execution metadata.
+- `RUN.template.md` for the required execution metadata;
+- `evidence/verification.template.json` with the exact scenario verification checklist.
 
 Use one newly prepared packet in one fresh model context. Do not add files to a baseline context, change `PROMPT.md`, change the guided context set, or reuse a context between runs. The packet tool does not invoke a model, repair generated output, or treat a build as rendered verification.
+
+After generation and verification, copy `evidence/verification.template.json` to `evidence/verification.json`. For every check:
+
+- use `pass` or `fail` only when at least one referenced evidence file exists under `evidence/`;
+- use `not_run` with an empty evidence list and a concrete reason when the check was not performed;
+- record 420 or 520 DIP exactly for the scenarios that define a constrained width;
+- record a text scale above 100 when text-scaling verification was performed;
+- record `ko-KR` and `en-US` when the corresponding long-content checks were performed;
+- record the actual Windows contrast-theme name when High Contrast was performed.
+
+The scenario-specific check set is fixed. It includes ComboBox popup, CommandBar overflow, ListView selection, InfoBar actions, ContentDialog actions, keyboard/focus, Narrator, and Accessibility Insights where relevant. Validate the record before capture:
+
+```powershell
+python scripts/evaluation_evidence.py evaluation/.runs/baseline/connection-settings/evidence/verification.json
+```
 
 After generation, copy `RUN.template.md` to `RUN.md`, replace every record placeholder, and keep generated work inside `project/`. Capture the immutable result without repairing it:
 
@@ -188,7 +204,7 @@ After generation, copy `RUN.template.md` to `RUN.md`, replace every record place
 python scripts/evaluation_harness.py capture --packet evaluation/.runs/baseline/connection-settings --destination evaluation/baseline/connection-settings
 ```
 
-Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. Failed or empty generations may still be captured when their completion status and missing checks are recorded accurately.
+Capture verifies prompt and reference hashes, rejects an incomplete `RUN.md` or invalid `verification.json`, ignores build directories, and preserves changed or added files under `generated/` plus deleted paths in `CAPTURE.json`. Failed or empty generations may still be captured when their completion status and every unperformed verification have concrete reasons.
 
 After all six results are captured, verify the controlled conditions mechanically:
 
@@ -202,7 +218,7 @@ The result validator requires all six directories, exact prompt and reference ha
 
 Score every artifact with `rubric.md`. Every category score requires file/line evidence or a rendered observation. The gate is evaluated only after all six immutable artifacts are available.
 
-Record the ten category scores, seven defect counts, and rule traces in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Every category whose guided score is higher than its baseline score requires a matching `traceable_improvements` entry with at least one existing LazyDesign rule ID and one evidence location.
+Record the ten category scores, ten matching `score_evidence` entries, seven defect counts, and rule traces in `evaluation/results/metrics.json` using `evaluation/gate-metrics.schema.json`. Each score-evidence entry must repeat its category and score, provide one or more evidence locations, and record evaluator uncertainty. Every category whose guided score is higher than its baseline score also requires a matching `traceable_improvements` entry with at least one existing LazyDesign rule ID and one evidence location.
 
 Generate the mechanical gate decision without editing the result by hand:
 
