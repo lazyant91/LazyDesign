@@ -25,19 +25,56 @@ from scripts.evaluation_harness import (
 ROOT = Path(__file__).resolve().parents[1]
 START_SHA = "b73babad19d0153707a49e5ba1ed9fb0a42c33ef"
 SCENARIOS = ("connection-settings", "device-list", "failure-confirmation")
+IGNORED_PROJECT_PARTS = {"bin", "obj", ".vs"}
+
+
+def run_artifact_metadata(packet: Path) -> tuple[str, str]:
+    manifest = json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))
+    reference_metadata = "none" if not manifest["references"] else "see PACKET.json"
+    original = {item["path"]: item["sha256"] for item in manifest["project_files"]}
+    current_records: list[dict[str, str]] = []
+    project = packet / "project"
+    for path in sorted(project.rglob("*")):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(project)
+        if any(part in IGNORED_PROJECT_PARTS for part in relative.parts):
+            continue
+        current_records.append(
+            {
+                "path": relative.as_posix(),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        )
+    current_records.sort(key=lambda item: (item["path"].casefold(), item["path"]))
+    current = {item["path"]: item["sha256"] for item in current_records}
+    changed = [
+        item["path"]
+        for item in current_records
+        if original.get(item["path"]) != item["sha256"]
+    ]
+    deleted = sorted(set(original) - set(current))
+    generated_metadata = json.dumps(
+        {"changed": changed, "deleted": deleted},
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    return reference_metadata, generated_metadata
 
 
 def complete_run(
     packet: Path, model: str = "gpt-5.6-test", build: dict | None = None
 ) -> None:
+    manifest = json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))
+    reference_metadata, generated_metadata = run_artifact_metadata(packet)
     build_command = "not performed"
     build_result = "not performed"
     if build is not None:
         build_command = build["harness_command"]
         build_result = f"exit {build['exit_code']}"
     values = {
-        "Condition": json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))["condition"],
-        "Scenario": json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))["scenario"],
+        "Condition": manifest["condition"],
+        "Scenario": manifest["scenario"],
         "Run date and local time": "2026-08-06 17:00 KST",
         "Model identifier": model,
         "Reasoning level": "high",
@@ -49,9 +86,9 @@ def complete_run(
         "Windows App SDK package": "2.0.1",
         "Tool access": "filesystem and build only",
         "Network access": "disabled",
-        "Reference files supplied": "see PACKET.json",
+        "Reference files supplied": reference_metadata,
         "Generation intervention": "none",
-        "Generated file list": "captured automatically",
+        "Generated file list": generated_metadata,
         "Generation completion status": "completed",
         "Build command": build_command,
         "Build result": build_result,
@@ -173,6 +210,48 @@ class EvaluationHarnessTests(unittest.TestCase):
             complete_run(packet, build=build)
             generated.write_text(
                 generated.read_text(encoding="utf-8") + "\n<!-- changed after build -->\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_capture_refuses_reference_metadata_that_differs_from_packet(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "device-list", packet)
+            complete_run(packet)
+            run_path = packet / "RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace(
+                    "Reference files supplied: none",
+                    "Reference files supplied: see PACKET.json",
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_capture_refuses_generated_file_list_that_differs_from_project(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "guided", "connection-settings", packet)
+            generated = packet / "project/MainWindow.xaml"
+            generated.write_text(
+                generated.read_text(encoding="utf-8") + "\n<!-- generated -->\n",
+                encoding="utf-8",
+            )
+            complete_run(packet)
+            _, expected_files = run_artifact_metadata(packet)
+            run_path = packet / "RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace(
+                    f"Generated file list: {expected_files}",
+                    "Generated file list: captured automatically",
+                ),
                 encoding="utf-8",
             )
             with self.assertRaises(ValueError):
@@ -317,6 +396,25 @@ class EvaluationHarnessTests(unittest.TestCase):
             self.assertEqual("in_progress", status["status"])
             self.assertIn("project files changed", status["activity"])
 
+    def test_inspect_reports_copyable_expected_run_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "guided", "device-list", packet)
+            main_window = packet / "project/MainWindow.xaml"
+            main_window.write_text(
+                main_window.read_text(encoding="utf-8") + "\n<!-- work -->\n",
+                encoding="utf-8",
+            )
+            expected_reference, expected_files = run_artifact_metadata(packet)
+            status = inspect_packet(ROOT, packet, "guided", "device-list")
+            self.assertEqual(
+                {
+                    "Reference files supplied": expected_reference,
+                    "Generated file list": expected_files,
+                },
+                status["expected_run_metadata"],
+            )
+
     def test_prepare_reads_guided_inputs_from_pinned_commit(self) -> None:
         source = ROOT / "components/button.md"
         original = source.read_bytes()
@@ -427,12 +525,12 @@ class EvaluationHarnessTests(unittest.TestCase):
             packet = Path(temp) / "packet"
             result = Path(temp) / "result"
             prepare_run_packet(ROOT, "guided", "failure-confirmation", packet)
-            complete_run(packet)
             changed = packet / "project/MainWindow.xaml"
             changed.write_text(changed.read_text(encoding="utf-8") + "\n<!-- generated -->\n", encoding="utf-8")
             (packet / "project/app.manifest").unlink()
             (packet / "project/bin/ignored.txt").parent.mkdir(parents=True)
             (packet / "project/bin/ignored.txt").write_text("ignore", encoding="utf-8")
+            complete_run(packet)
 
             capture = capture_run(ROOT, packet, result)
 
@@ -449,12 +547,12 @@ class EvaluationHarnessTests(unittest.TestCase):
                 packet = root / "packets" / condition / scenario
                 result = results / condition / scenario
                 prepare_run_packet(ROOT, condition, scenario, packet)
-                complete_run(packet)
                 main_window = packet / "project/MainWindow.xaml"
                 main_window.write_text(
                     main_window.read_text(encoding="utf-8") + f"\n<!-- {condition}-{scenario} -->\n",
                     encoding="utf-8",
                 )
+                complete_run(packet)
                 (packet / "evidence/notes.txt").write_text(
                     f"{condition}/{scenario} evidence\n", encoding="utf-8"
                 )

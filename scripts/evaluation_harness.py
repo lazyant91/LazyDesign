@@ -453,6 +453,66 @@ def _captured_project_records(
     )
 
 
+def _project_delta(
+    packet: dict[str, Any], project_root: Path
+) -> tuple[list[dict[str, str]], list[str]]:
+    original = {
+        item["path"]: item["sha256"] for item in packet.get("project_files", [])
+    }
+    current_records = _file_hashes(project_root)
+    current = {item["path"]: item["sha256"] for item in current_records}
+    changed = [
+        item
+        for item in current_records
+        if original.get(item["path"]) != item["sha256"]
+    ]
+    deleted = sorted(set(original) - set(current))
+    return changed, deleted
+
+
+def _generated_file_list_value(
+    changed: list[dict[str, str]], deleted: list[str]
+) -> str:
+    return json.dumps(
+        {
+            "changed": [item["path"] for item in changed],
+            "deleted": deleted,
+        },
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+
+def _expected_run_artifact_metadata(
+    packet: dict[str, Any],
+    changed: list[dict[str, str]],
+    deleted: list[str],
+) -> dict[str, str]:
+    return {
+        "Reference files supplied": (
+            "none" if not packet.get("references") else "see PACKET.json"
+        ),
+        "Generated file list": _generated_file_list_value(changed, deleted),
+    }
+
+
+def _validate_run_artifact_metadata(
+    run_values: dict[str, str],
+    packet: dict[str, Any],
+    changed: list[dict[str, str]],
+    deleted: list[str],
+    prefix: str = "",
+) -> list[str]:
+    label = f"{prefix}: " if prefix else ""
+    errors: list[str] = []
+    expected = _expected_run_artifact_metadata(packet, changed, deleted)
+    if run_values.get("Reference files supplied") != expected["Reference files supplied"]:
+        errors.append(f"{label}RUN.md reference metadata differs from packet")
+    if run_values.get("Generated file list") != expected["Generated file list"]:
+        errors.append(f"{label}RUN.md generated file list differs from project")
+    return errors
+
+
 def _git_project_file_hashes(
     repo_root: Path, commit: str, project_path: str
 ) -> list[dict[str, str]]:
@@ -760,12 +820,21 @@ def inspect_packet(
         result["errors"] = errors
         return result
 
+    changed, deleted = _project_delta(packet, packet_dir / "project")
+    result["expected_run_metadata"] = _expected_run_artifact_metadata(
+        packet, changed, deleted
+    )
     activity = result["activity"]
     run_path = packet_dir / "RUN.md"
     verification_path = packet_dir / "evidence/verification.json"
     if run_path.is_file() and verification_path.is_file():
         run_values, completion_errors = _parse_run_record(run_path)
         completion_errors.extend(_validate_run_environment(repo_root, run_values))
+        completion_errors.extend(
+            _validate_run_artifact_metadata(
+                run_values, packet, changed, deleted
+            )
+        )
         completion_errors.extend(
             f"verification: {error}" for error in load_and_validate(verification_path)
         )
@@ -918,9 +987,13 @@ def capture_run(
     if destination.exists():
         raise FileExistsError(f"result already exists: {destination}")
     packet, errors = _validate_packet(repo_root, packet_dir)
+    changed, deleted = _project_delta(packet, packet_dir / "project")
     run_values, run_errors = _parse_run_record(packet_dir / "RUN.md")
     errors.extend(run_errors)
     errors.extend(_validate_run_environment(repo_root, run_values))
+    errors.extend(
+        _validate_run_artifact_metadata(run_values, packet, changed, deleted)
+    )
     verification_path = packet_dir / "evidence/verification.json"
     verification_errors = load_and_validate(verification_path)
     errors.extend(f"verification: {error}" for error in verification_errors)
@@ -945,12 +1018,6 @@ def capture_run(
             errors.append("RUN.md start project SHA differs from PACKET.json")
     if errors:
         raise ValueError("invalid run packet: " + "; ".join(errors))
-
-    original = {item["path"]: item["sha256"] for item in packet.get("project_files", [])}
-    current_records = _file_hashes(packet_dir / "project")
-    current = {item["path"]: item["sha256"] for item in current_records}
-    changed = [item for item in current_records if original.get(item["path"]) != item["sha256"]]
-    deleted = sorted(set(original) - set(current))
 
     temp = destination.with_name(f".{destination.name}.tmp-{uuid.uuid4().hex}")
     try:
@@ -1073,6 +1140,15 @@ def _validate_result(
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)
     errors.extend(_validate_run_environment(repo_root, run_values, prefix))
+    errors.extend(
+        _validate_run_artifact_metadata(
+            run_values,
+            packet,
+            capture.get("generated_files", []),
+            capture.get("deleted_files", []),
+            prefix,
+        )
+    )
     verification_path = result_dir / "evidence/verification.json"
     verification_errors = load_and_validate(verification_path)
     errors.extend(f"{prefix}: verification: {error}" for error in verification_errors)

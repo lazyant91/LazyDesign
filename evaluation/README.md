@@ -187,7 +187,7 @@ python scripts/evaluation_harness.py prepare --condition baseline --scenario con
 python scripts/evaluation_harness.py inspect-packet --packet evaluation/.runs/v2/baseline/connection-settings --condition baseline --scenario connection-settings
 ```
 
-The single-packet inspection must report `ready` before generation. After `RUN.md`, `verification.json`, generated changes, and evidence are complete, run it again and require `capture_ready` before capture.
+The single-packet inspection must report `ready` before generation. For every valid packet it also returns `expected_run_metadata` with the exact `Reference files supplied` and `Generated file list` values required by the current project state. After generation and the controlled build, run inspection before completing `RUN.md`, copy those two values exactly, then run it again and require `capture_ready` before capture.
 
 A packet contains:
 
@@ -213,6 +213,15 @@ The helper reconstructs the pinned `global.json` in a temporary workspace direct
 The helper writes a one-shot pre-capture record to `evidence/build.txt` and never overwrites an existing build record. The evidence records the exact harness command, pinned build command, project file count, and a canonical SHA-256 of every non-build-output project file after the build. Inspection and capture validate the record; capture then includes its file hash in the immutable result. Exit code 0 means build success, 2 means the build ran and failed, and 1 means the packet or pinned build environment was invalid. Build failure remains a valid scored result and must not be repaired before capture.
 
 When build was performed, `verification.json` must mark `build` as `pass` or `fail` and reference `build.txt`; `RUN.md` must exactly match the harness command and `exit <code>` in the evidence. The project source must not change after the controlled build. When build was not performed, the verification check, RUN command, and RUN result must all say so consistently. Inspection and capture reject stale build evidence, a command for another packet, changed project files after build, or other contradictory metadata.
+
+`RUN.md` artifact metadata is also mechanical:
+
+```text
+Reference files supplied: none
+Generated file list: {"changed":["MainWindow.xaml"],"deleted":["app.manifest"]}
+```
+
+Baseline must use `none`; guided runs must use `see PACKET.json`. `Generated file list` is compact JSON with sorted repository-relative paths for every non-build-output file changed or added and every starting-project file deleted. `bin`, `obj`, and `.vs` are excluded. Copy both exact values from `inspect-packet`'s `expected_run_metadata`; inspection, capture, and result validation reject a mismatch.
 
 After generation and verification, copy `evidence/verification.template.json` to `evidence/verification.json`. For every check:
 

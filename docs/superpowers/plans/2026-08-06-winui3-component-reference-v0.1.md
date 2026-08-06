@@ -918,6 +918,8 @@ Use `evidence/build.txt` for the build verification entry. Exit 0 is a successfu
 
 After the controlled build, do not modify any non-build-output file in `project/`. The evidence binds the build to the exact harness command, project file count, and canonical project-state SHA-256. `RUN.md` must reproduce the harness command exactly; stale evidence or a command for another packet prevents `capture_ready` and capture.
 
+Run `inspect-packet` after the build and copy its `expected_run_metadata` values exactly into `RUN.md`. Baseline `Reference files supplied` must be `none`; guided runs use `see PACKET.json`. `Generated file list` must be compact JSON in the form `{"changed":[...],"deleted":[...]}` containing every non-build-output path changed, added, or deleted relative to the pinned project. Do not write a prose summary such as `captured automatically`.
+
 - [ ] **Step 3: Run Scenarios B and C identically**
 
 Repeat from fresh contexts using the exact prompt files.
@@ -1017,7 +1019,7 @@ Record the same metadata and verification evidence required by Task 9. Keep the 
 python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/guided/connection-settings
 ```
 
-Use the generated `evidence/build.txt` record and preserve exit 2 build failures without repair. The same pinned-project target, exact harness-command match, and post-build project-state binding required by Task 9 apply to every guided run.
+Use the generated `evidence/build.txt` record and preserve exit 2 build failures without repair. The same pinned-project target, exact harness-command match, post-build project-state binding, and `expected_run_metadata` copy required by Task 9 apply to every guided run. Guided `Reference files supplied` must be exactly `see PACKET.json`.
 
 - [ ] **Step 4: Preserve failures and commit**
 
