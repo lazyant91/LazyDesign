@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source manifest, five shared foundation drafts, and six component drafts are present. Button, TextBox, ToggleSwitch, ComboBox, CommandBar, and ListView rules are active as source-backed draft guidance. InfoBar and ContentDialog remain planned. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
+The v0.1 source manifest, five shared foundation pages, and all eight component pages are present as source-backed evaluation candidates. They are ready for controlled baseline/guided comparison, but they have not yet passed the v0.1 quality gate. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -48,11 +48,11 @@ Keep the visible label concise and action-oriented.
 Prevents: paragraph-length button content and ambiguous action labels.
 ```
 
-The example above demonstrates the format only. It is not an active rule until it appears in the reviewed Button component page with sources.
+The example above demonstrates the format only. Active rules appear in component or foundation pages with source references.
 
 ## Global defaults
 
-These defaults apply while component-specific guidance is being authored:
+These defaults apply while component-specific guidance is being evaluated:
 
 - Prefer native WinUI controls and styles.
 - Do not replace a `ControlTemplate` merely to change a basic color, radius, padding, or state appearance.
@@ -60,34 +60,34 @@ These defaults apply while component-specific guidance is being authored:
 - Do not use fixed dimensions where localized text or text scaling can change the required size, unless the official component behavior requires a fixed dimension.
 - Do not place explanatory paragraphs inside controls intended for concise labels or values.
 - Icon-only interactive controls require an accessible name.
-- A successful XAML build is not evidence that rendered states, text scaling, high contrast, or keyboard behavior were verified.
+- A successful XAML build is not evidence that rendered states, text scaling, contrast themes, keyboard behavior, or assistive technology were verified.
 
-These are repository operating defaults. Component pages must replace them with more precise, source-backed guidance when applicable.
+Component pages replace these defaults with more precise source-backed guidance where applicable.
 
 ## v0.1 component index
 
 | Component | Reference status | Primary risk covered |
 |---|---|---|
-| Button | draft-reviewed | label overflow, icon use, emphasis, native states |
-| TextBox | draft-reviewed | header/placeholder/helper confusion, text fit, validation |
-| ToggleSwitch | draft-reviewed | state labeling, immediate setting behavior, accessibility |
-| ComboBox | draft-reviewed | placeholder and selection content, popup width, long items |
-| CommandBar | draft-reviewed | icon/label composition, priority, overflow behavior |
-| ListView | draft-reviewed | item information density, selection states, long content |
-| InfoBar | planned | title/message/action composition, severity, dismissal |
-| ContentDialog | planned | title/body/button composition, long content, focus |
+| Button | v0.1-candidate | label overflow, icon use, emphasis, native states |
+| TextBox | v0.1-candidate | header/placeholder/helper confusion, text fit, validation |
+| ToggleSwitch | v0.1-candidate | state labeling, immediate setting behavior, accessibility |
+| ComboBox | v0.1-candidate | placeholder and selection content, popup width, long items |
+| CommandBar | v0.1-candidate | icon/label composition, priority, overflow behavior |
+| ListView | v0.1-candidate | item information density, selection states, long content |
+| InfoBar | v0.1-candidate | title/message/action composition, severity, dismissal |
+| ContentDialog | v0.1-candidate | title/body/button composition, long content, focus |
 
 ## v0.1 foundation index
 
 | Foundation | Reference status |
 |---|---|
-| Text and localization | draft-reviewed |
-| Sizing and spacing | draft-reviewed |
-| Icons | draft-reviewed |
-| States and themes | draft-reviewed |
-| Accessibility basics | draft-reviewed |
+| Text and localization | v0.1-candidate |
+| Sizing and spacing | v0.1-candidate |
+| Icons | v0.1-candidate |
+| States and themes | v0.1-candidate |
+| Accessibility basics | v0.1-candidate |
 
-`draft-reviewed` means the page has source IDs, no unresolved authoring markers, and has been checked for scope and internal consistency. It does not mean rendered or environment verification has occurred.
+`v0.1-candidate` means the page has source IDs, no unresolved authoring markers, and has been checked for scope and internal consistency. It does not mean the controlled evaluation, WinUI build, rendered state checks, scaling, contrast theme, keyboard, or assistive-technology verification has passed.
 
 ## Source authority
 
@@ -124,7 +124,10 @@ The v0.1 reference advances to full component coverage only when controlled befo
 - at least 50% reduction in clipping or content-overflow defects;
 - fewer missing anatomy and accessibility requirements;
 - no increase in unnecessary `ControlTemplate` replacement;
-- no material increase in irrelevant XAML or prompt-driven overengineering.
+- no material increase in irrelevant XAML or prompt-driven overengineering;
+- traceability from observed improvements to specific reference rules.
+
+Until all gate conditions pass, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
 
 The detailed product design and execution plan are stored in:
 
