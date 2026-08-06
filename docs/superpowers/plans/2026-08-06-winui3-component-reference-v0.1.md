@@ -914,7 +914,9 @@ Keep the prefilled `.NET SDK: 9.0.313` and `Windows App SDK package: 2.0.1` valu
 python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/baseline/connection-settings
 ```
 
-Use `evidence/build.txt` for the build verification entry. Exit 0 is a successful build, exit 2 is a preserved build failure, and exit 1 means the packet or pinned build environment is invalid. Do not run a root-level `dotnet build <packet-project>` as scored build evidence.
+Use `evidence/build.txt` for the build verification entry. Exit 0 is a successful build, exit 2 is a preserved build failure, and exit 1 means the packet or pinned build environment is invalid. The helper must target the exact top-level project file from the starting-project commit, not an alternate `.csproj` added by generation. A deleted pinned project is recorded as an actual build failure. Do not run a root-level `dotnet build <packet-project>` as scored build evidence.
+
+After the controlled build, do not modify any non-build-output file in `project/`. The evidence binds the build to the exact harness command, project file count, and canonical project-state SHA-256. `RUN.md` must reproduce the harness command exactly; stale evidence or a command for another packet prevents `capture_ready` and capture.
 
 - [ ] **Step 3: Run Scenarios B and C identically**
 
@@ -1015,7 +1017,7 @@ Record the same metadata and verification evidence required by Task 9. Keep the 
 python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/guided/connection-settings
 ```
 
-Use the generated `evidence/build.txt` record and preserve exit 2 build failures without repair.
+Use the generated `evidence/build.txt` record and preserve exit 2 build failures without repair. The same pinned-project target, exact harness-command match, and post-build project-state binding required by Task 9 apply to every guided run.
 
 - [ ] **Step 4: Preserve failures and commit**
 

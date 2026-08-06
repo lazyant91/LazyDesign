@@ -33,10 +33,7 @@ def complete_run(
     build_command = "not performed"
     build_result = "not performed"
     if build is not None:
-        relative_packet = packet.relative_to(ROOT).as_posix()
-        build_command = (
-            "python scripts/evaluation_harness.py build --packet " + relative_packet
-        )
+        build_command = build["harness_command"]
         build_result = f"exit {build['exit_code']}"
     values = {
         "Condition": json.loads((packet / "PACKET.json").read_text(encoding="utf-8"))["condition"],
@@ -125,6 +122,81 @@ class EvaluationHarnessTests(unittest.TestCase):
             captured = Path(temp) / "captured"
             capture_run(ROOT, packet, captured)
             self.assertTrue((captured / "evidence/build.txt").is_file())
+
+    def test_build_missing_pinned_project_is_preserved_as_failure(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result_dir = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "device-list", packet)
+            (packet / "project/LazyDesign.EvaluationApp.csproj").unlink()
+            build = build_packet(ROOT, packet)
+            self.assertNotEqual(0, build["exit_code"])
+            self.assertTrue((packet / "evidence/build.txt").is_file())
+            complete_run(packet, build=build)
+            self.assertEqual(
+                "capture_ready",
+                inspect_packet(ROOT, packet, "baseline", "device-list")["status"],
+            )
+            capture = capture_run(ROOT, packet, result_dir)
+            self.assertIn("LazyDesign.EvaluationApp.csproj", capture["deleted_files"])
+
+    def test_build_targets_pinned_project_when_alternate_project_is_added(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            (packet / "project/Alternate.csproj").write_text(
+                '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup>'
+                '<TargetFramework>net9.0</TargetFramework>'
+                '</PropertyGroup></Project>\n',
+                encoding="utf-8",
+            )
+            build = build_packet(ROOT, packet)
+            self.assertEqual(0, build["exit_code"])
+            evidence = (packet / "evidence/build.txt").read_text(encoding="utf-8")
+            command_line = next(
+                line for line in evidence.splitlines() if line.startswith("Command:")
+            )
+            self.assertIn("LazyDesign.EvaluationApp.csproj", command_line)
+            self.assertNotIn("Alternate.csproj", command_line)
+
+    def test_capture_refuses_project_changed_after_controlled_build(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            generated = packet / "project/MainWindow.xaml"
+            generated.write_text(
+                generated.read_text(encoding="utf-8") + "\n<!-- generated before build -->\n",
+                encoding="utf-8",
+            )
+            build = build_packet(ROOT, packet)
+            complete_run(packet, build=build)
+            generated.write_text(
+                generated.read_text(encoding="utf-8") + "\n<!-- changed after build -->\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
+
+    def test_capture_refuses_build_command_for_another_packet(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            result = Path(temp) / "result"
+            prepare_run_packet(ROOT, "baseline", "connection-settings", packet)
+            build = build_packet(ROOT, packet)
+            complete_run(packet, build=build)
+            run_path = packet / "RUN.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace(
+                    build["harness_command"],
+                    "python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/guided/device-list",
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                capture_run(ROOT, packet, result)
+            self.assertFalse(result.exists())
 
     def test_inspect_fresh_packet_is_ready(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:

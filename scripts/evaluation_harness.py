@@ -147,11 +147,26 @@ def pinned_build_environment(repo_root: Path) -> dict[str, str]:
             "utf-8-sig"
         )
     )
+    tree_paths = subprocess.check_output(
+        ["git", "ls-tree", "-r", "--name-only", commit, "--", project_path],
+        cwd=repo_root,
+    ).decode("utf-8-sig").splitlines()
+    project_root = PurePosixPath(project_path)
+    project_files = [
+        PurePosixPath(path).relative_to(project_root).as_posix()
+        for path in tree_paths
+        if PurePosixPath(path).is_relative_to(project_root)
+        and PurePosixPath(path).relative_to(project_root).parent == PurePosixPath(".")
+        and PurePosixPath(path).suffix.casefold() == ".csproj"
+    ]
+    if len(project_files) != 1:
+        raise ValueError("pinned start project must contain exactly one top-level .csproj")
+    project_file = project_files[0]
     project_xml = ET.fromstring(
         _git_file_bytes(
             repo_root,
             commit,
-            f"{project_path}/LazyDesign.EvaluationApp.csproj",
+            f"{project_path}/{project_file}",
         ).decode("utf-8-sig")
     )
     packages = {
@@ -164,6 +179,7 @@ def pinned_build_environment(repo_root: Path) -> dict[str, str]:
         "windows_sdk_build_tools": packages["Microsoft.Windows.SDK.BuildTools"],
         "start_commit": commit,
         "start_project_path": project_path,
+        "project_file": project_file,
     }
 
 
@@ -191,7 +207,10 @@ def _build_evidence_values(path: Path) -> tuple[dict[str, str], list[str]]:
         "Selected .NET SDK",
         "Starting Windows App SDK package",
         "Starting Windows SDK BuildTools",
+        "Harness command",
         "Command",
+        "Project state SHA-256",
+        "Project file count",
         "Exit code",
     }
     if not path.is_file():
@@ -213,6 +232,8 @@ def _validate_controlled_build(
     run_values: dict[str, str],
     verification_path: Path,
     prefix: str = "",
+    expected_project_records: list[dict[str, str]] | None = None,
+    expected_harness_command: str | None = None,
 ) -> list[str]:
     label = f"{prefix}: " if prefix else ""
     try:
@@ -255,6 +276,24 @@ def _validate_controlled_build(
         errors.append(f"{label}build: Windows App SDK differs from pinned value")
     if values["Starting Windows SDK BuildTools"] != environment["windows_sdk_build_tools"]:
         errors.append(f"{label}build: Windows SDK BuildTools differs from pinned value")
+
+    if expected_project_records is not None:
+        expected_state = _file_records_sha256(expected_project_records)
+        if values["Project state SHA-256"] != expected_state:
+            errors.append(f"{label}build: project changed after controlled build")
+        try:
+            project_file_count = int(values["Project file count"])
+        except ValueError:
+            errors.append(f"{label}build: project file count must be an integer")
+        else:
+            if project_file_count != len(expected_project_records):
+                errors.append(f"{label}build: project file count differs from current state")
+
+    if expected_harness_command is not None and values["Harness command"] != expected_harness_command:
+        errors.append(f"{label}build: build.txt harness command differs from packet path")
+    if run_values.get("Build command") != values["Harness command"]:
+        errors.append(f"{label}build: RUN.md command must match build.txt harness command")
+
     try:
         exit_code = int(values["Exit code"])
     except ValueError:
@@ -264,9 +303,6 @@ def _validate_controlled_build(
         errors.append(f"{label}build: pass requires exit code 0")
     if status == "fail" and exit_code == 0:
         errors.append(f"{label}build: fail requires a nonzero exit code")
-    command = run_values.get("Build command", "")
-    if not command.startswith("python scripts/evaluation_harness.py build --packet "):
-        errors.append(f"{label}build: RUN.md must record the controlled harness command")
     if run_values.get("Build result") != f"exit {exit_code}":
         errors.append(f"{label}build: RUN.md result must match build.txt exit code")
     return errors
@@ -384,6 +420,37 @@ def _file_hashes(root: Path) -> list[dict[str, str]]:
             }
         )
     return sorted(records, key=lambda item: (item["path"].casefold(), item["path"]))
+
+
+def _file_records_sha256(records: list[dict[str, str]]) -> str:
+    payload = json.dumps(
+        records,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _packet_build_command(repo_root: Path, packet_dir: Path) -> str:
+    relative = packet_dir.resolve().relative_to(repo_root.resolve()).as_posix()
+    return f"python scripts/evaluation_harness.py build --packet {relative}"
+
+
+def _captured_project_records(
+    packet: dict[str, Any], capture: dict[str, Any]
+) -> list[dict[str, str]]:
+    current = {
+        item["path"]: item["sha256"] for item in packet.get("project_files", [])
+    }
+    for relative in capture.get("deleted_files", []):
+        current.pop(relative, None)
+    for item in capture.get("generated_files", []):
+        current[item["path"]] = item["sha256"]
+    return sorted(
+        ({"path": path, "sha256": sha256} for path, sha256 in current.items()),
+        key=lambda item: (item["path"].casefold(), item["path"]),
+    )
 
 
 def _git_project_file_hashes(
@@ -704,7 +771,12 @@ def inspect_packet(
         )
         completion_errors.extend(
             _validate_controlled_build(
-                repo_root, packet_dir, run_values, verification_path
+                repo_root,
+                packet_dir,
+                run_values,
+                verification_path,
+                expected_project_records=_file_hashes(packet_dir / "project"),
+                expected_harness_command=_packet_build_command(repo_root, packet_dir),
             )
         )
         if run_values.get("Condition") != expected_condition:
@@ -748,11 +820,8 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
     if evidence_path.exists():
         raise FileExistsError(f"build evidence already exists: {evidence_path}")
 
-    projects = sorted((packet_dir / "project").glob("*.csproj"))
-    if len(projects) != 1:
-        raise ValueError("packet project must contain exactly one top-level .csproj")
-    project = projects[0]
     environment = pinned_build_environment(repo_root)
+    project = packet_dir / "project" / environment["project_file"]
     control_root = repo_root / "evaluation/.remote-temp" / f"sdk-{uuid.uuid4().hex}"
     control_root.mkdir(parents=True, exist_ok=False)
     try:
@@ -797,6 +866,9 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
         )
         output = completed.stdout.decode("utf-8", errors="replace")
         relative_project = project.relative_to(repo_root).as_posix()
+        harness_command = _packet_build_command(repo_root, packet_dir)
+        project_records = _file_hashes(packet_dir / "project")
+        project_state_sha256 = _file_records_sha256(project_records)
         evidence = "\n".join(
             (
                 "# Evaluation Build Evidence",
@@ -808,7 +880,10 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
                 f"Selected .NET SDK: {selected_sdk}",
                 f"Starting Windows App SDK package: {environment['windows_app_sdk']}",
                 f"Starting Windows SDK BuildTools: {environment['windows_sdk_build_tools']}",
+                f"Harness command: {harness_command}",
                 f"Command: dotnet build {relative_project} -c Debug -p:Platform=x64",
+                f"Project state SHA-256: {project_state_sha256}",
+                f"Project file count: {len(project_records)}",
                 f"Exit code: {completed.returncode}",
                 "",
                 "## Output",
@@ -825,6 +900,9 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
             "expected_sdk": environment["dotnet_sdk"],
             "selected_sdk": selected_sdk,
             "windows_app_sdk": environment["windows_app_sdk"],
+            "harness_command": harness_command,
+            "project_state_sha256": project_state_sha256,
+            "project_file_count": len(project_records),
             "exit_code": completed.returncode,
             "evidence": evidence_path.relative_to(repo_root).as_posix(),
         }
@@ -848,7 +926,12 @@ def capture_run(
     errors.extend(f"verification: {error}" for error in verification_errors)
     errors.extend(
         _validate_controlled_build(
-            repo_root, packet_dir, run_values, verification_path
+            repo_root,
+            packet_dir,
+            run_values,
+            verification_path,
+            expected_project_records=_file_hashes(packet_dir / "project"),
+            expected_harness_command=_packet_build_command(repo_root, packet_dir),
         )
     )
     if run_values:
@@ -995,7 +1078,12 @@ def _validate_result(
     errors.extend(f"{prefix}: verification: {error}" for error in verification_errors)
     errors.extend(
         _validate_controlled_build(
-            repo_root, result_dir, run_values, verification_path, prefix
+            repo_root,
+            result_dir,
+            run_values,
+            verification_path,
+            prefix,
+            expected_project_records=_captured_project_records(packet, capture),
         )
     )
     if run_values:
