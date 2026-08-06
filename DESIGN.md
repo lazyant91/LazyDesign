@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source manifest and five shared foundation drafts are present. The eight component pages are still planned and no component-specific rule is active yet. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
+The v0.1 source manifest, five shared foundation drafts, and five component drafts are present. Button, TextBox, ToggleSwitch, ComboBox, and ListView rules are active as source-backed draft guidance. CommandBar, InfoBar, and ContentDialog remain planned. Windows Design Kit identity is recorded, but component-level UI-kit inspection remains pending.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -68,12 +68,12 @@ These are repository operating defaults. Component pages must replace them with 
 
 | Component | Reference status | Primary risk covered |
 |---|---|---|
-| Button | planned | label overflow, icon use, emphasis, native states |
-| TextBox | planned | header/placeholder/helper confusion, text fit, validation |
-| ToggleSwitch | planned | state labeling, immediate setting behavior, accessibility |
-| ComboBox | planned | placeholder and selection content, popup width, long items |
+| Button | draft-reviewed | label overflow, icon use, emphasis, native states |
+| TextBox | draft-reviewed | header/placeholder/helper confusion, text fit, validation |
+| ToggleSwitch | draft-reviewed | state labeling, immediate setting behavior, accessibility |
+| ComboBox | draft-reviewed | placeholder and selection content, popup width, long items |
 | CommandBar | planned | icon/label composition, priority, overflow behavior |
-| ListView | planned | item information density, selection states, long content |
+| ListView | draft-reviewed | item information density, selection states, long content |
 | InfoBar | planned | title/message/action composition, severity, dismissal |
 | ContentDialog | planned | title/body/button composition, long content, focus |
 
