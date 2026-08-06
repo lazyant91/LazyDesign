@@ -12,6 +12,8 @@ State the control's defining role and the characteristic that must remain recogn
 
 <Concise operational guidance.>
 
+**Derived reasoning:** <Required only for derived evidence. Explain how the cited sources support the inference and state its limit.>
+
 **Sources:** `<SOURCE-ID>`
 
 ## 2. Anatomy

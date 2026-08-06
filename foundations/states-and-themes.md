@@ -12,6 +12,8 @@ This foundation defines the minimum treatment of native visual states and Window
 
 Use the native WinUI control template and theme resources unless a documented product requirement cannot be met by supported properties or styles. A customization that changes one state must be reviewed against every state relevant to the control.
 
+**Derived reasoning:** WinUI and Gallery evidence establish native templates and state behavior, while theme resources provide supported customization points; preserving the template unless properties or styles are insufficient is the conservative inference.
+
 **Sources:** `MS-WINUI3-OVERVIEW`, `MS-WIN-XAML-THEME-RESOURCES`, `WINUI-GALLERY-V2-9-3`
 
 ### WINUI-STATE-COMPLETE-001
@@ -22,6 +24,8 @@ Use the native WinUI control template and theme resources unless a documented pr
 
 When visual-state colors or brushes are customized, verify the complete foreground/background/border/icon combination for that state. Do not change only one side of a readable native pairing without validating the resulting contrast.
 
+**Derived reasoning:** Accessible-text and theme-resource guidance treat foreground, background, borders, and icons as a readable system; validating the whole state pairing follows from that combined evidence.
+
 **Sources:** `MS-WIN-ACCESSIBLE-TEXT`, `MS-WIN-XAML-THEME-RESOURCES`
 
 ### WINUI-STATE-DISABLED-001
@@ -31,6 +35,8 @@ When visual-state colors or brushes are customized, verify the complete foregrou
 **Prevents:** disabled controls looking active or disabled content being used as the sole explanation for why an action is unavailable.
 
 Preserve the native disabled state. When the reason for unavailability is important, provide that explanation in surrounding content or another accessible mechanism rather than encoding the reason only through reduced opacity or color.
+
+**Derived reasoning:** The accessibility checklist and Gallery demonstrate a native disabled state but do not guarantee it explains the reason for unavailability; preserving the state and adding accessible explanation when needed is the resulting inference.
 
 **Sources:** `MS-WIN-ACCESSIBILITY-CHECKLIST`, `WINUI-GALLERY-V2-9-3`
 
@@ -54,6 +60,8 @@ Use named XAML theme resources, system brushes, and inherited control foreground
 
 Render and inspect each modified visual state in both Light and Dark themes before claiming Light/Dark verification. Static XAML review may identify obvious fixed-color risks but does not prove rendered readability.
 
+**Derived reasoning:** The theming sources define separate Light and Dark resource behavior, and accessible-text guidance requires rendered readability; therefore static resource inspection or a build cannot substitute for rendering both themes.
+
 **Sources:** `MS-WIN-THEMING`, `MS-WIN-XAML-THEME-RESOURCES`, `MS-WIN-ACCESSIBLE-TEXT`
 
 ## Contrast themes
@@ -75,6 +83,8 @@ Preserve system-aware contrast behavior and use the documented system color reso
 **Prevents:** High Contrast support being inferred from Light/Dark results.
 
 Treat contrast-theme verification as a separate environment test. Record the Windows contrast theme, control states exercised, and whether system settings were changed or only simulated.
+
+**Derived reasoning:** Contrast-theme guidance defines a distinct Windows environment and accessibility testing requires environment-specific evidence; treating it separately from Light and Dark is the direct operational inference.
 
 **Sources:** `MS-WIN-CONTRAST-THEMES`, `MS-WIN-ACCESSIBILITY-TESTING`
 

@@ -58,6 +58,8 @@ Provide a safe close action through `CloseButtonText`. The close action must let
 
 Use a concise title that states the decision and content that identifies the affected object, consequence, and any essential recovery information.
 
+**Derived reasoning:** ContentDialog guidance defines title and content regions, and Windows content guidance separates decisions from explanatory detail; identifying the object and consequence in those regions is a conservative confirmation-writing inference.
+
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-WIN-DESIGN-CONTENT`
 
 ### WINUI-CONTENTDIALOG-ACTION-001
@@ -78,6 +80,8 @@ Use `PrimaryButtonText` for the first committing action, `SecondaryButtonText` o
 
 For destructive confirmation, name the action explicitly, identify the selected item in the content, and use a safe close label such as `Cancel`. Do not rely on button color alone to communicate risk.
 
+**Derived reasoning:** Dialog guidance provides named built-in actions and accessibility guidance requires meaning beyond color; explicit destructive wording, object identification, and a safe cancel label follow from those principles.
+
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-WIN-ACCESSIBILITY-CHECKLIST`
 
 ### WINUI-CONTENTDIALOG-DENSITY-001
@@ -87,6 +91,8 @@ For destructive confirmation, name the action explicitly, identify the selected 
 **Prevents:** replacing an entire page or complex workflow with a cramped modal form
 
 Keep dialog content focused on one decision. Move dense forms, multi-step workflows, and large information structures to a page or dedicated surface.
+
+**Derived reasoning:** ContentDialog is a modal decision surface and Windows content guidance supports clear grouping; limiting it to one focused decision is an inference intended to avoid turning the modal into a page-sized workflow.
 
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-WIN-DESIGN-CONTENT`
 
@@ -99,6 +105,8 @@ Keep dialog content focused on one decision. Move dense forms, multi-step workfl
 **Prevents:** long localized content pushing commands off-screen or clipping
 
 Test the longest supported Korean and English title, body, and action labels. When the content must be long, place the body in an appropriate scrolling container while keeping the built-in command area intact.
+
+**Derived reasoning:** Dialog guidance preserves a built-in command area and accessible-text guidance requires long localized content to remain readable; scrolling the body while keeping native commands intact is the combined inference.
 
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-WIN-ACCESSIBLE-TEXT`
 
@@ -153,6 +161,8 @@ Verify initial focus, Tab navigation, Enter behavior, and the safe close path. P
 **Prevents:** screen-reader users encountering an unnamed modal or unclear action consequences
 
 Provide a meaningful title, readable content, and explicit button labels. Verify that focus enters the dialog when it opens and returns to a sensible control when it closes.
+
+**Derived reasoning:** Dialog guidance defines modal focus and built-in buttons, while the accessibility checklist requires meaningful names and logical focus; verifying entry and return focus follows from those combined requirements.
 
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-WIN-ACCESSIBILITY-CHECKLIST`
 

@@ -1120,7 +1120,7 @@ Search all `derived` rules and confirm that each explains its reasoning and does
 Run:
 
 ```bash
-git grep -n "Evidence: derived" -- components foundations
+git grep -n "derived" -- components foundations
 ```
 
 Review every match manually.

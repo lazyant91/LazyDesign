@@ -22,6 +22,8 @@ Use concise, action-oriented text that states what happens when the button is in
 
 Use the accent button style for the single primary action in a local decision area. Keep peer actions at the default emphasis unless product requirements establish a different hierarchy.
 
+**Derived reasoning:** The Button guidance documents built-in accent emphasis and the Gallery demonstrates that native style; reserving it for one local primary action is a conservative hierarchy inference, not an explicit universal Microsoft limit.
+
 **Sources:** `MS-WIN-CONTROLS-BUTTONS`, `WINUI-GALLERY-V2-9-3`
 
 ## 2. Anatomy
@@ -48,6 +50,8 @@ Preserve the native `Button` control and default template unless a documented pr
 
 Keep the visible label short. Place explanatory text beside or above the button instead of inside it.
 
+**Derived reasoning:** The Button content model permits text while Windows content guidance separates actions from explanation; keeping labels concise and moving explanation outside the control is therefore an inference to prevent wrapping, not a fixed Microsoft word-count rule.
+
 **Sources:** `MS-WIN-CONTROLS-BUTTONS`, `MS-WIN-DESIGN-CONTENT`
 
 ### WINUI-BUTTON-ICON-001
@@ -67,6 +71,8 @@ When a button has only an icon, provide an accessible name that communicates the
 **Prevents:** unfamiliar or ambiguous icon commands
 
 Retain a text label when the icon is not universally recognizable in the target context.
+
+**Derived reasoning:** The icon guidance defines supported icon usage but does not guarantee that every glyph is self-explanatory; retaining text for unfamiliar icons is a conservative usability inference from that limitation.
 
 **Sources:** `MS-WIN-CONTROLS-ICONS`
 
@@ -89,6 +95,8 @@ Start with the native desired size. When a fixed or constrained width is necessa
 **Prevents:** inconsistent button rows and accidental stretching
 
 Use a shared layout container for peer buttons. Let content determine width unless equal-width buttons are a documented layout requirement.
+
+**Derived reasoning:** Windows content guidance distinguishes page layout from control content; using a shared container for peer buttons and content-driven widths applies that principle without asserting a universal equal-width rule.
 
 **Sources:** `MS-WIN-DESIGN-CONTENT`
 

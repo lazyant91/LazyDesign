@@ -22,6 +22,8 @@ Use a WinUI icon element or icon source supported by the target property, such a
 
 Document the icon source used by reusable XAML. Do not commit font files or copied Windows Design Kit assets. If a custom asset is required by a product, keep that decision outside the generic LazyDesign rule.
 
+**Derived reasoning:** The icon source lists supported mechanisms and the design-kit evidence cannot be redistributed as a generic asset library; documenting reusable icon provenance and excluding copied fonts or kit assets follows from those constraints.
+
 **Sources:** `MS-WIN-CONTROLS-ICONS`, `MS-WINDOWS-DESIGN-KIT-FIGMA`
 
 ## Meaning and labels
@@ -44,6 +46,8 @@ Provide an accessible name for an icon-only interactive control. The name must d
 
 Pair an icon with a visible text label when the icon is not broadly recognizable in the target context or when the component normally exposes labels. Do not remove a required label only to save space without verifying the component's overflow or compact behavior.
 
+**Derived reasoning:** Icon guidance defines supported visuals, CommandBar exposes label behavior, and content guidance values understandable actions; retaining text for unfamiliar icons is the conservative inference from those combined facts.
+
 **Sources:** `MS-WIN-CONTROLS-ICONS`, `MS-WIN-CONTROLS-COMMANDBAR`, `MS-WIN-DESIGN-CONTENT`
 
 ### WINUI-ICON-DECORATIVE-001
@@ -53,6 +57,8 @@ Pair an icon with a visible text label when the icon is not broadly recognizable
 **Prevents:** decorative icons being announced redundantly or semantic icons being hidden from assistive technologies.
 
 Classify each icon as semantic or decorative. A semantic icon must have an accessible equivalent through the control name or surrounding content. A decorative icon must not create a duplicate or misleading announcement.
+
+**Derived reasoning:** Accessible-text and checklist guidance require meaningful content without duplicate announcements; distinguishing semantic from decorative icons is the implementation inference needed to satisfy that outcome.
 
 **Sources:** `MS-WIN-ACCESSIBLE-TEXT`, `MS-WIN-ACCESSIBILITY-CHECKLIST`
 
@@ -66,6 +72,8 @@ Classify each icon as semantic or decorative. A semantic icon must have an acces
 
 Use one deliberate icon size and alignment convention within a component or command group. Let the native control style position the icon when it provides an icon property or standard content structure.
 
+**Derived reasoning:** The icon source and Gallery show native icon-bearing control composition; using one deliberate size convention while letting native properties handle placement is an inference that avoids inconsistent manual alignment.
+
 **Sources:** `MS-WIN-CONTROLS-ICONS`, `WINUI-GALLERY-V2-9-3`
 
 ### WINUI-ICON-THEME-001
@@ -75,6 +83,8 @@ Use one deliberate icon size and alignment convention within a component or comm
 **Prevents:** icons disappearing or losing meaning in Dark or contrast themes because of a fixed foreground or baked-in color.
 
 Use inherited foreground or theme resources for monochrome icons unless color is essential to the meaning and verified in all supported themes. Do not rely on color alone to communicate state.
+
+**Derived reasoning:** Theme and contrast guidance require resource-responsive visuals, and accessibility guidance prohibits color-only meaning; inherited or theme-based icon foregrounds are the conservative implementation conclusion.
 
 **Sources:** `MS-WIN-XAML-THEME-RESOURCES`, `MS-WIN-CONTRAST-THEMES`, `MS-WIN-ACCESSIBILITY-CHECKLIST`
 

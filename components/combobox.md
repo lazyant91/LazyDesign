@@ -44,6 +44,8 @@ Populate the control through either `Items` or `ItemsSource`, not both.
 
 Use concise, parallel option labels. Avoid explanatory paragraphs inside list items; provide supporting text outside the selector when needed.
 
+**Derived reasoning:** ComboBox guidance defines a selectable list and Windows content guidance supports scan-friendly hierarchy; concise parallel options without paragraph text are inferred from those roles rather than stated as a universal item template.
+
 **Sources:** `MS-WIN-DESIGN-CONTENT`, `MS-WIN-CONTROLS-COMBOBOX`
 
 ### WINUI-COMBO-EDITABLE-001
@@ -63,6 +65,8 @@ Set `IsEditable="True"` only when typed input is part of the product requirement
 **Prevents:** selected value or popup item clipping
 
 Size for the longest realistic selected item and inspect the expanded popup. Test Korean, English, and text scaling rather than sizing only for placeholder text.
+
+**Derived reasoning:** The ComboBox source defines both collapsed selection and expanded popup states, while accessible-text guidance requires localized scaled text to remain readable; testing the longest item in both states is the resulting inference.
 
 **Sources:** `MS-WIN-CONTROLS-COMBOBOX`, `MS-WIN-ACCESSIBLE-TEXT`
 

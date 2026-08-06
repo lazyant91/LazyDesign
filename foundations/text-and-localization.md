@@ -30,6 +30,8 @@ Keep each text role separate:
 
 Do not rely on placeholder text as the only persistent label for an important field.
 
+**Derived reasoning:** The cited content and control sources assign different purposes to labels, placeholders, values, help, and validation; keeping those roles separate is the conservative synthesis rather than a single quoted Microsoft rule.
+
 **Sources:** `MS-WIN-CONTROLS-TEXTBOX`, `MS-WIN-DESIGN-CONTENT`, `MS-WIN-ACCESSIBLE-TEXT`
 
 ## Concision and hierarchy
@@ -41,6 +43,8 @@ Do not rely on placeholder text as the only persistent label for an important fi
 **Prevents:** paragraph-length content inside controls intended for concise labels, commands, states, or values.
 
 Keep control-internal text limited to the control's immediate purpose. Put explanatory paragraphs in surrounding text content, an `InfoBar`, a dialog body, or another component designed for explanation.
+
+**Derived reasoning:** Windows content and typography guidance distinguish concise control text from explanatory prose; moving paragraphs to a suitable surrounding surface is inferred from that hierarchy.
 
 **Sources:** `MS-WIN-DESIGN-CONTENT`, `MS-WIN-DESIGN-TYPOGRAPHY`
 
@@ -64,6 +68,8 @@ Use the Windows type ramp and semantic text styles to distinguish title, body, b
 
 Treat visible UI strings as variable-length content. Do not choose a fixed width solely because the current language fits. When a bounded width is required, verify the longest supported labels and values in the target layout.
 
+**Derived reasoning:** Accessible-text and content guidance require readable localized text but do not define one fixed width; treating strings as variable length and testing bounded layouts is the resulting inference.
+
 **Sources:** `MS-WIN-ACCESSIBLE-TEXT`, `MS-WIN-DESIGN-CONTENT`
 
 ### WINUI-TEXT-LOCALIZATION-002
@@ -74,6 +80,8 @@ Treat visible UI strings as variable-length content. Do not choose a fixed width
 
 Choose wrapping, trimming, scrolling, or layout expansion at the component level. The surrounding layout must provide a deliberate fallback for long content; this foundation does not prescribe one universal text-overflow behavior.
 
+**Derived reasoning:** Windows content guidance and Gallery examples show that overflow behavior depends on the component; choosing wrapping, trimming, scrolling, or expansion per control is therefore an inference against a universal rule.
+
 **Sources:** `MS-WIN-DESIGN-CONTENT`, `WINUI-GALLERY-V2-9-3`
 
 ### WINUI-TEXT-LOCALIZATION-003
@@ -83,6 +91,8 @@ Choose wrapping, trimming, scrolling, or layout expansion at the component level
 **Prevents:** reusable examples and generated pages containing hidden, non-localizable UI strings.
 
 Keep user-visible text identifiable and localizable. Do not bury visible strings in drawing data, images, or reusable templates where the application cannot translate or replace them.
+
+**Derived reasoning:** Accessible-text guidance requires user-visible content to remain available to users and assistive technology; keeping strings outside opaque drawing data or images is a localization-oriented inference from that requirement.
 
 **Sources:** `MS-WIN-ACCESSIBLE-TEXT`
 

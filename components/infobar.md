@@ -58,6 +58,8 @@ Set `Severity` to the actual message meaning: `Informational`, `Success`, `Warni
 
 Use `Title` for a concise summary and `Message` for the explanation, consequence, or recovery guidance. Do not repeat the same sentence in both properties.
 
+**Derived reasoning:** InfoBar guidance exposes distinct Title and Message properties, while Windows content guidance separates summary from explanation; assigning those roles without duplication is the inference drawn from both.
+
 **Sources:** `MS-WIN-CONTROLS-INFOBAR`, `MS-WIN-DESIGN-CONTENT`
 
 ### WINUI-INFOBAR-CONTENT-002
@@ -67,6 +69,8 @@ Use `Title` for a concise summary and `Message` for the explanation, consequence
 **Prevents:** status banners that contain excessive prose and obscure the page
 
 Keep the message focused on the current status and the user's next useful step. Move detailed troubleshooting or documentation to a separate destination.
+
+**Derived reasoning:** InfoBar guidance provides a status surface and Windows content guidance limits competing explanatory detail; focusing the message on status and the next useful step is a conservative content-hierarchy inference.
 
 **Sources:** `MS-WIN-CONTROLS-INFOBAR`, `MS-WIN-DESIGN-CONTENT`
 
@@ -87,6 +91,8 @@ Provide one directly related action through `ActionButton` when the user can res
 **Prevents:** users dismissing an unresolved blocking condition or being unable to dismiss obsolete information
 
 Set `IsClosable` according to message lifetime. Allow dismissal when the information can safely be ignored or revisited; keep it non-closable only when the status must remain visible until the application resolves it.
+
+**Derived reasoning:** The InfoBar source documents closable behavior but does not prescribe every product lifetime; tying IsClosable to whether the status can safely disappear is an explicit product-context inference from that capability.
 
 **Sources:** `MS-WIN-CONTROLS-INFOBAR`
 
@@ -132,6 +138,8 @@ Set and update `IsOpen` from application state. An InfoBar is not visible by def
 
 Verify keyboard focus and activation for the action and close affordances. Preserve native focus visuals and do not replace the control template to change a single state color.
 
+**Derived reasoning:** Keyboard guidance requires operable focus paths, InfoBar supplies native action and close affordances, and theme resources preserve state visuals; verifying those native affordances follows from the combined evidence.
+
 **Sources:** `MS-WIN-KEYBOARD-INTERACTIONS`, `MS-WIN-CONTROLS-INFOBAR`, `MS-WIN-XAML-THEME-RESOURCES`
 
 ## 6. Theme, accessibility, and localization
@@ -143,6 +151,8 @@ Verify keyboard focus and activation for the action and close affordances. Prese
 **Prevents:** severity being communicated only by icon or color
 
 Write title and message text that communicates the condition without relying on severity color or icon alone. Ensure an icon-only custom action, when unavoidable, exposes an accessible name.
+
+**Derived reasoning:** InfoBar severity is visually represented while the accessibility and icon sources warn against color-only or unnamed meaning; communicating the condition in text and naming icon-only actions is the resulting inference.
 
 **Sources:** `MS-WIN-CONTROLS-INFOBAR`, `MS-WIN-ACCESSIBILITY-CHECKLIST`, `MS-WIN-CONTROLS-ICONS`
 

@@ -35,6 +35,8 @@ Provide a concise header when surrounding context does not clearly identify what
 
 Label the setting or state, not the gesture. Prefer “Bluetooth” with state text such as “On/Off” over “Turn Bluetooth on”.
 
+**Derived reasoning:** The ToggleSwitch source describes a setting and its on/off state; wording the header as the setting rather than as the gesture is inferred from that state model, not quoted as a universal Microsoft wording rule.
+
 **Sources:** `MS-WIN-CONTROLS-TOGGLES`
 
 ### WINUI-TOGGLE-CONTENT-002
@@ -43,6 +45,8 @@ Label the setting or state, not the gesture. Prefer “Bluetooth” with state t
 **Prevents:** long state text destabilizing layout
 
 Keep `OnContent` and `OffContent` short and semantically parallel. Put explanatory detail outside the control.
+
+**Derived reasoning:** The ToggleSwitch source supplies separate on/off content and Windows content guidance favors concise control text; keeping the two state labels short and parallel combines those sources into a conservative rule.
 
 **Sources:** `MS-WIN-DESIGN-CONTENT`, `MS-WIN-CONTROLS-TOGGLES`
 
@@ -54,6 +58,8 @@ Keep `OnContent` and `OffContent` short and semantically parallel. Put explanato
 **Prevents:** long localized header or state text clipping
 
 Avoid fixed width unless the longest supported header and both state labels have been tested in Korean, English, and text scaling.
+
+**Derived reasoning:** ToggleSwitch exposes a header and state labels, and accessible-text guidance requires scaled text to remain readable; verifying all three strings before fixing width follows from those combined facts.
 
 **Sources:** `MS-WIN-ACCESSIBLE-TEXT`, `MS-WIN-CONTROLS-TOGGLES`
 

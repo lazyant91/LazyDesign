@@ -48,6 +48,8 @@ Place the most frequent and important commands in `PrimaryCommands`; place less 
 
 Use recognizable icons and concise labels. Preserve labels in overflow and provide accessible names for icon-only compact presentation.
 
+**Derived reasoning:** CommandBar guidance defines compact and overflow presentations and the icon guidance does not make every symbol self-evident; combining labels, recognizable icons, and accessible names is therefore a conservative inference.
+
 **Sources:** `MS-WIN-CONTROLS-COMMANDBAR`, `MS-WIN-CONTROLS-ICONS`
 
 ## 4. Sizing and layout
@@ -103,6 +105,8 @@ Every command must expose a meaningful accessible name, role, and state. Do not 
 **Prevents:** localized labels clipping or changing overflow priority unexpectedly
 
 Test long Korean and English command labels in both primary and overflow presentations at constrained widths.
+
+**Derived reasoning:** The CommandBar source defines primary and overflow layouts, and accessible-text guidance requires localized scaled text to remain readable; testing long labels in both presentations follows from those two sources.
 
 **Sources:** `MS-WIN-CONTROLS-COMMANDBAR`, `MS-WIN-ACCESSIBLE-TEXT`
 

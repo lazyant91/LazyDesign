@@ -24,6 +24,8 @@ A typical field consists of an optional `Header`, the editable surface, optional
 
 Use `Header` for the persistent field label, `PlaceholderText` only for a temporary hint, and adjacent text for help or validation.
 
+**Derived reasoning:** The TextBox and forms guidance distinguish headers, placeholders, values, and surrounding instructions; separating helper and validation text follows from those roles rather than from one explicit all-in-one Microsoft prescription.
+
 **Sources:** `MS-WIN-CONTROLS-TEXTBOX`, `MS-WIN-CONTROLS-FORMS`
 
 ## 3. Content rules
@@ -44,6 +46,8 @@ Do not put essential instructions or the only field label in `PlaceholderText`, 
 
 Choose `AcceptsReturn`, wrapping, and scrolling deliberately according to whether the field is single-line or multiline.
 
+**Derived reasoning:** The TextBox source documents single-line, multiline, wrapping, and scrolling options, while the Gallery shows native configurations; choosing them deliberately from the field's purpose is an implementation inference.
+
 **Sources:** `MS-WIN-CONTROLS-TEXTBOX`, `WINUI-GALLERY-V2-9-3`
 
 ## 4. Sizing and layout
@@ -54,6 +58,8 @@ Choose `AcceptsReturn`, wrapping, and scrolling deliberately according to whethe
 **Prevents:** localized headers or entered values clipping
 
 Avoid arbitrary fixed width. When width is constrained, test the longest supported header, placeholder, entered value, Korean and English content, and text scaling.
+
+**Derived reasoning:** The TextBox source defines the control's text-bearing parts and accessible-text guidance requires readable scaled content; testing the longest localized strings before fixing width is the conservative conclusion from both.
 
 **Sources:** `MS-WIN-CONTROLS-TEXTBOX`, `MS-WIN-ACCESSIBLE-TEXT`
 

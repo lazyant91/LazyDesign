@@ -48,6 +48,8 @@ Populate the list using either direct `Items` or `ItemsSource`, not both.
 
 Give each item a clear primary label and only the secondary information required for scanning or deciding. Keep repeated item structure consistent.
 
+**Derived reasoning:** ListView guidance defines repeated item content while Windows content guidance establishes primary and secondary hierarchy; limiting each row to decision-relevant information is an inference from those structures.
+
 **Sources:** `MS-WIN-DESIGN-CONTENT`, `MS-WIN-CONTROLS-LISTVIEW`
 
 ### WINUI-LISTVIEW-CONTENT-003
@@ -57,6 +59,8 @@ Give each item a clear primary label and only the secondary information required
 **Prevents:** nested buttons conflicting with item invocation or selection
 
 When an item contains interactive children, define whether the row itself remains invokable and verify pointer and keyboard behavior for both the row and nested controls.
+
+**Derived reasoning:** ListView and keyboard guidance define row selection, invocation, and focus behavior; requiring an explicit interaction decision for nested controls is a conservative inference to avoid conflicting input semantics.
 
 **Sources:** `MS-WIN-CONTROLS-LISTVIEW`, `MS-WIN-KEYBOARD-INTERACTIONS`
 
@@ -69,6 +73,8 @@ When an item contains interactive children, define whether the row itself remain
 **Prevents:** variable content clipping or uncontrolled row growth
 
 Define wrapping, trimming, and maximum content for primary and secondary text. Test long Korean and English strings at constrained widths and text scaling.
+
+**Derived reasoning:** ListView supports templated text content and accessible-text guidance requires localized scaled text to remain readable; defining wrapping or trimming and testing long strings is the combined operational inference.
 
 **Sources:** `MS-WIN-CONTROLS-LISTVIEW`, `MS-WIN-ACCESSIBLE-TEXT`
 

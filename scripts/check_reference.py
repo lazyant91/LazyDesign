@@ -43,6 +43,15 @@ COMPONENT_HEADINGS = (
 
 FORBIDDEN_MARKERS = ("TBD", "TODO", "<RULE-ID>", "<SOURCE-ID>", "<ControlName>")
 SOURCE_ID_PATTERN = re.compile(r"`([A-Z][A-Z0-9-]+)`")
+RULE_BLOCK_PATTERN = re.compile(
+    r"^### (?P<rule_id>[A-Z][A-Z0-9-]+)[ \t]*\r?\n"
+    r"(?P<body>.*?)(?=^### |^## |\Z)",
+    flags=re.MULTILINE | re.DOTALL,
+)
+DERIVED_REASONING_PATTERN = re.compile(
+    r"^\*\*Derived reasoning:\*\*\s+\S.*$",
+    flags=re.MULTILINE,
+)
 
 
 def read_text(path: Path, errors: list[str]) -> str | None:
@@ -70,12 +79,25 @@ def check_forbidden(path: Path, text: str, errors: list[str]) -> None:
             errors.append(f"unresolved marker {marker!r}: {path.relative_to(ROOT)}")
 
 
+def check_derived_reasoning(path: Path, text: str, errors: list[str]) -> None:
+    for match in RULE_BLOCK_PATTERN.finditer(text):
+        body = match.group("body")
+        if "**Evidence:** derived" not in body:
+            continue
+        if DERIVED_REASONING_PATTERN.search(body) is None:
+            errors.append(
+                f"missing derived reasoning for {match.group('rule_id')}: "
+                f"{path.relative_to(ROOT)}"
+            )
+
+
 def check_component(path: Path, source_ids: set[str], errors: list[str]) -> None:
     text = read_text(path, errors)
     if text is None:
         return
 
     check_forbidden(path, text, errors)
+    check_derived_reasoning(path, text, errors)
 
     positions: list[int] = []
     for heading in COMPONENT_HEADINGS:
@@ -115,6 +137,7 @@ def check_foundation(path: Path, source_ids: set[str], errors: list[str]) -> Non
         return
 
     check_forbidden(path, text, errors)
+    check_derived_reasoning(path, text, errors)
 
     source_lines = [line for line in text.splitlines() if line.startswith("**Sources:**")]
     if not source_lines:
