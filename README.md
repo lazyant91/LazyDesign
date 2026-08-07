@@ -77,9 +77,9 @@ It also defines five shared foundations:
 - states and themes;
 - accessibility basics.
 
-All thirteen pages are currently `v0.1-candidate`. This means their source IDs and authoring structure are present; it does not mean the controlled evaluation, WinUI build, rendered states, text scaling, contrast themes, keyboard behavior, or assistive-technology checks have passed.
+All thirteen pages remain `v0.1-candidate`. The controlled v0.1 comparison is complete, but the mechanical quality gate failed: baseline scored 44/60 and guided scored 46/60, a 4.55% improvement rather than the required 20%. No baseline clipping/content-overflow defect was directly observed, so the required 50% reduction is not demonstrated. The detailed result is recorded in [`evaluation/results/gate-decision.md`](evaluation/results/gate-decision.md).
 
-The same three UI tasks will be generated without and with LazyDesign guidance. The v0.1 gate passes only when the guided output shows a meaningful reduction in clipping, content overflow, missing anatomy, lost native states, accessibility omissions, and unnecessary template customization without adding material complexity.
+The guided connection-settings run improved hierarchy, component anatomy, accessible naming, and theme-resource use. The device-list pair retained the same CS8852 typed-`x:Bind`/positional-record build failure, both failure-confirmation runs retained the same CS4036 `ContentDialog.ShowAsync()` await/projection build failure, and the guided failure-confirmation run additionally generated an inert Retry button. Precision expansion is therefore blocked.
 
 ## Repository layout
 
@@ -123,21 +123,18 @@ LazyDesign/
 Completed in the current v0.1 branch:
 
 - source manifest and source notes;
-- component/foundation document contract;
-- structural checker source;
-- five shared foundations;
-- eight component candidates;
-- fixed evaluation procedure;
-- three immutable scenario prompts;
-- 10-category scoring rubric.
+- component/foundation document contract and structural checker;
+- five shared foundations and eight component candidates;
+- fixed evaluation procedure, three immutable prompts, and 10-category rubric;
+- three baseline and three guided fresh-context artifacts from the same pinned WinUI start project;
+- controlled build and available runtime/UI Automation evidence;
+- immutable capture validation for all six runs;
+- mechanical scoring, findings, and v0.1 gate decision.
 
-Pending in the local Windows phase:
+The v0.1 gate result is **FAIL**, so the existing eight components and five foundations remain candidates and no new control family is approved. Before rerunning the same gate, revise these exact reference areas from source-backed evidence:
 
-- run the structural checker against the checked-out branch;
-- create and record the clean WinUI evaluation project snapshot;
-- generate three baseline and three guided artifacts in fresh contexts;
-- build and render the generated pages;
-- verify constrained widths, Light, Dark, contrast theme, text scaling, keyboard, focus, and accessibility evidence;
-- score the six artifacts and apply the mechanical gate.
+- `components/listview.md` — add build-safe typed-`x:Bind` data-model guidance or an equivalent verified pattern that prevents the observed positional-record/init-only CS8852 failure;
+- `components/contentdialog.md` — add a compile-verified minimal `ShowAsync()` C# pattern, including the WinRT async projection/import requirements needed by the pinned evaluation project, to prevent the observed CS4036 failure;
+- `components/infobar.md` — strengthen the action verification guidance so an `ActionButton` such as Retry is confirmed to have actual activation behavior rather than only a label.
 
-The approved local workspace is `Z:\workspace\LazyDesign`. Precision expansion remains blocked until the v0.1 gate passes.
+Keep the existing guided-context scope and fresh-context controls unchanged for the next comparison unless a separately reviewed evaluation-procedure defect is found. The approved local workspace is `Z:\workspace\LazyDesign`. Precision expansion remains blocked until a revised v0.1 run passes the mechanical gate.
