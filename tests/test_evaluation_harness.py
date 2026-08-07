@@ -156,6 +156,65 @@ class EvaluationHarnessTests(unittest.TestCase):
             matrix.write_bytes((ROOT / DEFAULT_MATRIX).read_bytes())
             self.assertEqual([], validate_matrix(ROOT, matrix))
 
+    def test_initial_and_revision_matrices_are_valid(self) -> None:
+        self.assertEqual([], validate_matrix(ROOT, DEFAULT_MATRIX))
+        self.assertEqual(
+            [],
+            validate_matrix(
+                ROOT,
+                Path("evaluation/revisions/v0.1-r1/run-matrix.json"),
+            ),
+        )
+
+    def test_revision_guided_packet_uses_revision_input_and_original_reference_paths(self) -> None:
+        matrix_path = Path("evaluation/revisions/v0.1-r1/run-matrix.json")
+        matrix = json.loads((ROOT / matrix_path).read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            packet = Path(temp) / "packet"
+            manifest = prepare_run_packet(
+                ROOT,
+                "guided",
+                "device-list",
+                packet,
+                matrix_path=matrix_path,
+            )
+        original = json.loads((ROOT / DEFAULT_MATRIX).read_text(encoding="utf-8"))
+        self.assertEqual(matrix["input_commit"], manifest["input_commit"])
+        self.assertEqual(
+            original["scenarios"]["device-list"]["guided_references"],
+            [item["path"] for item in manifest["references"]],
+        )
+
+    def test_revision_input_changes_only_targeted_reference_contents(self) -> None:
+        original = json.loads((ROOT / DEFAULT_MATRIX).read_text(encoding="utf-8"))
+        revision_path = Path("evaluation/revisions/v0.1-r1/run-matrix.json")
+        revision = json.loads((ROOT / revision_path).read_text(encoding="utf-8"))
+        original_commit = original["input_commit"]
+        revision_commit = revision["input_commit"]
+        references = {
+            relative
+            for scenario in original["scenarios"].values()
+            for relative in scenario["guided_references"]
+        }
+        changed = {
+            relative
+            for relative in references
+            if subprocess.check_output(
+                ["git", "show", f"{original_commit}:{relative}"], cwd=ROOT
+            )
+            != subprocess.check_output(
+                ["git", "show", f"{revision_commit}:{relative}"], cwd=ROOT
+            )
+        }
+        self.assertEqual(
+            {
+                "components/listview.md",
+                "components/contentdialog.md",
+                "components/infobar.md",
+            },
+            changed,
+        )
+
     def test_prepare_uses_explicit_matrix_path(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
             matrix = Path(temp) / "run-matrix.json"

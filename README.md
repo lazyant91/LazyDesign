@@ -131,10 +131,8 @@ Completed in the current v0.1 branch:
 - immutable capture validation for all six runs;
 - mechanical scoring, findings, and v0.1 gate decision.
 
-The v0.1 gate result is **FAIL**, so the existing eight components and five foundations remain candidates and no new control family is approved. Before rerunning the same gate, revise these exact reference areas from source-backed evidence:
+The initial v0.1 Gate v1 result remains **FAIL**, so the existing eight components and five foundations remain candidates and no new control family is approved. The source-backed `v0.1-r1` revision is now pinned for controlled re-evaluation. It changes only the three reference areas implicated by the first comparison: typed `x:Bind` item-model compatibility in `components/listview.md`, C#/WinRT `ContentDialog.ShowAsync()` awaitability in `components/contentdialog.md`, and actual InfoBar action activation in `components/infobar.md`.
 
-- `components/listview.md` — add build-safe typed-`x:Bind` data-model guidance or an equivalent verified pattern that prevents the observed positional-record/init-only CS8852 failure;
-- `components/contentdialog.md` — add a compile-verified minimal `ShowAsync()` C# pattern, including the WinRT async projection/import requirements needed by the pinned evaluation project, to prevent the observed CS4036 failure;
-- `components/infobar.md` — strengthen the action verification guidance so an `ActionButton` such as Retry is confirmed to have actual activation behavior rather than only a label.
+The clean revision input snapshot is `d40d08504baf73cf80d8b4f16248a1ee86d8c252`. Relative to the original guided input, the guided reference contents differ only in those three component pages; the three prompt bytes, pinned starting fixture, constrained widths, and scenario-specific reference path sets remain unchanged. The new six-run `v0.1-r1` comparison has not yet been generated or scored.
 
-Keep the existing guided-context scope and fresh-context controls unchanged for the next comparison unless a separately reviewed evaluation-procedure defect is found. The approved local workspace is `Z:\workspace\LazyDesign`. Precision expansion remains blocked until a revised v0.1 run passes the mechanical gate.
+Gate v2 preserves the same ten scoring categories. It treats baseline-zero/guided-zero overflow as a zero-defect non-regression floor rather than a measurable reduction, and it adds a hard prerequisite that all three guided controlled builds pass. The approved local workspace is `Z:\workspace\LazyDesign`. Precision expansion remains blocked until the revised comparison passes Gate v2 and the repository owner separately approves expansion.

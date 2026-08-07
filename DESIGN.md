@@ -8,7 +8,9 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source manifest, five shared foundation pages, and all eight component pages are present as source-backed evaluation candidates. They are ready for controlled baseline/guided comparison, but they have not yet passed the v0.1 quality gate. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
+The initial controlled six-run v0.1 comparison is complete and Gate v1 returned **FAIL**: baseline scored 44/60 and guided scored 46/60 (+4.55%), while overflow reduction was not demonstrated because the baseline observed-overflow count was zero. The pages therefore remain `v0.1-candidate`. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
+
+A source-backed `v0.1-r1` revision is now pinned for re-evaluation at input snapshot `d40d08504baf73cf80d8b4f16248a1ee86d8c252`. Relative to the original guided input, only `components/listview.md`, `components/contentdialog.md`, and `components/infobar.md` differ; the fixed prompt bytes, starting fixture, constrained widths, and guided reference path sets remain unchanged. The new six-run comparison has not yet been generated or scored. Precision expansion remains blocked.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -118,16 +120,20 @@ Do not use LazyDesign to:
 
 ## Evaluation gate
 
-The v0.1 reference advances to full component coverage only when controlled before/after evaluation demonstrates:
+The `v0.1-r1` reference advances only when Gate v2 passes. The same ten scoring categories remain in force, with these mechanical requirements:
 
 - at least 20% improvement in the total rubric score;
-- at least 50% reduction in clipping or content-overflow defects;
+- when baseline observed overflow is greater than zero, at least 50% reduction in clipping or content-overflow defects;
+- when baseline observed overflow is zero, guided observed overflow must also remain zero as a non-regression floor; this is not reported as a measurable reduction;
 - fewer missing anatomy and accessibility requirements;
 - no increase in unnecessary `ControlTemplate` replacement;
 - no material increase in irrelevant XAML or prompt-driven overengineering;
-- traceability from observed improvements to specific reference rules.
+- traceability from observed improvements to specific reference rules;
+- as a hard prerequisite outside the six quality conditions, all three guided generated projects must pass the controlled build.
 
-Until all gate conditions pass, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
+The initial Gate v1 FAIL remains preserved under `evaluation/results/` and is not reinterpreted under Gate v2. The new `v0.1-r1` comparison will be stored separately under `evaluation/revisions/v0.1-r1/`.
+
+Until Gate v2 passes, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
 
 The detailed product design and execution plan are stored in:
 
