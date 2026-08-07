@@ -4,7 +4,7 @@ import unittest
 from copy import deepcopy
 from pathlib import Path
 
-from scripts.evaluation_gate import evaluate_gate, render_gate_markdown
+from scripts.evaluation_gate import evaluate_gate, evaluate_gate_v2, render_gate_markdown
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -92,6 +92,16 @@ def passing_metrics() -> dict:
     }
 
 
+def passing_metrics_v2() -> dict:
+    metrics = deepcopy(passing_metrics())
+    metrics["schema_version"] = 2
+    return metrics
+
+
+def guided_builds(status: str = "pass") -> dict[str, str]:
+    return {scenario: status for scenario in SCENARIOS}
+
+
 class EvaluationGateTests(unittest.TestCase):
     def test_passing_metrics_pass_all_six_conditions(self) -> None:
         result = evaluate_gate(ROOT, passing_metrics())
@@ -112,6 +122,93 @@ class EvaluationGateTests(unittest.TestCase):
         self.assertEqual("fail", overflow["status"])
         self.assertIsNone(result["overflow_reduction_percent"])
         self.assertIn("not demonstrated", overflow["detail"])
+
+    def test_gate_v1_zero_overflow_behavior_is_unchanged(self) -> None:
+        metrics = passing_metrics()
+        for scenario in SCENARIOS:
+            metrics["scenarios"][scenario]["baseline"]["defects"]["overflow"] = 0
+            metrics["scenarios"][scenario]["guided"]["defects"]["overflow"] = 0
+        result = evaluate_gate(ROOT, metrics)
+        overflow = next(
+            item for item in result["conditions"] if item["id"] == "overflow-reduction"
+        )
+        self.assertEqual("fail", overflow["status"])
+        self.assertIsNone(result["overflow_reduction_percent"])
+
+    def test_gate_v2_zero_overflow_non_regression_passes(self) -> None:
+        metrics = passing_metrics_v2()
+        for scenario in SCENARIOS:
+            metrics["scenarios"][scenario]["baseline"]["defects"]["overflow"] = 0
+            metrics["scenarios"][scenario]["guided"]["defects"]["overflow"] = 0
+        result = evaluate_gate_v2(ROOT, metrics, guided_builds())
+        overflow = next(
+            item for item in result["conditions"] if item["id"] == "overflow-non-regression"
+        )
+        self.assertEqual("pass", overflow["status"])
+        self.assertEqual("non-regression", result["overflow_mode"])
+        self.assertIsNone(result["overflow_reduction_percent"])
+
+    def test_gate_v2_zero_baseline_overflow_regression_fails(self) -> None:
+        metrics = passing_metrics_v2()
+        for scenario in SCENARIOS:
+            metrics["scenarios"][scenario]["baseline"]["defects"]["overflow"] = 0
+            metrics["scenarios"][scenario]["guided"]["defects"]["overflow"] = 0
+        metrics["scenarios"]["device-list"]["guided"]["defects"]["overflow"] = 1
+        result = evaluate_gate_v2(ROOT, metrics, guided_builds())
+        overflow = next(
+            item for item in result["conditions"] if item["id"] == "overflow-non-regression"
+        )
+        self.assertEqual("fail", overflow["status"])
+
+    def test_gate_v2_positive_overflow_baseline_still_requires_half_reduction(self) -> None:
+        metrics = passing_metrics_v2()
+        for scenario in SCENARIOS:
+            metrics["scenarios"][scenario]["baseline"]["defects"]["overflow"] = 0
+            metrics["scenarios"][scenario]["guided"]["defects"]["overflow"] = 0
+        metrics["scenarios"]["device-list"]["baseline"]["defects"]["overflow"] = 4
+        metrics["scenarios"]["device-list"]["guided"]["defects"]["overflow"] = 3
+        result = evaluate_gate_v2(ROOT, metrics, guided_builds())
+        overflow = next(
+            item for item in result["conditions"] if item["id"] == "overflow-reduction"
+        )
+        self.assertEqual("fail", overflow["status"])
+        metrics["scenarios"]["device-list"]["guided"]["defects"]["overflow"] = 2
+        result = evaluate_gate_v2(ROOT, metrics, guided_builds())
+        overflow = next(
+            item for item in result["conditions"] if item["id"] == "overflow-reduction"
+        )
+        self.assertEqual("pass", overflow["status"])
+
+    def test_gate_v2_requires_all_guided_builds_to_pass(self) -> None:
+        metrics = passing_metrics_v2()
+        statuses = guided_builds()
+        statuses["device-list"] = "fail"
+        result = evaluate_gate_v2(ROOT, metrics, statuses)
+        self.assertEqual("FAIL", result["overall"])
+        self.assertEqual("fail", result["guided_build_prerequisite"]["status"])
+
+    def test_gate_v2_not_run_guided_build_fails_prerequisite(self) -> None:
+        metrics = passing_metrics_v2()
+        statuses = guided_builds()
+        statuses["failure-confirmation"] = "not_run"
+        result = evaluate_gate_v2(ROOT, metrics, statuses)
+        self.assertEqual("FAIL", result["overall"])
+
+    def test_gate_v2_markdown_reports_build_prerequisite_and_non_regression(self) -> None:
+        metrics = passing_metrics_v2()
+        for scenario in SCENARIOS:
+            metrics["scenarios"][scenario]["baseline"]["defects"]["overflow"] = 0
+            metrics["scenarios"][scenario]["guided"]["defects"]["overflow"] = 0
+        markdown = render_gate_markdown(
+            evaluate_gate_v2(ROOT, metrics, guided_builds())
+        )
+        self.assertIn("## Guided build prerequisite", markdown)
+        self.assertIn("Overflow mode | non-regression", markdown)
+        self.assertIn("Overflow reduction | not measurable", markdown)
+        self.assertIn(
+            "guided build prerequisite and all six quality conditions pass",
+            markdown,
+        )
 
     def test_each_positive_score_change_requires_rule_trace(self) -> None:
         metrics = passing_metrics()

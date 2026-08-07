@@ -32,6 +32,7 @@ DEFECT_KEYS = (
 CONDITION_LABELS = {
     "score-improvement": "Guided total improved by at least 20%",
     "overflow-reduction": "Clipping/content-overflow defects decreased by at least 50%",
+    "overflow-non-regression": "Zero-baseline clipping/content-overflow defects did not regress",
     "anatomy-accessibility": "Missing anatomy and accessibility requirements decreased",
     "template-nonincrease": "Unnecessary ControlTemplate replacement did not increase",
     "complexity-nonincrease": "Irrelevant XAML or complexity did not materially increase",
@@ -52,7 +53,11 @@ def _is_nonnegative_int(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
 
-def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
+def _validate_metrics(
+    repo_root: Path,
+    metrics: dict[str, Any],
+    expected_schema_version: int = 1,
+) -> list[str]:
     errors: list[str] = []
     if not isinstance(metrics, dict):
         return ["metrics must be a JSON object"]
@@ -65,8 +70,8 @@ def _validate_metrics(repo_root: Path, metrics: dict[str, Any]) -> list[str]:
         errors.append(
             "metrics must contain exactly schema_version, scenarios, traceable_improvements, and findings"
         )
-    if metrics.get("schema_version") != 1:
-        errors.append("schema_version must be 1")
+    if metrics.get("schema_version") != expected_schema_version:
+        errors.append(f"schema_version must be {expected_schema_version}")
     scenarios = metrics.get("scenarios")
     if not isinstance(scenarios, dict) or set(scenarios) != set(SCENARIOS):
         errors.append("scenarios must contain exactly the three fixed scenarios")
@@ -252,7 +257,7 @@ def _condition(condition_id: str, passed: bool, detail: str) -> dict[str, str]:
 
 
 def evaluate_gate(repo_root: Path, metrics: dict[str, Any]) -> dict[str, Any]:
-    errors = _validate_metrics(repo_root, metrics)
+    errors = _validate_metrics(repo_root, metrics, expected_schema_version=1)
     if errors:
         raise ValueError("invalid gate metrics: " + "; ".join(errors))
 
@@ -393,16 +398,196 @@ def evaluate_gate(repo_root: Path, metrics: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def evaluate_gate_v2(
+    repo_root: Path,
+    metrics: dict[str, Any],
+    guided_build_statuses: dict[str, str],
+) -> dict[str, Any]:
+    errors = _validate_metrics(repo_root, metrics, expected_schema_version=2)
+    if set(guided_build_statuses) != set(SCENARIOS):
+        errors.append("guided build statuses must contain exactly the three fixed scenarios")
+    elif any(
+        status not in {"pass", "fail", "not_run"}
+        for status in guided_build_statuses.values()
+    ):
+        errors.append("guided build statuses must be pass, fail, or not_run")
+    if errors:
+        raise ValueError("invalid gate metrics: " + "; ".join(errors))
+
+    baseline_total = sum(
+        sum(metrics["scenarios"][scenario]["baseline"]["scores"])
+        for scenario in SCENARIOS
+    )
+    guided_total = sum(
+        sum(metrics["scenarios"][scenario]["guided"]["scores"])
+        for scenario in SCENARIOS
+    )
+    baseline_defects = _aggregate_defects(metrics, "baseline")
+    guided_defects = _aggregate_defects(metrics, "guided")
+    conditions: list[dict[str, str]] = []
+
+    build_passed = all(
+        guided_build_statuses[scenario] == "pass" for scenario in SCENARIOS
+    )
+    build_prerequisite = {
+        "status": "pass" if build_passed else "fail",
+        "detail": "; ".join(
+            f"{scenario}={guided_build_statuses[scenario]}" for scenario in SCENARIOS
+        ),
+    }
+
+    if baseline_total == 0:
+        improvement_percent = None
+        conditions.append(
+            _condition(
+                "score-improvement",
+                False,
+                "not demonstrated because the baseline total is zero",
+            )
+        )
+    else:
+        improvement_percent = round(
+            ((guided_total - baseline_total) / baseline_total) * 100,
+            2,
+        )
+        conditions.append(
+            _condition(
+                "score-improvement",
+                (guided_total - baseline_total) * 100 >= baseline_total * 20,
+                f"baseline {baseline_total}, guided {guided_total}, improvement {improvement_percent}%",
+            )
+        )
+
+    baseline_overflow = baseline_defects["overflow"]
+    guided_overflow = guided_defects["overflow"]
+    if baseline_overflow == 0:
+        overflow_mode = "non-regression"
+        overflow_reduction_percent = None
+        conditions.append(
+            _condition(
+                "overflow-non-regression",
+                guided_overflow == 0,
+                f"baseline {baseline_overflow}, guided {guided_overflow}; reduction not measurable",
+            )
+        )
+    else:
+        overflow_mode = "reduction"
+        overflow_reduction_percent = round(
+            ((baseline_overflow - guided_overflow) / baseline_overflow) * 100,
+            2,
+        )
+        conditions.append(
+            _condition(
+                "overflow-reduction",
+                (baseline_overflow - guided_overflow) * 100
+                >= baseline_overflow * 50,
+                f"baseline {baseline_overflow}, guided {guided_overflow}, reduction {overflow_reduction_percent}%",
+            )
+        )
+
+    anatomy_passed = guided_defects["anatomy"] < baseline_defects["anatomy"]
+    accessibility_passed = (
+        guided_defects["accessibility"] < baseline_defects["accessibility"]
+    )
+    conditions.append(
+        _condition(
+            "anatomy-accessibility",
+            anatomy_passed and accessibility_passed,
+            "anatomy "
+            f"{baseline_defects['anatomy']} to {guided_defects['anatomy']}; "
+            "accessibility "
+            f"{baseline_defects['accessibility']} to {guided_defects['accessibility']}",
+        )
+    )
+    conditions.append(
+        _condition(
+            "template-nonincrease",
+            guided_defects["control_template"]
+            <= baseline_defects["control_template"],
+            "ControlTemplate defects "
+            f"{baseline_defects['control_template']} to {guided_defects['control_template']}",
+        )
+    )
+    conditions.append(
+        _condition(
+            "complexity-nonincrease",
+            guided_defects["complexity"] <= baseline_defects["complexity"],
+            "complexity defects "
+            f"{baseline_defects['complexity']} to {guided_defects['complexity']}",
+        )
+    )
+
+    positive_changes = {
+        (scenario, category)
+        for scenario in SCENARIOS
+        for category, (baseline, guided) in enumerate(
+            zip(
+                metrics["scenarios"][scenario]["baseline"]["scores"],
+                metrics["scenarios"][scenario]["guided"]["scores"],
+            ),
+            start=1,
+        )
+        if guided > baseline
+    }
+    covered_changes = {
+        (trace["scenario"], trace["category"])
+        for trace in metrics["traceable_improvements"]
+    }
+    missing_changes = sorted(positive_changes - covered_changes)
+    if not positive_changes:
+        trace_passed = False
+        trace_detail = "no positive category changes were recorded"
+    elif missing_changes:
+        trace_passed = False
+        trace_detail = "missing traces for " + ", ".join(
+            f"{scenario} category {category}"
+            for scenario, category in missing_changes
+        )
+    else:
+        trace_passed = True
+        trace_detail = (
+            f"all {len(positive_changes)} positive category changes have rule IDs and evidence"
+        )
+    conditions.append(
+        _condition("rule-traceability", trace_passed, trace_detail)
+    )
+
+    overall = (
+        "PASS"
+        if build_passed and all(item["status"] == "pass" for item in conditions)
+        else "FAIL"
+    )
+    return {
+        "schema_version": 2,
+        "overall": overall,
+        "baseline_total": baseline_total,
+        "guided_total": guided_total,
+        "improvement_percent": improvement_percent,
+        "overflow_mode": overflow_mode,
+        "overflow_reduction_percent": overflow_reduction_percent,
+        "baseline_defects": baseline_defects,
+        "guided_defects": guided_defects,
+        "guided_build_statuses": dict(guided_build_statuses),
+        "guided_build_prerequisite": build_prerequisite,
+        "conditions": conditions,
+    }
+
+
 def render_gate_markdown(result: dict[str, Any]) -> str:
+    schema_version = result.get("schema_version", 1)
     improvement = (
         "not demonstrated"
         if result["improvement_percent"] is None
         else f"{result['improvement_percent']}%"
     )
     overflow = (
-        "not demonstrated"
-        if result["overflow_reduction_percent"] is None
-        else f"{result['overflow_reduction_percent']}%"
+        "not measurable"
+        if schema_version == 2 and result["overflow_reduction_percent"] is None
+        else (
+            "not demonstrated"
+            if result["overflow_reduction_percent"] is None
+            else f"{result['overflow_reduction_percent']}%"
+        )
     )
     lines = [
         "# LazyDesign v0.1 Gate Decision",
@@ -416,22 +601,44 @@ def render_gate_markdown(result: dict[str, Any]) -> str:
         f"| Baseline total | {result['baseline_total']} / 60 |",
         f"| Guided total | {result['guided_total']} / 60 |",
         f"| Score improvement | {improvement} |",
-        f"| Overflow reduction | {overflow} |",
-        "",
-        "## Mechanical conditions",
-        "",
     ]
+    if schema_version == 2:
+        lines.append(f"| Overflow mode | {result['overflow_mode']} |")
+    lines.extend(
+        [
+            f"| Overflow reduction | {overflow} |",
+            "",
+        ]
+    )
+    if schema_version == 2:
+        prerequisite = result["guided_build_prerequisite"]
+        lines.extend(
+            [
+                "## Guided build prerequisite",
+                "",
+                "- "
+                f"[{prerequisite['status']}] "
+                "All three guided controlled builds passed. "
+                f"{prerequisite['detail']}.",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Mechanical conditions",
+            "",
+        ]
+    )
     for item in result["conditions"]:
         lines.append(
             f"- [{item['status']}] {item['label']}. {item['detail']}."
         )
-    lines.extend(
-        [
-            "",
-            "The overall result is PASS only when all six conditions pass.",
-            "",
-        ]
+    final_sentence = (
+        "The overall result is PASS only when the guided build prerequisite and all six quality conditions pass."
+        if schema_version == 2
+        else "The overall result is PASS only when all six conditions pass."
     )
+    lines.extend(["", final_sentence, ""])
     return "\n".join(lines)
 
 
