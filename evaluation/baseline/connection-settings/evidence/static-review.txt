@@ -1,0 +1,13 @@
+# Static review evidence
+
+Method: Read-only review of frozen MainWindow.xaml and MainWindow.xaml.cs against the exact packet PROMPT.md. Generated source was not modified.
+
+Observed source state:
+- Native TextBox, ComboBox, ToggleSwitch, and Button controls are present.
+- The required persistent label, helper content, validation content, transport options, Korean fixture strings, and save action are present.
+- Empty-name validation is implemented with minimal code-behind and returns focus to the TextBox on invalid Save.
+- Horizontal scrolling is disabled; wrapping text and a MaxWidth 420 inner layout are present.
+- No custom ControlTemplate or replacement interaction model is introduced.
+
+Actual result: The frozen source contains all fixed prompt controls/content and minimal supporting C#.
+Pass reason: Static inspection found no direct contradiction with the fixed prompt requirements. This source review does not substitute for runtime, theme, scaling, focus-visual, or assistive-technology verification.

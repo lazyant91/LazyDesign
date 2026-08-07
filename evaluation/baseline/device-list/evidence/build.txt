@@ -1,0 +1,32 @@
+# Evaluation Build Evidence
+
+Recorded at: 2026-08-07T14:30:01+09:00
+Packet: baseline/device-list
+Pinned start: b73babad19d0153707a49e5ba1ed9fb0a42c33ef:evaluation/fixtures/winui-start
+Expected .NET SDK: 9.0.313
+Selected .NET SDK: 9.0.313
+Starting Windows App SDK package: 2.0.1
+Starting Windows SDK BuildTools: 10.0.26100.4948
+Harness command: python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/baseline/device-list
+Command: dotnet build evaluation/.runs/v2/baseline/device-list/project/LazyDesign.EvaluationApp.csproj -c Debug -p:Platform=x64
+Project state SHA-256: 1c5a33797afc6865f0a59292892a7613bad5cf2db09493c7089d4b78723973b8
+Project file count: 8
+Exit code: 1
+
+## Output
+
+  Determining projects to restore...
+  Restored Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj (in 1.83 sec).
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(482,13): error CS8852: Init-only property or indexer 'DeviceItem.Name' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(492,13): error CS8852: Init-only property or indexer 'DeviceItem.ConnectionType' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(502,13): error CS8852: Init-only property or indexer 'DeviceItem.Status' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+
+Build FAILED.
+
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(482,13): error CS8852: Init-only property or indexer 'DeviceItem.Name' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(492,13): error CS8852: Init-only property or indexer 'DeviceItem.ConnectionType' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\XamlTypeInfo.g.cs(502,13): error CS8852: Init-only property or indexer 'DeviceItem.Status' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor. [Z:\workspace\LazyDesign\evaluation\.runs\v2\baseline\device-list\project\LazyDesign.EvaluationApp.csproj]
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:18.51

@@ -1,0 +1,16 @@
+# Static review evidence
+
+Method: Read-only review of frozen generated MainWindow.xaml and MainWindow.xaml.cs against the exact device-list PROMPT.md after the controlled build, without modifying source.
+
+Observed structure:
+- MainWindow.xaml defines a native CommandBar with Refresh, Add device, and Remove AppBarButton commands and IsDynamicOverflowEnabled="True".
+- MainWindow.xaml defines a native ListView bound to Devices with a typed DataTemplate showing device name, connection type, and status.
+- MainWindow.xaml defines a separate EmptyState panel and uses native selection behavior.
+- MainWindow.xaml.cs seeds both required long fixture names, updates RemoveButton enabled state from ListView selection, and toggles ContentGrid/EmptyState from collection count.
+
+Static/build-critical defect:
+- MainWindow.xaml uses x:DataType="local:DeviceItem" with x:Bind to Name, ConnectionType, and Status.
+- MainWindow.xaml.cs declares DeviceItem as a positional record: `public sealed record DeviceItem(string Name, string ConnectionType, string Status);`.
+- Those generated properties are init-only. WinUI XAML generated type metadata emitted setters for the bound properties, producing CS8852 for Name, ConnectionType, and Status in XamlTypeInfo.g.cs during the controlled build.
+
+Conclusion: required UI structure is visibly present in frozen source, but static review fails because the generated source contains a build-blocking typed-XAML binding/model incompatibility. No repair was made.

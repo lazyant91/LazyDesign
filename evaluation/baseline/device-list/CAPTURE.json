@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "26f4c828a0374a5e3726e0acb5305370838e11d05e9d6ffacf8241f8a8f16ba4",
+  "run_sha256": "a7bf1aab1db93ae9c79fe7d39cba1cc0fc2f9122a9e31664f6666aaf8d6ebb10",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "075de97e3bb84234b32d0d3ed284df8b21e5eb6128c5910e85574121c11d0bf4"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "a7ecaccd358d14860cbdb4340afe345f524a46c7c5a85eb06a9370c1d298f5fa"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "4a62f519a317f74bc01f8ceff6cd5f40b0f4c87ba761d0d3d6dd5986dc8a4999"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "f309e28c5a21f2cfee168187cfb01cde955f74536cd132f22aebd578295a36d8"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "1901674efe309e49a25ff8a3bb9d5310e943c52052251a6771fc2034205a532c"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "fdcb8d5224d54e903aae5c72b6ef322a5d97a6614b8ece6efb5aca1f0533c2b0"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "7452b681877f3aa0f1f9e509dd91c230a29be29400254dacb6472aa46b78cae8"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}
