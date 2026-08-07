@@ -132,6 +132,18 @@ Set `XamlRoot` to the current visual root before calling `ShowAsync` in WinUI 3.
 
 **Sources:** `MS-WIN-CONTROLS-DIALOGS`
 
+### WINUI-CONTENTDIALOG-ASYNC-001
+
+**Level:** MUST
+**Evidence:** derived
+**Prevents:** C# `await ContentDialog.ShowAsync()` failing to compile because the WinRT `IAsyncOperation` await extension is not in scope
+
+In C# code that awaits `ContentDialog.ShowAsync()`, ensure the project exposes the Windows Runtime await extension used by the target .NET projection. In the verified LazyDesign v0.1 fixture, `using System;` is required so `WindowsRuntimeSystemExtensions.GetAwaiter` is available for the returned `IAsyncOperation<ContentDialogResult>`. Treat this as a C#/WinRT projection requirement, not as ContentDialog visual-design guidance.
+
+**Derived reasoning:** Microsoft documents `ShowAsync()` as returning a result from a Windows Runtime asynchronous operation, and the .NET `WindowsRuntimeSystemExtensions` API provides the `GetAwaiter<TResult>(IAsyncOperation<TResult>)` extension used by compiler await support in namespace `System`. The exact import requirement is verified against the pinned LazyDesign .NET/WinUI project.
+
+**Sources:** `MS-WIN-CONTROLS-DIALOGS`, `MS-DOTNET-WINRT-AWAIT`
+
 ### WINUI-CONTENTDIALOG-DEFAULT-001
 
 **Level:** MUST  
@@ -181,6 +193,7 @@ Use native styles and theme resources. Verify Light, Dark, and contrast themes s
 - Using a ContentDialog for routine success or background status information.
 - Opening a second ContentDialog while one is already open.
 - Forgetting to set `XamlRoot` before `ShowAsync` in WinUI 3.
+- Awaiting `ShowAsync` in C# without the WinRT await extension being available in the project/import scope.
 - Omitting a safe close action.
 - Using generic labels such as `Yes` and `No` when action names are clearer.
 - Placing custom command buttons inside the content instead of using built-in button properties.
@@ -202,14 +215,25 @@ Use native styles and theme resources. Verify Light, Dark, and contrast themes s
 </ContentDialog>
 ```
 
-Display it from code after assigning the current root:
+Display it from code after assigning the current root and keeping the WinRT await extension in scope:
 
 ```csharp
-RemoveDeviceDialog.XamlRoot = Content.XamlRoot;
-ContentDialogResult result = await RemoveDeviceDialog.ShowAsync();
+using System;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+
+private async void RemoveButton_Click(object sender, RoutedEventArgs e)
+{
+    RemoveDeviceDialog.XamlRoot = Content.XamlRoot;
+    ContentDialogResult result = await RemoveDeviceDialog.ShowAsync();
+    if (result == ContentDialogResult.Primary)
+    {
+        // Perform the already-approved removal operation here.
+    }
+}
 ```
 
-No local `ControlTemplate` or manually composed command row is required.
+The `using System;` requirement above is verified for the pinned LazyDesign C#/WinRT projection; it is not a visual-design requirement. No local `ControlTemplate` or manually composed command row is required.
 
 ## 9. Verification checklist
 
@@ -219,6 +243,7 @@ No local `ControlTemplate` or manually composed command row is required.
 - [ ] A safe `CloseButtonText` action is present.
 - [ ] Primary and secondary labels name their actions explicitly.
 - [ ] `XamlRoot` is set before `ShowAsync`.
+- [ ] The exact `ShowAsync` code-behind sample compiles in the target project.
 - [ ] `DefaultButton` matches the intended keyboard behavior.
 - [ ] Tab, Enter, and safe close behavior were tested.
 - [ ] Long Korean and English content remains readable and the command area stays visible.
@@ -229,6 +254,7 @@ No local `ControlTemplate` or manually composed command row is required.
 ## 10. Sources
 
 - `MS-WIN-CONTROLS-DIALOGS`
+- `MS-DOTNET-WINRT-AWAIT`
 - `MS-WIN-CONTROLS-INFOBAR`
 - `MS-WIN-DESIGN-CONTENT`
 - `MS-WIN-ACCESSIBLE-TEXT`

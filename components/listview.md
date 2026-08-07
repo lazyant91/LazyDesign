@@ -28,6 +28,18 @@ Bind business data through `ItemsSource` and use `ItemTemplate` for presentation
 
 **Sources:** `MS-WIN-CONTROLS-LISTVIEW`
 
+### WINUI-LISTVIEW-XBIND-001
+
+**Level:** MUST
+**Evidence:** derived
+**Prevents:** compiled `x:Bind` item templates failing generated XAML code because the chosen item model is not compatible with the target binding/compiler projection
+
+When a `DataTemplate` uses typed `{x:Bind}`, compile the exact item model with the target WinUI/.NET environment. In the verified LazyDesign v0.1 environment, use ordinary public get/set properties for values exposed by the typed item template unless another model shape has been independently compiled. Do not assume that a positional record with init-only properties is safe merely because the binding reads those values.
+
+**Derived reasoning:** `{x:Bind}` is converted to generated code at XAML compile time and typed data templates declare the item type with `x:DataType`. The pinned WinUI environment is therefore sensitive to the projected shape of that model. The get/set-class recommendation is a verified compatibility pattern for this environment, not a universal ban on records or immutable models.
+
+**Sources:** `MS-WIN-XBIND`
+
 ## 3. Content rules
 
 ### WINUI-LISTVIEW-CONTENT-001
@@ -152,25 +164,41 @@ Use theme resources for item foregrounds, backgrounds, separators, and state vis
 - Fixed row heights that clip localized or scaled text.
 - Removing native selected and focus states with a custom template.
 - Wrapping a large list in another unconstrained scroll viewer.
+- Assuming an unverified init-only or positional-record model is compatible with typed `x:Bind` code generation.
 
 ## 8. Minimal native XAML
 
 ```xml
-<ListView ItemsSource="{x:Bind ViewModel.Devices}"
-          SelectedItem="{x:Bind ViewModel.SelectedDevice, Mode=TwoWay}"
-          SelectionMode="Single"
-          IsItemClickEnabled="True"
-          ItemClick="DeviceList_ItemClick">
+<ListView ItemsSource="{x:Bind Devices}"
+          SelectionMode="Single">
     <ListView.ItemTemplate>
         <DataTemplate x:DataType="local:DeviceViewModel">
             <StackPanel Padding="12,8">
                 <TextBlock Text="{x:Bind Name}" />
-                <TextBlock Text="{x:Bind Status}"
-                           Style="{StaticResource CaptionTextBlockStyle}" />
+                <TextBlock Text="{x:Bind Status}" />
             </StackPanel>
         </DataTemplate>
     </ListView.ItemTemplate>
 </ListView>
+```
+
+Use a model shape that has been compiled with the target typed template. This get/set class pattern is verified in the pinned v0.1 environment:
+
+```csharp
+using System.Collections.ObjectModel;
+
+public ObservableCollection<DeviceViewModel> Devices { get; } =
+    new()
+    {
+        new DeviceViewModel { Name = "Conference room display", Status = "Connected" },
+        new DeviceViewModel { Name = "회의실 디스플레이", Status = "연결됨" },
+    };
+
+public sealed class DeviceViewModel
+{
+    public string Name { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+}
 ```
 
 ## 9. Verification checklist
@@ -178,6 +206,7 @@ Use theme resources for item foregrounds, backgrounds, separators, and state vis
 - [ ] Display, selection, and invocation behavior are explicitly defined.
 - [ ] Only one population mechanism is used.
 - [ ] Item templates present a consistent information hierarchy.
+- [ ] The exact typed `x:Bind` item model compiled in the target WinUI/.NET environment.
 - [ ] Long Korean and English text and text scaling were checked.
 - [ ] Large-list scrolling and virtualization behavior were considered.
 - [ ] Pointer, selected, focused, pressed, and disabled states remain visible.
@@ -188,6 +217,7 @@ Use theme resources for item foregrounds, backgrounds, separators, and state vis
 ## 10. Sources
 
 - `MS-WIN-CONTROLS-LISTVIEW`
+- `MS-WIN-XBIND`
 - `MS-WIN-DESIGN-CONTENT`
 - `MS-WIN-ACCESSIBLE-TEXT`
 - `MS-WIN-KEYBOARD-INTERACTIONS`

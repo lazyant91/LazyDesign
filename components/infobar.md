@@ -84,6 +84,18 @@ Provide one directly related action through `ActionButton` when the user can res
 
 **Sources:** `MS-WIN-CONTROLS-INFOBAR`, `WINUI-GALLERY-V2-9-3`
 
+### WINUI-INFOBAR-ACTION-002
+
+**Level:** MUST
+**Evidence:** derived
+**Prevents:** an InfoBar displaying an action label such as Retry while providing no invocation behavior
+
+When `ActionButton` represents a recovery or investigation action, wire actual invocation behavior through `Click`, `Command`, or an equivalent supported mechanism and verify that activation performs the intended action. A visible action label alone is not a complete action.
+
+**Derived reasoning:** Microsoft InfoBar guidance presents `ActionButton` as interactive call-to-action content and its examples wire `Click` handlers, while Windows keyboard guidance requires app functionality to be keyboard-accessible. Requiring actual invocation wiring is the implementation consequence of presenting an interactive action rather than decorative content.
+
+**Sources:** `MS-WIN-CONTROLS-INFOBAR`, `MS-WIN-KEYBOARD-INTERACTIONS`
+
 ### WINUI-INFOBAR-DISMISS-001
 
 **Level:** MUST  
@@ -172,6 +184,7 @@ Retain native severity and theme resources. Verify Light, Dark, and contrast the
 - Repeating the same text in `Title` and `Message`.
 - Selecting `Error` only to obtain a red visual treatment.
 - Adding several unrelated buttons to one InfoBar.
+- Providing an `ActionButton` label without `Click`, `Command`, or equivalent invocation behavior.
 - Making a persistent unresolved error freely dismissible without another visible status location.
 - Fixing the height so a long Korean message clips.
 - Communicating severity only through color or icon.
@@ -193,7 +206,7 @@ Retain native severity and theme resources. Verify Light, Dark, and contrast the
 </InfoBar>
 ```
 
-No local `ControlTemplate` is required.
+The application must implement `RetryConnection_Click` (or bind a `Command`) to invoke its real retry operation; the reference does not invent that product operation. No local `ControlTemplate` is required.
 
 ## 9. Verification checklist
 
@@ -201,6 +214,7 @@ No local `ControlTemplate` is required.
 - [ ] `Title` summarizes and `Message` explains without duplication.
 - [ ] `Severity` matches meaning rather than decorative preference.
 - [ ] At most one directly related action is present.
+- [ ] Every displayed action has activation wiring and its intended effect was verified.
 - [ ] `IsClosable` matches the status lifetime.
 - [ ] `IsOpen` transitions were verified.
 - [ ] Long Korean and English messages remain readable at constrained width.
