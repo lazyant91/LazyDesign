@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.evaluation_report import generate_reports, write_reports
-from test_evaluation_gate import passing_metrics
+from test_evaluation_gate import passing_metrics, passing_metrics_v2
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +34,33 @@ def materialize_evidence(root: Path, metrics: dict) -> None:
         path = root / _reference_path(reference)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("line 1\nline 2\nline 3\nline 4\nline 5\n", encoding="utf-8")
+
+
+def materialize_guided_build_verifications(
+    root: Path,
+    statuses: dict[str, str],
+) -> None:
+    for scenario, status in statuses.items():
+        path = root / "guided" / scenario / "evidence" / "verification.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(
+                {
+                    "checks": {
+                        "build": {
+                            "status": status,
+                            "evidence": (
+                                []
+                                if status == "not_run"
+                                else [{"path": "build.txt", "detail": "test"}]
+                            ),
+                            "reason": "not run" if status == "not_run" else "",
+                        }
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
 
 
 class EvaluationReportTests(unittest.TestCase):
@@ -83,6 +111,53 @@ class EvaluationReportTests(unittest.TestCase):
                 {"scores.md", "findings.md", "gate-decision.md"},
                 {path.name for path in output.iterdir()},
             )
+
+    def test_v2_report_uses_immutable_guided_build_statuses(self) -> None:
+        metrics = passing_metrics_v2()
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            materialize_guided_build_verifications(
+                evaluation_root,
+                {
+                    scenario: "pass"
+                    for scenario in (
+                        "connection-settings",
+                        "device-list",
+                        "failure-confirmation",
+                    )
+                },
+            )
+            result = write_reports(
+                ROOT,
+                metrics,
+                evaluation_root / "results",
+                require_complete_results=False,
+            )
+            self.assertEqual(
+                "pass", result["guided_build_prerequisite"]["status"]
+            )
+
+    def test_v2_report_rejects_build_failure_count_that_disagrees_with_verification(self) -> None:
+        metrics = passing_metrics_v2()
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            evaluation_root = Path(temp)
+            materialize_evidence(evaluation_root, metrics)
+            materialize_guided_build_verifications(
+                evaluation_root,
+                {
+                    "connection-settings": "pass",
+                    "device-list": "fail",
+                    "failure-confirmation": "pass",
+                },
+            )
+            with self.assertRaisesRegex(ValueError, "build_failures"):
+                write_reports(
+                    ROOT,
+                    metrics,
+                    evaluation_root / "results",
+                    require_complete_results=False,
+                )
 
     def test_write_reports_rejects_missing_score_evidence_file(self) -> None:
         metrics = passing_metrics()

@@ -16,6 +16,7 @@ try:
         FINDING_SECTIONS,
         SCENARIOS,
         evaluate_gate,
+        evaluate_gate_v2,
         render_gate_markdown,
     )
 except ModuleNotFoundError:
@@ -25,6 +26,7 @@ except ModuleNotFoundError:
         FINDING_SECTIONS,
         SCENARIOS,
         evaluate_gate,
+        evaluate_gate_v2,
         render_gate_markdown,
     )
 
@@ -162,6 +164,42 @@ def validate_metric_evidence(evaluation_root: Path, metrics: dict[str, Any]) -> 
     return errors
 
 
+def _guided_build_statuses(evaluation_root: Path) -> dict[str, str]:
+    statuses: dict[str, str] = {}
+    for scenario in SCENARIOS:
+        path = (
+            evaluation_root
+            / "guided"
+            / scenario
+            / "evidence"
+            / "verification.json"
+        )
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+        status = data.get("checks", {}).get("build", {}).get("status")
+        if status not in {"pass", "fail", "not_run"}:
+            raise ValueError(
+                f"guided/{scenario}: invalid build verification status"
+            )
+        statuses[scenario] = status
+    return statuses
+
+
+def _validate_v2_build_defects(
+    metrics: dict[str, Any],
+    statuses: dict[str, str],
+) -> None:
+    for scenario, status in statuses.items():
+        expected = 1 if status == "fail" else 0
+        actual = metrics["scenarios"][scenario]["guided"]["defects"][
+            "build_failures"
+        ]
+        if actual != expected:
+            raise ValueError(
+                f"guided/{scenario}: build_failures {actual} disagrees with "
+                f"immutable build status {status}"
+            )
+
+
 def _cell(value: Any) -> str:
     if isinstance(value, list):
         value = "<br>".join(str(item) for item in value)
@@ -279,8 +317,20 @@ def render_findings_markdown(metrics: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def generate_reports(repo_root: Path, metrics: dict[str, Any]) -> dict[str, str]:
-    gate = evaluate_gate(repo_root, metrics)
+def generate_reports(
+    repo_root: Path,
+    metrics: dict[str, Any],
+    guided_build_statuses: dict[str, str] | None = None,
+) -> dict[str, str]:
+    schema_version = metrics.get("schema_version")
+    if schema_version == 1:
+        gate = evaluate_gate(repo_root, metrics)
+    elif schema_version == 2:
+        if guided_build_statuses is None:
+            raise ValueError("Gate v2 requires guided build statuses")
+        gate = evaluate_gate_v2(repo_root, metrics, guided_build_statuses)
+    else:
+        raise ValueError("unsupported metrics schema_version")
     return {
         "scores.md": render_scores_markdown(metrics, gate),
         "findings.md": render_findings_markdown(metrics),
@@ -293,34 +343,59 @@ def write_reports(
     metrics: dict[str, Any],
     output_dir: Path,
     require_complete_results: bool = True,
+    matrix_path: Path = Path("evaluation/run-matrix.json"),
 ) -> dict[str, Any]:
     resolved = output_dir.resolve()
     if not resolved.is_relative_to(repo_root.resolve()):
         raise ValueError("report output directory must remain inside the repository workspace")
     evaluation_root = resolved.parent
-    reports = generate_reports(repo_root, metrics)
     if require_complete_results:
-        result_errors = validate_results(repo_root, evaluation_root)
+        result_errors = validate_results(
+            repo_root, evaluation_root, matrix_path=matrix_path
+        )
         if result_errors:
             raise ValueError("invalid evaluation results: " + "; ".join(result_errors))
     evidence_errors = validate_metric_evidence(evaluation_root, metrics)
     if evidence_errors:
         raise ValueError("invalid metric evidence: " + "; ".join(evidence_errors))
+
+    schema_version = metrics.get("schema_version")
+    if schema_version == 1:
+        guided_build_statuses = None
+        result = evaluate_gate(repo_root, metrics)
+    elif schema_version == 2:
+        guided_build_statuses = _guided_build_statuses(evaluation_root)
+        _validate_v2_build_defects(metrics, guided_build_statuses)
+        result = evaluate_gate_v2(repo_root, metrics, guided_build_statuses)
+    else:
+        raise ValueError("unsupported metrics schema_version")
+
+    reports = generate_reports(repo_root, metrics, guided_build_statuses)
     resolved.mkdir(parents=True, exist_ok=True)
     for filename, content in reports.items():
         (resolved / filename).write_text(content, encoding="utf-8")
-    return evaluate_gate(repo_root, metrics)
+    return result
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("metrics", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--matrix",
+        type=Path,
+        default=Path("evaluation/run-matrix.json"),
+    )
     args = parser.parse_args()
     repo_root = Path(__file__).resolve().parents[1]
     try:
         metrics = json.loads(args.metrics.read_text(encoding="utf-8-sig"))
-        result = write_reports(repo_root, metrics, args.output_dir)
+        result = write_reports(
+            repo_root,
+            metrics,
+            args.output_dir,
+            matrix_path=args.matrix,
+        )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

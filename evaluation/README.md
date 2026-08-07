@@ -278,3 +278,19 @@ python scripts/evaluation_report.py evaluation/results/metrics.json --output-dir
 Before writing anything, the command reruns six-result validation and verifies that every score, trace, and finding evidence path exists in the allowed scenario directory; invalid or out-of-range references stop report generation. It then writes `scores.md`, `findings.md`, and `gate-decision.md`. It returns exit code 0 for PASS, 2 for a valid FAIL decision, and 1 for invalid or incomplete results or metrics. A zero baseline denominator is `not demonstrated`, not an automatic pass. Anatomy and accessibility defect counts must each decrease; unnecessary `ControlTemplate` and complexity defect counts must not increase.
 
 Do not mark v0.1 validated or approve precision expansion before the mechanical gate in the implementation plan passes.
+
+## v0.1-r1 revision
+
+The initial Gate v1 experiment remains bound to `evaluation/run-matrix.json`. Existing Gate v1 commands omit `--matrix` and continue to use that file by default; the original `evaluation/baseline/`, `evaluation/guided/`, and `evaluation/results/` artifacts are not replaced or reinterpreted.
+
+The `v0.1-r1` comparison uses an explicitly selected revision matrix for every harness and report command:
+
+```powershell
+--matrix evaluation/revisions/v0.1-r1/run-matrix.json
+```
+
+Revision captures and reports live under `evaluation/revisions/v0.1-r1/`. A revision command must pass the revision matrix explicitly rather than relying on path-based auto-detection or a newest-matrix convention.
+
+Gate v2 keeps the same ten scoring categories and six quality conditions, and adds a hard prerequisite that all three guided controlled builds have `build: pass` in their immutable `verification.json` evidence. The report generator derives those statuses from the captured evidence and cross-checks the guided `build_failures` defect counts before evaluating the gate.
+
+For overflow, Gate v2 preserves the existing 50% reduction rule when baseline observed overflow is greater than zero. When baseline observed overflow is zero, guided overflow must also remain zero to satisfy a non-regression floor. Zero-to-zero is reported as `non-regression`; it is not described as a measurable 50% reduction.
