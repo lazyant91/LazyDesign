@@ -1,0 +1,44 @@
+<Window
+    x:Class="LazyDesign.Evaluation.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LazyDesign.Evaluation"
+    Title="Devices">
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*" RowSpacing="12">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Devices" FontSize="28" FontWeight="SemiBold" />
+            <TextBlock Text="Manage available presentation and meeting devices." TextWrapping="Wrap" />
+        </StackPanel>
+        <CommandBar Grid.Row="1" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="True">
+            <AppBarButton Icon="Refresh" Label="Refresh" AutomationProperties.Name="Refresh" Click="RefreshButton_Click" />
+            <AppBarButton Icon="Add" Label="Add device" AutomationProperties.Name="Add device" Click="AddButton_Click" />
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="RemoveButton" Icon="Delete" Label="Remove" AutomationProperties.Name="Remove selected device" IsEnabled="False" Click="RemoveButton_Click" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+        <Grid Grid.Row="2">
+            <ListView x:Name="DeviceList" ItemsSource="{x:Bind Devices}" SelectionMode="Single" SelectionChanged="DeviceList_SelectionChanged">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Device">
+                        <Grid Padding="12,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind ConnectionType}" Opacity="0.7" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Status}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel x:Name="EmptyState" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+                <TextBlock Text="No devices" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock Text="Add a device to make it available here." TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

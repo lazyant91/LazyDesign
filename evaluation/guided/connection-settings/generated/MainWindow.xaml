@@ -1,0 +1,45 @@
+﻿<Window
+    x:Class="LazyDesign.Evaluation.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="연결 설정">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24">
+            <StackPanel Spacing="20">
+                <TextBlock Text="연결 설정" Style="{StaticResource TitleTextBlockStyle}" />
+                <StackPanel Spacing="6">
+                    <TextBox x:Name="ConnectionNameTextBox"
+                             Header="연결 프로필 이름"
+                             AutomationProperties.Name="연결 프로필 이름"
+                             TextChanged="ConnectionNameTextBox_TextChanged" />
+                    <TextBlock Text="장치를 구분할 수 있는 이름을 입력하세요."
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               TextWrapping="Wrap" />
+                    <TextBlock x:Name="ConnectionNameError"
+                               Text="연결 프로필 이름을 입력하세요."
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               TextWrapping="Wrap"
+                               Visibility="Visible"
+                               AutomationProperties.LiveSetting="Assertive" />
+                </StackPanel>
+                <ComboBox Header="전송 방식" SelectedIndex="0" AutomationProperties.Name="전송 방식">
+                    <ComboBoxItem Content="USB" />
+                    <ComboBoxItem Content="Wi-Fi" />
+                    <ComboBoxItem Content="Bluetooth" />
+                </ComboBox>
+                <ToggleSwitch AutomationProperties.Name="사용 가능한 장치에 자동으로 다시 연결"
+                              OffContent="끔"
+                              OnContent="켬">
+                    <ToggleSwitch.Header>
+                        <TextBlock Text="사용 가능한 장치에 자동으로 다시 연결" TextWrapping="Wrap" />
+                    </ToggleSwitch.Header>
+                </ToggleSwitch>
+                <Button Content="연결 설정 저장"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Click="SaveButton_Click" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Window>

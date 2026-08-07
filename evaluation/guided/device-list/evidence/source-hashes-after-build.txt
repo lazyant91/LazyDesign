@@ -1,0 +1,10 @@
+﻿# Source hashes immediately after controlled build
+Method: SHA-256 every non-build-output file under project/; bin, obj, and .vs excluded.
+edf3ad06fba5b2fb715db40ad2a5a520eaf7ea8aaa3c72e8b6a37d84c7dcd7d1  app.manifest
+def5bda0b14a23f9eb411e764dcdee9b7ae666bceea59c8a2a04f87ecc81ffa3  App.xaml
+6e604dcfa28cb4be3e1ab4732b6f05bbcffa8dfbf3c6176cc62f21de19ff6af7  App.xaml.cs
+826c897f119b8f949f829b3fe57b54d1b14a55de8cec932266c8d76bc0280fb2  global.json
+70dba0c48abb6a0fdbc3d3becbb5fadcf00d450fc4559171a202360fe3e9de0e  LazyDesign.EvaluationApp.csproj
+c1a68e996c68fe7dabd669d68bf1d814e27076b83f36886fc0bbdedc492a0945  MainWindow.xaml
+4aed3356e5a6d189f628e7caa7d223d6814b43448005b505d7e24d673bbc2d2b  MainWindow.xaml.cs
+5995320df3c5654c23c3305751dc23cb8679de43bb15b1d50e64b6a3dd562b59  README.md
