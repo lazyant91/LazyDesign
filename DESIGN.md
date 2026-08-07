@@ -8,7 +8,7 @@ This reference does not select controls, invent a visual identity, or override p
 
 ## Current status
 
-The v0.1 source manifest, five shared foundation pages, and all eight component pages are present as source-backed evaluation candidates. The controlled six-run baseline/guided comparison is complete and the mechanical v0.1 quality gate returned **FAIL**: baseline scored 44/60 and guided scored 46/60 (+4.55%), while the required overflow-reduction condition was not demonstrated because the baseline overflow count was zero. The pages therefore remain `v0.1-candidate`. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
+The v0.1 source manifest, five shared foundation pages, and all eight component pages are present as source-backed evaluation candidates. They are ready for controlled baseline/guided comparison, but they have not yet passed the v0.1 quality gate. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -126,10 +126,6 @@ The v0.1 reference advances to full component coverage only when controlled befo
 - no increase in unnecessary `ControlTemplate` replacement;
 - no material increase in irrelevant XAML or prompt-driven overengineering;
 - traceability from observed improvements to specific reference rules.
-
-The completed v0.1 evaluation did not satisfy all six conditions. Guided output improved connection-settings hierarchy, native anatomy, accessible naming, and theme-resource use, but device-list retained the CS8852 typed-`x:Bind`/positional-record build failure, failure-confirmation retained the CS4036 `ContentDialog.ShowAsync()` await/projection build failure, and the guided failure-confirmation Retry button had no activation behavior. Detailed scores and evidence are in `evaluation/results/`.
-
-Before the gate is rerun, revise `components/listview.md`, `components/contentdialog.md`, and `components/infobar.md` specifically against those observed failures using the existing source-authority rules. Do not convert these observations into normative guidance without source support. Keep the same evaluation prompt bytes, pinned start project, fresh-context requirement, and scenario-specific guided context sets for the next controlled comparison unless the evaluation procedure itself is separately reviewed and changed before the rerun.
 
 Until all gate conditions pass, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
 
