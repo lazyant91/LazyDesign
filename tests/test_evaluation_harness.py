@@ -24,6 +24,7 @@ from scripts.evaluation_harness import (
 
 ROOT = Path(__file__).resolve().parents[1]
 START_SHA = "b73babad19d0153707a49e5ba1ed9fb0a42c33ef"
+DEFAULT_MATRIX = Path("evaluation/run-matrix.json")
 SCENARIOS = ("connection-settings", "device-list", "failure-confirmation")
 IGNORED_PROJECT_PARTS = {"bin", "obj", ".vs"}
 
@@ -148,6 +149,55 @@ def complete_run(
 class EvaluationHarnessTests(unittest.TestCase):
     def test_matrix_is_valid(self) -> None:
         self.assertEqual([], validate_matrix(ROOT))
+
+    def test_validate_matrix_accepts_explicit_matrix_path(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            matrix = Path(temp) / "run-matrix.json"
+            matrix.write_bytes((ROOT / DEFAULT_MATRIX).read_bytes())
+            self.assertEqual([], validate_matrix(ROOT, matrix))
+
+    def test_prepare_uses_explicit_matrix_path(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            matrix = Path(temp) / "run-matrix.json"
+            matrix.write_bytes((ROOT / DEFAULT_MATRIX).read_bytes())
+            packet = Path(temp) / "packet"
+            manifest = prepare_run_packet(
+                ROOT,
+                "guided",
+                "device-list",
+                packet,
+                matrix_path=matrix,
+            )
+            self.assertEqual(
+                {item["path"] for item in manifest["references"]},
+                {
+                    "DESIGN.md",
+                    "foundations/text-and-localization.md",
+                    "foundations/sizing-and-spacing.md",
+                    "foundations/icons.md",
+                    "foundations/states-and-themes.md",
+                    "foundations/accessibility-basics.md",
+                    "components/button.md",
+                    "components/commandbar.md",
+                    "components/listview.md",
+                },
+            )
+
+    def test_validate_cli_accepts_explicit_matrix(self) -> None:
+        process = subprocess.run(
+            [
+                sys.executable,
+                "scripts/evaluation_harness.py",
+                "validate",
+                "--matrix",
+                "evaluation/run-matrix.json",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, process.returncode, process.stdout + process.stderr)
 
     def test_pinned_build_environment_matches_fixture_contract(self) -> None:
         environment = pinned_build_environment(ROOT)

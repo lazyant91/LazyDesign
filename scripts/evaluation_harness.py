@@ -100,8 +100,17 @@ def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
-def _load_matrix(repo_root: Path) -> dict[str, Any]:
-    return _load_json(repo_root / MATRIX_PATH)
+def _resolve_matrix_path(
+    repo_root: Path, matrix_path: Path = MATRIX_PATH
+) -> Path:
+    candidate = matrix_path if matrix_path.is_absolute() else repo_root / matrix_path
+    return _require_workspace_path(repo_root, candidate, "run matrix")
+
+
+def _load_matrix(
+    repo_root: Path, matrix_path: Path = MATRIX_PATH
+) -> dict[str, Any]:
+    return _load_json(_resolve_matrix_path(repo_root, matrix_path))
 
 
 def _safe_repo_path(repo_root: Path, relative: str) -> Path:
@@ -137,8 +146,10 @@ def _git_file_bytes(repo_root: Path, commit: str, relative: str) -> bytes:
     )
 
 
-def pinned_build_environment(repo_root: Path) -> dict[str, str]:
-    matrix = _load_matrix(repo_root)
+def pinned_build_environment(
+    repo_root: Path, matrix_path: Path = MATRIX_PATH
+) -> dict[str, str]:
+    matrix = _load_matrix(repo_root, matrix_path)
     start = matrix["start_project"]
     commit = start["commit"]
     project_path = start["path"].rstrip("/")
@@ -184,9 +195,12 @@ def pinned_build_environment(repo_root: Path) -> dict[str, str]:
 
 
 def _validate_run_environment(
-    repo_root: Path, values: dict[str, str], prefix: str = ""
+    repo_root: Path,
+    values: dict[str, str],
+    prefix: str = "",
+    matrix_path: Path = MATRIX_PATH,
 ) -> list[str]:
-    environment = pinned_build_environment(repo_root)
+    environment = pinned_build_environment(repo_root, matrix_path)
     label = f"{prefix}: " if prefix else ""
     errors: list[str] = []
     if values.get(".NET SDK") != environment["dotnet_sdk"]:
@@ -234,6 +248,7 @@ def _validate_controlled_build(
     prefix: str = "",
     expected_project_records: list[dict[str, str]] | None = None,
     expected_harness_command: str | None = None,
+    matrix_path: Path = MATRIX_PATH,
 ) -> list[str]:
     label = f"{prefix}: " if prefix else ""
     try:
@@ -267,7 +282,7 @@ def _validate_controlled_build(
     if evidence_errors:
         return errors
 
-    environment = pinned_build_environment(repo_root)
+    environment = pinned_build_environment(repo_root, matrix_path)
     if values["Expected .NET SDK"] != environment["dotnet_sdk"]:
         errors.append(f"{label}build: expected SDK differs from pinned value")
     if values["Selected .NET SDK"] != environment["dotnet_sdk"]:
@@ -308,12 +323,14 @@ def _validate_controlled_build(
     return errors
 
 
-def validate_matrix(repo_root: Path) -> list[str]:
+def validate_matrix(
+    repo_root: Path, matrix_path: Path = MATRIX_PATH
+) -> list[str]:
     errors: list[str] = []
     try:
-        matrix = _load_matrix(repo_root)
-    except (OSError, json.JSONDecodeError) as exc:
-        return [f"cannot load {MATRIX_PATH}: {exc}"]
+        matrix = _load_matrix(repo_root, matrix_path)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        return [f"cannot load {matrix_path}: {exc}"]
 
     if matrix.get("schema_version") != 1:
         errors.append("run matrix schema_version must be 1")
@@ -432,9 +449,25 @@ def _file_records_sha256(records: list[dict[str, str]]) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _packet_build_command(repo_root: Path, packet_dir: Path) -> str:
+def _matrix_cli_suffix(repo_root: Path, matrix_path: Path) -> str:
+    resolved = _resolve_matrix_path(repo_root, matrix_path)
+    default = _resolve_matrix_path(repo_root, MATRIX_PATH)
+    if resolved == default:
+        return ""
+    relative = resolved.relative_to(repo_root.resolve()).as_posix()
+    return f" --matrix {relative}"
+
+
+def _packet_build_command(
+    repo_root: Path,
+    packet_dir: Path,
+    matrix_path: Path = MATRIX_PATH,
+) -> str:
     relative = packet_dir.resolve().relative_to(repo_root.resolve()).as_posix()
-    return f"python scripts/evaluation_harness.py build --packet {relative}"
+    return (
+        f"python scripts/evaluation_harness.py build --packet {relative}"
+        f"{_matrix_cli_suffix(repo_root, matrix_path)}"
+    )
 
 
 def _captured_project_records(
@@ -595,14 +628,18 @@ def _git_project_file_hashes(
 
 
 def prepare_run_packet(
-    repo_root: Path, condition: str, scenario_name: str, destination: Path
+    repo_root: Path,
+    condition: str,
+    scenario_name: str,
+    destination: Path,
+    matrix_path: Path = MATRIX_PATH,
 ) -> dict[str, Any]:
-    errors = validate_matrix(repo_root)
+    errors = validate_matrix(repo_root, matrix_path)
     if errors:
         raise ValueError("invalid run matrix: " + "; ".join(errors))
     if condition not in {"baseline", "guided"}:
         raise ValueError(f"unsupported condition: {condition}")
-    matrix = _load_matrix(repo_root)
+    matrix = _load_matrix(repo_root, matrix_path)
     if scenario_name not in matrix["scenarios"]:
         raise ValueError(f"unsupported scenario: {scenario_name}")
     destination = _require_workspace_path(repo_root, destination, "run packet destination")
@@ -650,7 +687,7 @@ def prepare_run_packet(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         (temp / "RUN.template.md").write_text(
-            _run_template(manifest, pinned_build_environment(repo_root)),
+            _run_template(manifest, pinned_build_environment(repo_root, matrix_path)),
             encoding="utf-8",
         )
         evidence_dir = temp / "evidence"
@@ -697,11 +734,15 @@ Notes: packet hashes are recorded in PACKET.json
 """
 
 
-def _validate_packet(repo_root: Path, packet_dir: Path) -> tuple[dict[str, Any], list[str]]:
+def _validate_packet(
+    repo_root: Path,
+    packet_dir: Path,
+    matrix_path: Path = MATRIX_PATH,
+) -> tuple[dict[str, Any], list[str]]:
     errors: list[str] = []
     try:
         packet = _load_json(packet_dir / "PACKET.json")
-        matrix = _load_matrix(repo_root)
+        matrix = _load_matrix(repo_root, matrix_path)
     except (OSError, json.JSONDecodeError) as exc:
         return {}, [f"cannot load packet: {exc}"]
 
@@ -773,7 +814,9 @@ def _validate_packet(repo_root: Path, packet_dir: Path) -> tuple[dict[str, Any],
             errors.append(f"packet reference content changed: {relative}")
 
     run_template = packet_dir / "RUN.template.md"
-    expected_run_template = _run_template(packet, pinned_build_environment(repo_root))
+    expected_run_template = _run_template(
+        packet, pinned_build_environment(repo_root, matrix_path)
+    )
     if (
         not run_template.is_file()
         or run_template.read_text(encoding="utf-8-sig") != expected_run_template
@@ -847,6 +890,7 @@ def inspect_packet(
     packet_dir: Path,
     expected_condition: str,
     expected_scenario: str,
+    matrix_path: Path = MATRIX_PATH,
 ) -> dict[str, Any]:
     packet_dir = _require_workspace_path(repo_root, packet_dir, "run packet")
     relative = packet_dir.relative_to(repo_root.resolve()).as_posix()
@@ -861,7 +905,7 @@ def inspect_packet(
     if not packet_dir.is_dir():
         return result
 
-    packet, errors = _validate_packet(repo_root, packet_dir)
+    packet, errors = _validate_packet(repo_root, packet_dir, matrix_path)
     if packet:
         if packet.get("condition") != expected_condition:
             errors.append("packet condition differs from expected directory")
@@ -885,7 +929,11 @@ def inspect_packet(
     )
     if run_path.is_file() and verification_path.is_file():
         run_values, completion_errors = _parse_run_record(run_path)
-        completion_errors.extend(_validate_run_environment(repo_root, run_values))
+        completion_errors.extend(
+            _validate_run_environment(
+                repo_root, run_values, matrix_path=matrix_path
+            )
+        )
         completion_errors.extend(
             _validate_run_artifact_metadata(
                 run_values, packet, changed, deleted
@@ -904,7 +952,10 @@ def inspect_packet(
                 run_values,
                 verification_path,
                 expected_project_records=_file_hashes(packet_dir / "project"),
-                expected_harness_command=_packet_build_command(repo_root, packet_dir),
+                expected_harness_command=_packet_build_command(
+                    repo_root, packet_dir, matrix_path
+                ),
+                matrix_path=matrix_path,
             )
         )
         if run_values.get("Condition") != expected_condition:
@@ -924,7 +975,11 @@ def inspect_packet(
     return result
 
 
-def inspect_packets(repo_root: Path, packets_root: Path) -> list[dict[str, Any]]:
+def inspect_packets(
+    repo_root: Path,
+    packets_root: Path,
+    matrix_path: Path = MATRIX_PATH,
+) -> list[dict[str, Any]]:
     packets_root = _require_workspace_path(repo_root, packets_root, "packet root")
     return [
         inspect_packet(
@@ -932,15 +987,20 @@ def inspect_packets(repo_root: Path, packets_root: Path) -> list[dict[str, Any]]
             packets_root / condition / scenario,
             condition,
             scenario,
+            matrix_path,
         )
         for condition in ("baseline", "guided")
         for scenario in sorted(EXPECTED_SCENARIOS)
     ]
 
 
-def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
+def build_packet(
+    repo_root: Path,
+    packet_dir: Path,
+    matrix_path: Path = MATRIX_PATH,
+) -> dict[str, Any]:
     packet_dir = _require_workspace_path(repo_root, packet_dir, "run packet")
-    packet, errors = _validate_packet(repo_root, packet_dir)
+    packet, errors = _validate_packet(repo_root, packet_dir, matrix_path)
     if errors:
         raise ValueError("invalid run packet: " + "; ".join(errors))
 
@@ -948,7 +1008,7 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
     if evidence_path.exists():
         raise FileExistsError(f"build evidence already exists: {evidence_path}")
 
-    environment = pinned_build_environment(repo_root)
+    environment = pinned_build_environment(repo_root, matrix_path)
     project = packet_dir / "project" / environment["project_file"]
     control_root = repo_root / "evaluation/.remote-temp" / f"sdk-{uuid.uuid4().hex}"
     control_root.mkdir(parents=True, exist_ok=False)
@@ -994,7 +1054,7 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
         )
         output = completed.stdout.decode("utf-8", errors="replace")
         relative_project = project.relative_to(repo_root).as_posix()
-        harness_command = _packet_build_command(repo_root, packet_dir)
+        harness_command = _packet_build_command(repo_root, packet_dir, matrix_path)
         project_records = _file_hashes(packet_dir / "project")
         project_state_sha256 = _file_records_sha256(project_records)
         evidence = "\n".join(
@@ -1039,17 +1099,22 @@ def build_packet(repo_root: Path, packet_dir: Path) -> dict[str, Any]:
 
 
 def capture_run(
-    repo_root: Path, packet_dir: Path, destination: Path
+    repo_root: Path,
+    packet_dir: Path,
+    destination: Path,
+    matrix_path: Path = MATRIX_PATH,
 ) -> dict[str, Any]:
     packet_dir = _require_workspace_path(repo_root, packet_dir, "run packet")
     destination = _require_workspace_path(repo_root, destination, "result destination")
     if destination.exists():
         raise FileExistsError(f"result already exists: {destination}")
-    packet, errors = _validate_packet(repo_root, packet_dir)
+    packet, errors = _validate_packet(repo_root, packet_dir, matrix_path)
     changed, deleted = _project_delta(packet, packet_dir / "project")
     run_values, run_errors = _parse_run_record(packet_dir / "RUN.md")
     errors.extend(run_errors)
-    errors.extend(_validate_run_environment(repo_root, run_values))
+    errors.extend(
+        _validate_run_environment(repo_root, run_values, matrix_path=matrix_path)
+    )
     errors.extend(
         _validate_run_artifact_metadata(run_values, packet, changed, deleted)
     )
@@ -1066,7 +1131,10 @@ def capture_run(
             run_values,
             verification_path,
             expected_project_records=_file_hashes(packet_dir / "project"),
-            expected_harness_command=_packet_build_command(repo_root, packet_dir),
+            expected_harness_command=_packet_build_command(
+                repo_root, packet_dir, matrix_path
+            ),
+            matrix_path=matrix_path,
         )
     )
     if run_values:
@@ -1117,13 +1185,17 @@ def capture_run(
 
 
 def _validate_result(
-    repo_root: Path, result_dir: Path, condition: str, scenario_name: str
+    repo_root: Path,
+    result_dir: Path,
+    condition: str,
+    scenario_name: str,
+    matrix_path: Path = MATRIX_PATH,
 ) -> tuple[dict[str, str], list[str]]:
     errors: list[str] = []
     try:
         packet = _load_json(result_dir / "PACKET.json")
         capture = _load_json(result_dir / "CAPTURE.json")
-        matrix = _load_matrix(repo_root)
+        matrix = _load_matrix(repo_root, matrix_path)
     except (OSError, json.JSONDecodeError) as exc:
         return {}, [f"{condition}/{scenario_name}: cannot load result metadata: {exc}"]
     prefix = f"{condition}/{scenario_name}"
@@ -1201,7 +1273,11 @@ def _validate_result(
         errors.append(f"{prefix}: captured evidence files differ")
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)
-    errors.extend(_validate_run_environment(repo_root, run_values, prefix))
+    errors.extend(
+        _validate_run_environment(
+            repo_root, run_values, prefix, matrix_path=matrix_path
+        )
+    )
     errors.extend(
         _validate_run_artifact_metadata(
             run_values,
@@ -1225,6 +1301,7 @@ def _validate_result(
             verification_path,
             prefix,
             expected_project_records=_captured_project_records(packet, capture),
+            matrix_path=matrix_path,
         )
     )
     if run_values:
@@ -1239,8 +1316,12 @@ def _validate_result(
     return run_values, errors
 
 
-def validate_results(repo_root: Path, results_root: Path) -> list[str]:
-    errors = validate_matrix(repo_root)
+def validate_results(
+    repo_root: Path,
+    results_root: Path,
+    matrix_path: Path = MATRIX_PATH,
+) -> list[str]:
+    errors = validate_matrix(repo_root, matrix_path)
     if errors:
         return errors
     all_runs: list[tuple[str, dict[str, str]]] = []
@@ -1252,7 +1333,7 @@ def validate_results(repo_root: Path, results_root: Path) -> list[str]:
                 errors.append(f"missing result directory: {label}")
                 continue
             values, result_errors = _validate_result(
-                repo_root, result_dir, condition, scenario_name
+                repo_root, result_dir, condition, scenario_name, matrix_path
             )
             errors.extend(result_errors)
             if values:
@@ -1265,20 +1346,29 @@ def validate_results(repo_root: Path, results_root: Path) -> list[str]:
     return errors
 
 
+def _add_matrix_argument(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--matrix", type=Path, default=MATRIX_PATH)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("validate")
+    validate = subparsers.add_parser("validate")
+    _add_matrix_argument(validate)
     prepare = subparsers.add_parser("prepare")
+    _add_matrix_argument(prepare)
     prepare.add_argument("--condition", choices=("baseline", "guided"), required=True)
     prepare.add_argument("--scenario", choices=tuple(sorted(EXPECTED_SCENARIOS)), required=True)
     prepare.add_argument("--destination", type=Path, required=True)
     build = subparsers.add_parser("build")
+    _add_matrix_argument(build)
     build.add_argument("--packet", type=Path, required=True)
     capture = subparsers.add_parser("capture")
+    _add_matrix_argument(capture)
     capture.add_argument("--packet", type=Path, required=True)
     capture.add_argument("--destination", type=Path, required=True)
     inspect_one = subparsers.add_parser("inspect-packet")
+    _add_matrix_argument(inspect_one)
     inspect_one.add_argument("--packet", type=Path, required=True)
     inspect_one.add_argument(
         "--condition", choices=("baseline", "guided"), required=True
@@ -1287,33 +1377,35 @@ def main() -> int:
         "--scenario", choices=tuple(sorted(EXPECTED_SCENARIOS)), required=True
     )
     inspect = subparsers.add_parser("inspect-packets")
+    _add_matrix_argument(inspect)
     inspect.add_argument("--root", type=Path, default=Path("evaluation/.runs"))
     validate_completed = subparsers.add_parser("validate-results")
+    _add_matrix_argument(validate_completed)
     validate_completed.add_argument("--root", type=Path, default=Path("evaluation"))
     args = parser.parse_args()
     repo_root = Path(__file__).resolve().parents[1]
     if args.command == "validate":
-        errors = validate_matrix(repo_root)
+        errors = validate_matrix(repo_root, args.matrix)
         success = "evaluation run matrix passed"
     elif args.command == "validate-results":
         results_root = args.root if args.root.is_absolute() else repo_root / args.root
-        errors = validate_results(repo_root, results_root)
+        errors = validate_results(repo_root, results_root, args.matrix)
         success = "evaluation results passed"
     elif args.command == "build":
         packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
-        build_result = build_packet(repo_root, packet)
+        build_result = build_packet(repo_root, packet, args.matrix)
         print(json.dumps(build_result, ensure_ascii=False, indent=2))
         return 0 if build_result["exit_code"] == 0 else 2
     elif args.command == "inspect-packet":
         packet = args.packet if args.packet.is_absolute() else repo_root / args.packet
         status = inspect_packet(
-            repo_root, packet, args.condition, args.scenario
+            repo_root, packet, args.condition, args.scenario, args.matrix
         )
         print(json.dumps(status, ensure_ascii=False, indent=2))
         return 1 if status["status"] in {"stale", "missing"} else 0
     elif args.command == "inspect-packets":
         packets_root = args.root if args.root.is_absolute() else repo_root / args.root
-        statuses = inspect_packets(repo_root, packets_root)
+        statuses = inspect_packets(repo_root, packets_root, args.matrix)
         counts = {
             status: sum(item["status"] == status for item in statuses)
             for status in ("ready", "in_progress", "capture_ready", "stale", "missing")
@@ -1333,7 +1425,11 @@ def main() -> int:
             else repo_root / args.destination
         )
         manifest = prepare_run_packet(
-            repo_root, args.condition, args.scenario, destination
+            repo_root,
+            args.condition,
+            args.scenario,
+            destination,
+            args.matrix,
         )
         print(json.dumps(manifest, ensure_ascii=False, indent=2))
         return 0
@@ -1344,7 +1440,9 @@ def main() -> int:
             if args.destination.is_absolute()
             else repo_root / args.destination
         )
-        capture_manifest = capture_run(repo_root, packet, destination)
+        capture_manifest = capture_run(
+            repo_root, packet, destination, args.matrix
+        )
         print(json.dumps(capture_manifest, ensure_ascii=False, indent=2))
         return 0
     if errors:
