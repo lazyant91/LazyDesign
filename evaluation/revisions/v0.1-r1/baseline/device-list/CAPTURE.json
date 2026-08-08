@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "9efcb6c58b8c69d32976dcf7cd01aa743a4043ba32b75a2a1409b49479321e84",
+  "run_sha256": "592da73a1ee67d54aa0db131cb723e6dc0920932a3b84de187c7748c1e5fc880",
+  "generated_files": [],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "generation-failure.txt",
+      "sha256": "4a2fe58dd442b75dca3f0e3eef4919f64aa2f1e098369e81b696f0709e752f7d"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "fcf010a7a64f4453a060f7547a195bc3207462895a5508e43d313f0d44638fa4"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "c7f78c9859c0b80608f82e322b15e42aa8c29a55ecdb68435bd4b0410b82cd1f"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}

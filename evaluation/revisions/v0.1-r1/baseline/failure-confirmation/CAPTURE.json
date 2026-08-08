@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "failure-confirmation",
+  "prompt_sha256": "da6a5a51a50c1bba205352038197645747a13d9c6af81926e759fe951535c938",
+  "packet_sha256": "976468beded76ee95f36da5390097ad7d628c6477f434abae99842782725a369",
+  "run_sha256": "f7bc07ab42d3a2c41f0632302916cb488fbea3ba444a7adcaf37b3431124127f",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "0992e9301867609a4b0335f616dd9ccfd1a48f0fde34bddc4d968264522d9504"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "13e2b7eff4033da268c607454f9b4a2996bf2dc5d203a8754ac30c1ba5967b31"
+    },
+    {
+      "path": "generation-failure.txt",
+      "sha256": "a414f7bf2b1d5c0e7932b1e77f4387d7e68b9c037b913579ec7c570fbedf1925"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "1795c571330e6151392c91729ebee2312d97b48274cdd85dcaf8268a748cebf6"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "de81baf5e43074d4bf3ae2d0411372b7d37b61720eb388f12faa314774a6f2e7"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "9da78c14d459ff20112e39c5695182b003c0e4786b6e179f8d71fcdbb0494b24"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7eb300520d323956dbb46c2416d1c755c1b1db00a0bf41a19e021e9992e8388e"
+    }
+  ]
+}
