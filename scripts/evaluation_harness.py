@@ -472,6 +472,54 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _sha256_matches_text_line_endings(path: Path, expected: object) -> bool:
+    if not isinstance(expected, str):
+        return False
+    data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() == expected:
+        return True
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+
+    normalized = data.replace(b"\r\n", b"\n")
+    parts = normalized.split(b"\n")
+    newline_count = len(parts) - 1
+    if newline_count == 0:
+        return False
+
+    for split in range(newline_count + 1):
+        for first, second in ((b"\r\n", b"\n"), (b"\n", b"\r\n")):
+            candidate = bytearray(parts[0])
+            for index, part in enumerate(parts[1:]):
+                candidate += first if index < split else second
+                candidate += part
+            if hashlib.sha256(candidate).hexdigest() == expected:
+                return True
+    return False
+
+
+def _file_hashes_match_capture(captured: object, root: Path) -> bool:
+    if not isinstance(captured, list):
+        return False
+    actual = _file_hashes(root)
+    if len(captured) != len(actual):
+        return False
+    for expected, observed in zip(captured, actual):
+        if not isinstance(expected, dict):
+            return False
+        if expected.get("path") != observed["path"]:
+            return False
+        if expected.get("sha256") == observed["sha256"]:
+            continue
+        if not _sha256_matches_text_line_endings(
+            root / observed["path"], expected.get("sha256")
+        ):
+            return False
+    return True
+
+
 def _file_hashes(root: Path) -> list[dict[str, str]]:
     records: list[dict[str, str]] = []
     for path in sorted(root.rglob("*")):
@@ -1336,11 +1384,17 @@ def _validate_result(
     prompt_path = result_dir / "PROMPT.md"
     packet_path = result_dir / "PACKET.json"
     run_path = result_dir / "RUN.md"
-    if not prompt_path.is_file() or capture.get("prompt_sha256") != _sha256(prompt_path):
+    if not prompt_path.is_file() or not _sha256_matches_text_line_endings(
+        prompt_path, capture.get("prompt_sha256")
+    ):
         errors.append(f"{prefix}: captured prompt differs")
-    if not packet_path.is_file() or capture.get("packet_sha256") != _sha256(packet_path):
+    if not packet_path.is_file() or not _sha256_matches_text_line_endings(
+        packet_path, capture.get("packet_sha256")
+    ):
         errors.append(f"{prefix}: captured packet metadata differs")
-    if not run_path.is_file() or capture.get("run_sha256") != _sha256(run_path):
+    if not run_path.is_file() or not _sha256_matches_text_line_endings(
+        run_path, capture.get("run_sha256")
+    ):
         errors.append(f"{prefix}: captured run record differs")
     if packet.get("start_project_commit") != start["commit"]:
         errors.append(f"{prefix}: start project SHA mismatch")
@@ -1352,7 +1406,9 @@ def _validate_result(
     prompt_bytes = _git_file_bytes(repo_root, input_commit, scenario["prompt"])
     prompt = result_dir / "PROMPT.md"
     expected_prompt_hash = hashlib.sha256(prompt_bytes).hexdigest()
-    if not prompt.is_file() or _sha256(prompt) != expected_prompt_hash:
+    if not prompt.is_file() or not _sha256_matches_text_line_endings(
+        prompt, expected_prompt_hash
+    ):
         errors.append(f"{prefix}: PROMPT.md bytes differ")
     if packet.get("prompt_sha256") != expected_prompt_hash:
         errors.append(f"{prefix}: PACKET.json prompt hash differs")
@@ -1364,20 +1420,20 @@ def _validate_result(
         if item.get("sha256") != hashlib.sha256(reference_bytes).hexdigest():
             errors.append(f"{prefix}: reference hash differs for {item['path']}")
     captured_generated = capture.get("generated_files")
-    actual_generated = (
-        _file_hashes(result_dir / "generated")
-        if (result_dir / "generated").is_dir()
-        else []
-    )
-    if captured_generated != actual_generated:
+    generated_root = result_dir / "generated"
+    if generated_root.is_dir():
+        generated_matches = _file_hashes_match_capture(captured_generated, generated_root)
+    else:
+        generated_matches = captured_generated == []
+    if not generated_matches:
         errors.append(f"{prefix}: captured generated files differ")
     captured_evidence = capture.get("evidence_files")
-    actual_evidence = (
-        _file_hashes(result_dir / "evidence")
-        if (result_dir / "evidence").is_dir()
-        else []
-    )
-    if captured_evidence != actual_evidence:
+    evidence_root = result_dir / "evidence"
+    if evidence_root.is_dir():
+        evidence_matches = _file_hashes_match_capture(captured_evidence, evidence_root)
+    else:
+        evidence_matches = captured_evidence == []
+    if not evidence_matches:
         errors.append(f"{prefix}: captured evidence files differ")
     run_values, run_errors = _parse_run_record(result_dir / "RUN.md")
     errors.extend(f"{prefix}: {error}" for error in run_errors)

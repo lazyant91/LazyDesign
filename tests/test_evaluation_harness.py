@@ -1040,6 +1040,28 @@ class EvaluationHarnessTests(unittest.TestCase):
             errors = validate_results(ROOT, results)
             self.assertTrue(any("Model identifier differs" in error for error in errors))
 
+    def test_validate_results_accepts_line_ending_only_checkout_conversion(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
+            results = self._create_complete_results(Path(temp))
+            prompt = results / "baseline/connection-settings/PROMPT.md"
+            original = prompt.read_bytes()
+            normalized = original.replace(b"\r\n", b"\n")
+            parts = normalized.split(b"\n")
+            split = max(1, (len(parts) - 1) // 2)
+            captured_bytes = bytearray(parts[0])
+            for index, part in enumerate(parts[1:]):
+                captured_bytes += b"\r\n" if index < split else b"\n"
+                captured_bytes += part
+            captured_hash = hashlib.sha256(bytes(captured_bytes)).hexdigest()
+            self.assertNotEqual(captured_hash, hashlib.sha256(original).hexdigest())
+            capture_path = results / "baseline/connection-settings/CAPTURE.json"
+            capture = json.loads(capture_path.read_text(encoding="utf-8"))
+            capture["prompt_sha256"] = captured_hash
+            capture_path.write_text(
+                json.dumps(capture, indent=2) + "\n", encoding="utf-8"
+            )
+            self.assertEqual([], validate_results(ROOT, results))
+
     def test_validate_results_rejects_modified_captured_evidence(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "evaluation") as temp:
             results = self._create_complete_results(Path(temp))
