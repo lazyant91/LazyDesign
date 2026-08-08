@@ -1,0 +1,143 @@
+{
+  "schema_version": 2,
+  "scenarios": {
+    "connection-settings": {
+      "baseline": {
+        "scores": [1, 1, 1, 1, 0, 1, 1, 1, 2, 2],
+        "score_evidence": [
+          {"category": 1, "score": 1, "evidence": ["baseline/connection-settings/evidence/static-review.txt:6-9", "baseline/connection-settings/evidence/runtime-uia.txt:1-3"], "uncertainty": "The source wraps growing text and avoids horizontal scrolling, but the runtime crashed before 420-DIP content fit could be observed."},
+          {"category": 2, "score": 1, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:9-30"], "uncertainty": "Basic grouping exists, but hierarchy relies on local FontSize, FontWeight, and Opacity treatment and repeats the automatic-reconnect concept in a separate heading."},
+          {"category": 3, "score": 1, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:13-30"], "uncertainty": "Native controls are present, but TextBox and ComboBox use adjacent TextBlocks rather than native associated headers."},
+          {"category": 4, "score": 1, "evidence": ["baseline/connection-settings/evidence/static-review.txt:6-10", "baseline/connection-settings/evidence/runtime-uia.txt:1-3"], "uncertainty": "Native controls and state handlers are present statically, but the executable crashed before keyboard, popup, toggle, validation, or save states could be exercised."},
+          {"category": 5, "score": 0, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:13-31"], "uncertainty": "The TextBox and ComboBox lack an associated native label or explicit AutomationProperties.Name, so important interactive naming/association is missing even before runtime verification."},
+          {"category": 6, "score": 1, "evidence": ["baseline/connection-settings/evidence/static-review.txt:7-9", "baseline/connection-settings/evidence/runtime-uia.txt:1-3"], "uncertainty": "Required Korean strings are present with wrapping-oriented structure, but the 420-DIP runtime and text scaling could not be verified because launch failed."},
+          {"category": 7, "score": 1, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:9-31"], "uncertainty": "Native controls and a ThemeResource critical brush are used, but local font-size/weight/opacity styling duplicates semantic styling that built-in styles could provide."},
+          {"category": 8, "score": 1, "evidence": ["baseline/connection-settings/evidence/static-review.txt:6-8", "baseline/connection-settings/evidence/runtime-uia.txt:1-3"], "uncertainty": "The intended TextBox, ComboBox, ToggleSwitch, and Button characteristics are represented statically, but scenario-specific runtime behavior was not observable."},
+          {"category": 9, "score": 2, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:13-31"], "uncertainty": "Labels, helper text, validation text, values, and the save action are structurally distinct despite the missing native associations."},
+          {"category": 10, "score": 2, "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:1-35", "baseline/connection-settings/generated/MainWindow.xaml.cs:1-30"], "uncertainty": "The implementation is compact and contains only scenario-related XAML and minimal validation/save code."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 1, "accessibility": 2, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 1}
+      },
+      "guided": {
+        "scores": [2, 2, 2, 2, 1, 2, 2, 2, 2, 2],
+        "score_evidence": [
+          {"category": 1, "score": 2, "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:3-12"], "uncertainty": "The required controls and growing text were directly bounded inside the measured 420-DIP client width; text scaling above 100 percent was not exercised."},
+          {"category": 2, "score": 2, "evidence": ["guided/connection-settings/generated/MainWindow.xaml:10-45"], "uncertainty": "none"},
+          {"category": 3, "score": 2, "evidence": ["guided/connection-settings/generated/MainWindow.xaml:15-45"], "uncertainty": "none"},
+          {"category": 4, "score": 2, "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:15-20"], "uncertainty": "ComboBox open/selection, ToggleSwitch state, keyboard traversal, validation, and Save activation were exercised; focus visuals were not separately inspected."},
+          {"category": 5, "score": 1, "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:4-18", "guided/connection-settings/generated/MainWindow.xaml:15-45"], "uncertainty": "Meaningful UIA names and keyboard operation were observed, but focus-visual, Narrator, and Accessibility Insights verification were not performed."},
+          {"category": 6, "score": 2, "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:3-12"], "uncertainty": "The required 420-DIP constrained-width behavior was measured directly; text scaling above 100 percent was not exercised."},
+          {"category": 7, "score": 2, "evidence": ["guided/connection-settings/generated/MainWindow.xaml:12-45", "guided/connection-settings/evidence/static-review.txt:6-13"], "uncertainty": "Native controls and built-in semantic/accent styles are used with no local ControlTemplate or fixed-color replacement; Light and High Contrast were not run."},
+          {"category": 8, "score": 2, "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:15-18"], "uncertainty": "none"},
+          {"category": 9, "score": 2, "evidence": ["guided/connection-settings/generated/MainWindow.xaml:15-45"], "uncertainty": "none"},
+          {"category": 10, "score": 2, "evidence": ["guided/connection-settings/generated/MainWindow.xaml:1-49", "guided/connection-settings/generated/MainWindow.xaml.cs:1-44"], "uncertainty": "The output stays within the requested native controls and uses only small event handlers needed for validation and state tracking."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 0, "accessibility": 0, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 0}
+      }
+    },
+    "device-list": {
+      "baseline": {
+        "scores": [0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        "score_evidence": [
+          {"category": 1, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "Generation produced no device-list implementation or required long fixtures."},
+          {"category": 2, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "No scenario information hierarchy was generated."},
+          {"category": 3, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "Required CommandBar, ListView, and empty-state anatomy are absent."},
+          {"category": 4, "score": 0, "evidence": ["baseline/device-list/evidence/generation-failure.txt:13-22", "baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "No selection, command, overflow, keyboard, or disabled-state implementation was generated."},
+          {"category": 5, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "No requested interactive controls or keyboard/accessibility path exists in the empty generation result."},
+          {"category": 6, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "Neither required long-language fixture was generated, so localization or 520-DIP resilience is absent."},
+          {"category": 7, "score": 2, "evidence": ["baseline/device-list/CAPTURE.json:1-28", "baseline/device-list/evidence/static-review.txt:5-11"], "uncertainty": "No scenario implementation was generated, but the preserved starter source introduces no custom ControlTemplate, fixed-color system, or native-style replacement; this category does not imply the scenario itself was implemented."},
+          {"category": 8, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "No CommandBar or ListView characteristic is implemented."},
+          {"category": 9, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "No device labels, metadata, values, or empty-state explanation were generated."},
+          {"category": 10, "score": 0, "evidence": ["baseline/device-list/evidence/static-review.txt:5-14"], "uncertainty": "The unchanged starter project is small but is not the smallest clear implementation necessary for this scenario because it does not implement the scenario at all."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 3, "accessibility": 1, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 0}
+      },
+      "guided": {
+        "scores": [1, 2, 2, 1, 1, 1, 2, 1, 2, 2],
+        "score_evidence": [
+          {"category": 1, "score": 1, "evidence": ["guided/device-list/generated/MainWindow.xaml:43-111", "guided/device-list/evidence/runtime-crash.txt:5-12"], "uncertainty": "Long names use wrapping-oriented layout, but the executable crashed before the required 520-DIP content fit could be rendered."},
+          {"category": 2, "score": 2, "evidence": ["guided/device-list/generated/MainWindow.xaml:15-40", "guided/device-list/generated/MainWindow.xaml:63-111"], "uncertainty": "none"},
+          {"category": 3, "score": 2, "evidence": ["guided/device-list/evidence/static-review.txt:5-12"], "uncertainty": "The required native anatomy is explicit statically; runtime rendering later failed before the screen appeared."},
+          {"category": 4, "score": 1, "evidence": ["guided/device-list/evidence/static-review.txt:6-10", "guided/device-list/evidence/runtime-crash.txt:5-12"], "uncertainty": "Selection and command enable/disable plumbing are present, but native selection visibility, keyboard behavior, and overflow could not be exercised."},
+          {"category": 5, "score": 1, "evidence": ["guided/device-list/generated/MainWindow.xaml:23-52", "guided/device-list/evidence/runtime-crash.txt:5-12"], "uncertainty": "Native labeled commands and an item AutomationProperties.Name are present, but keyboard, focus, selected-state, and UIA runtime exposure could not be verified."},
+          {"category": 6, "score": 1, "evidence": ["guided/device-list/generated/MainWindow.xaml:63-111", "guided/device-list/generated/MainWindow.xaml.cs:9-13", "guided/device-list/evidence/runtime-crash.txt:12-12"], "uncertainty": "Both required long fixtures and wrapping are present, but 520-DIP rendering and text scaling were not verified because runtime failed."},
+          {"category": 7, "score": 2, "evidence": ["guided/device-list/evidence/static-review.txt:5-12"], "uncertainty": "Native CommandBar/ListView controls and built-in text styles are used without custom ControlTemplate or fixed-color replacement; theme rendering was not available."},
+          {"category": 8, "score": 1, "evidence": ["guided/device-list/evidence/static-review.txt:6-10", "guided/device-list/evidence/runtime-crash.txt:12-12"], "uncertainty": "Remove is placed in SecondaryCommands and ListView selection plumbing exists, but overflow and selection characteristics were not runnable."},
+          {"category": 9, "score": 2, "evidence": ["guided/device-list/generated/MainWindow.xaml:63-111"], "uncertainty": "Device name, connection label/value, status label/value, and empty-state explanation are separated structurally."},
+          {"category": 10, "score": 2, "evidence": ["guided/device-list/generated/MainWindow.xaml:1-115", "guided/device-list/generated/MainWindow.xaml.cs:1-56"], "uncertainty": "The XAML and code-behind are limited to the requested commands, list, empty state, data, selection, and small mutation handlers; no unrelated architecture is added."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 0, "accessibility": 0, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 1}
+      }
+    },
+    "failure-confirmation": {
+      "baseline": {
+        "scores": [0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        "score_evidence": [
+          {"category": 1, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "The required Korean failure message and dialog content were never generated."},
+          {"category": 2, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "No scenario status, explanation, or destructive-action hierarchy exists."},
+          {"category": 3, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "InfoBar and ContentDialog are both absent."},
+          {"category": 4, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "Retry, dismissal, dialog actions, keyboard behavior, and focus flow are absent."},
+          {"category": 5, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "The requested interactive controls, accessible names, and focus behavior are absent."},
+          {"category": 6, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "The required Korean message and dialog explanation are absent, so localization/scaling resilience is not implemented."},
+          {"category": 7, "score": 2, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "The partial generation introduces no custom ControlTemplate or fixed-color replacement; this category does not imply the scenario was implemented."},
+          {"category": 8, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "No InfoBar or ContentDialog characteristic is implemented."},
+          {"category": 9, "score": 0, "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "No status title/message, action labels, or dialog explanation were generated."},
+          {"category": 10, "score": 0, "evidence": ["baseline/failure-confirmation/generated/MainWindow.xaml:1-9", "baseline/failure-confirmation/evidence/static-review.txt:5-16"], "uncertainty": "The source is tiny but is only a title change over the starter and does not implement the requested scenario."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 2, "accessibility": 1, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 0}
+      },
+      "guided": {
+        "scores": [0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        "score_evidence": [
+          {"category": 1, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "Generation never began, so the required message and dialog content are absent."},
+          {"category": 2, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No scenario information hierarchy was generated."},
+          {"category": 3, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "InfoBar and ContentDialog are absent because generation never began."},
+          {"category": 4, "score": 0, "evidence": ["guided/failure-confirmation/evidence/generation-failure.txt:6-17", "guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No Retry, dismissal, dialog, keyboard, or focus interaction was generated or run."},
+          {"category": 5, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No requested interactive controls or accessibility relationships exist in the empty generation result."},
+          {"category": 6, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "The required Korean content was not generated, so localization/scaling resilience is absent."},
+          {"category": 7, "score": 2, "evidence": ["guided/failure-confirmation/CAPTURE.json:1-28", "guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No scenario implementation was generated, but the unchanged starter source introduces no custom ControlTemplate or fixed-color replacement; this does not imply the scenario was implemented."},
+          {"category": 8, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No InfoBar or ContentDialog characteristic was generated."},
+          {"category": 9, "score": 0, "evidence": ["guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "No status, action, or dialog text roles were generated."},
+          {"category": 10, "score": 0, "evidence": ["guided/failure-confirmation/evidence/generation-failure.txt:6-17", "guided/failure-confirmation/evidence/static-review.txt:5-10"], "uncertainty": "The unchanged starter project is not a scenario implementation."}
+        ],
+        "defects": {"overflow": 0, "anatomy": 2, "accessibility": 1, "control_template": 0, "complexity": 0, "build_failures": 0, "render_failures": 0}
+      }
+    }
+  },
+  "traceable_improvements": [
+    {"scenario": "connection-settings", "category": 1, "rule_ids": ["WINUI-SIZE-WIDTH-001", "WINUI-TEXT-LOCALIZATION-001"], "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:3-12"]},
+    {"scenario": "connection-settings", "category": 2, "rule_ids": ["WINUI-TEXT-HIERARCHY-001"], "evidence": ["guided/connection-settings/generated/MainWindow.xaml:10-29"]},
+    {"scenario": "connection-settings", "category": 3, "rule_ids": ["WINUI-TEXTBOX-ANATOMY-001", "WINUI-COMBO-ANATOMY-001", "WINUI-TOGGLE-ANATOMY-001"], "evidence": ["guided/connection-settings/generated/MainWindow.xaml:15-41"]},
+    {"scenario": "connection-settings", "category": 4, "rule_ids": ["WINUI-A11Y-KEYBOARD-001", "WINUI-COMBO-STATE-001", "WINUI-TOGGLE-STATE-001"], "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:15-20"]},
+    {"scenario": "connection-settings", "category": 5, "rule_ids": ["WINUI-A11Y-NAME-001", "WINUI-A11Y-LABEL-001", "WINUI-COMBO-A11Y-001"], "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:4-18", "guided/connection-settings/generated/MainWindow.xaml:15-45"]},
+    {"scenario": "connection-settings", "category": 6, "rule_ids": ["WINUI-SIZE-WIDTH-001", "WINUI-TEXT-LOCALIZATION-001"], "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:3-12"]},
+    {"scenario": "connection-settings", "category": 7, "rule_ids": ["WINUI-THEME-RESOURCE-001", "WINUI-THEME-ACCENT-001"], "evidence": ["guided/connection-settings/generated/MainWindow.xaml:12-45"]},
+    {"scenario": "connection-settings", "category": 8, "rule_ids": ["WINUI-COMBO-STATE-001", "WINUI-TOGGLE-STATE-001", "WINUI-TEXTBOX-STATE-001"], "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:15-18"]},
+    {"scenario": "device-list", "category": 1, "rule_ids": ["WINUI-LISTVIEW-LAYOUT-001", "WINUI-TEXT-LOCALIZATION-001"], "evidence": ["guided/device-list/generated/MainWindow.xaml:43-111"]},
+    {"scenario": "device-list", "category": 2, "rule_ids": ["WINUI-TEXT-HIERARCHY-001", "WINUI-LISTVIEW-CONTENT-001"], "evidence": ["guided/device-list/generated/MainWindow.xaml:15-40", "guided/device-list/generated/MainWindow.xaml:63-111"]},
+    {"scenario": "device-list", "category": 3, "rule_ids": ["WINUI-COMMANDBAR-ANATOMY-001", "WINUI-LISTVIEW-ANATOMY-001"], "evidence": ["guided/device-list/evidence/static-review.txt:5-12"]},
+    {"scenario": "device-list", "category": 4, "rule_ids": ["WINUI-COMMANDBAR-STATE-001", "WINUI-LISTVIEW-STATE-001"], "evidence": ["guided/device-list/evidence/static-review.txt:6-10"]},
+    {"scenario": "device-list", "category": 5, "rule_ids": ["WINUI-COMMANDBAR-A11Y-001", "WINUI-LISTVIEW-A11Y-001"], "evidence": ["guided/device-list/generated/MainWindow.xaml:23-52"]},
+    {"scenario": "device-list", "category": 6, "rule_ids": ["WINUI-TEXT-LOCALIZATION-001", "WINUI-LISTVIEW-LAYOUT-001"], "evidence": ["guided/device-list/generated/MainWindow.xaml:63-111", "guided/device-list/generated/MainWindow.xaml.cs:9-13"]},
+    {"scenario": "device-list", "category": 8, "rule_ids": ["WINUI-COMMANDBAR-STATE-001", "WINUI-LISTVIEW-STATE-001"], "evidence": ["guided/device-list/evidence/static-review.txt:6-10"]},
+    {"scenario": "device-list", "category": 9, "rule_ids": ["WINUI-LISTVIEW-CONTENT-001", "WINUI-LISTVIEW-CONTENT-002"], "evidence": ["guided/device-list/generated/MainWindow.xaml:63-111"]},
+    {"scenario": "device-list", "category": 10, "rule_ids": ["WINUI-LISTVIEW-XBIND-001", "WINUI-SIZE-NATIVE-001"], "evidence": ["guided/device-list/generated/MainWindow.xaml.cs:9-56", "guided/device-list/evidence/static-review.txt:11-15"]}
+  ],
+  "findings": {
+    "attributable_improvements": [
+      {"summary": "The guided connection-settings output uses native Headers and semantic built-in styles instead of the baseline's adjacent unlabeled field text and local font/opacity hierarchy, and its 420-DIP runtime sequence completed.", "evidence": ["baseline/connection-settings/generated/MainWindow.xaml:9-30", "guided/connection-settings/generated/MainWindow.xaml:10-45", "guided/connection-settings/evidence/runtime-uia.txt:3-20"], "rule_ids": ["WINUI-TEXT-HIERARCHY-001", "WINUI-TEXTBOX-ANATOMY-001", "WINUI-A11Y-LABEL-001", "WINUI-THEME-RESOURCE-001"]}
+    ],
+    "unchanged_defects": [
+      {"summary": "The failure-confirmation scenario remained non-evaluable as a product UI: the baseline captured only a title change and the guided run never began generation, so neither result contains InfoBar or ContentDialog anatomy.", "evidence": ["baseline/failure-confirmation/evidence/static-review.txt:5-16", "guided/failure-confirmation/evidence/static-review.txt:5-10"], "rule_ids": []},
+      {"summary": "A Microsoft.UI.Xaml.dll 0xc000027b runtime crash remained present in the revision dataset, occurring for baseline connection-settings and guided device-list before a target window could render.", "evidence": ["baseline/connection-settings/evidence/runtime-crash.txt:11-28", "guided/device-list/evidence/runtime-crash.txt:5-12"], "rule_ids": []}
+    ],
+    "regressions": [],
+    "ambiguous_decisions": [
+      {"summary": "The large aggregate score increase is heavily confounded by generation infrastructure failures: baseline device-list produced no source and both failure-confirmation generations were blocked or partial, so the 15-to-36 point change is not clean evidence of reference efficacy by itself.", "evidence": ["baseline/device-list/evidence/generation-failure.txt:13-22", "baseline/failure-confirmation/evidence/static-review.txt:5-16", "guided/failure-confirmation/evidence/generation-failure.txt:6-17"], "rule_ids": []},
+      {"summary": "The revised guided device-list used the new get/set typed-x:Bind item-model pattern and passed the controlled build, but its paired revision baseline produced no source. The buildability observation is real, while the paired causal improvement cannot be isolated in this run set.", "evidence": ["guided/device-list/evidence/static-review.txt:11-17", "baseline/device-list/evidence/generation-failure.txt:13-22"], "rule_ids": []},
+      {"summary": "Runtime success differed across generated scenarios: guided connection-settings rendered and completed UIA checks while baseline connection-settings and guided device-list crashed in Microsoft.UI.Xaml.dll. The evidence does not establish that this runtime difference was caused by LazyDesign guidance.", "evidence": ["guided/connection-settings/evidence/runtime-uia.txt:3-20", "baseline/connection-settings/evidence/runtime-crash.txt:11-28", "guided/device-list/evidence/runtime-crash.txt:5-12"], "rule_ids": []}
+    ],
+    "ignored_rules": [],
+    "unnecessary_output": []
+  }
+}

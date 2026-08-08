@@ -10,7 +10,9 @@ This reference does not select controls, invent a visual identity, or override p
 
 The initial controlled six-run v0.1 comparison is complete and Gate v1 returned **FAIL**: baseline scored 44/60 and guided scored 46/60 (+4.55%), while overflow reduction was not demonstrated because the baseline observed-overflow count was zero. The pages therefore remain `v0.1-candidate`. Windows Design Kit identity is recorded, while component-level UI-kit inspection remains pending and does not support active rules.
 
-A source-backed `v0.1-r1` revision is now pinned for re-evaluation at input snapshot `d40d08504baf73cf80d8b4f16248a1ee86d8c252`. Relative to the original guided input, only `components/listview.md`, `components/contentdialog.md`, and `components/infobar.md` differ; the fixed prompt bytes, starting fixture, constrained widths, and guided reference path sets remain unchanged. The new six-run comparison has not yet been generated or scored. Precision expansion remains blocked.
+The separate source-backed `v0.1-r1` comparison is now complete and Gate v2 also returns **FAIL**. The clean scored input snapshot is `d40d08504baf73cf80d8b4f16248a1ee86d8c252`; relative to the original guided input, only `components/listview.md`, `components/contentdialog.md`, and `components/infobar.md` differ, while prompt bytes, the starting fixture, constrained widths, and guided reference path sets remain unchanged. Revision scores are 15/60 baseline and 36/60 guided (+140.0%). All six quality conditions pass mechanically, including zero-to-zero overflow non-regression, but the hard guided-build prerequisite fails because build statuses are `connection-settings=pass`, `device-list=pass`, and `failure-confirmation=not_run`.
+
+The revision result is not clean evidence of reference efficacy by score alone: baseline device-list produced no source, baseline failure-confirmation produced only a partial title change, and guided failure-confirmation never began generation after its mandatory harness invocation was blocked by the Remote safety inspection. Guided device-list did apply the revised public get/set typed-`x:Bind` model and passed the controlled build, but its executable later crashed before rendering in `Microsoft.UI.Xaml.dll` with `0xc000027b`; baseline connection-settings hit the same runtime crash class. All captures remain immutable. Precision expansion remains blocked, and evaluation execution reliability plus the runtime-startup failure should be investigated outside scored artifacts before another reference revision is chosen.
 
 An absent rule is not permission to present a guess as official guidance.
 
@@ -131,9 +133,9 @@ The `v0.1-r1` reference advances only when Gate v2 passes. The same ten scoring 
 - traceability from observed improvements to specific reference rules;
 - as a hard prerequisite outside the six quality conditions, all three guided generated projects must pass the controlled build.
 
-The initial Gate v1 FAIL remains preserved under `evaluation/results/` and is not reinterpreted under Gate v2. The new `v0.1-r1` comparison will be stored separately under `evaluation/revisions/v0.1-r1/`.
+The initial Gate v1 FAIL remains preserved under `evaluation/results/` and is not reinterpreted under Gate v2. The completed `v0.1-r1` comparison is stored separately under `evaluation/revisions/v0.1-r1/`; its mechanical decision is also FAIL because the guided build prerequisite is not satisfied even though all six quality conditions pass.
 
-Until Gate v2 passes, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
+Until a future controlled evaluation passes Gate v2, these pages remain `v0.1-candidate` and expansion to additional controls is blocked.
 
 The detailed product design and execution plan are stored in:
 
