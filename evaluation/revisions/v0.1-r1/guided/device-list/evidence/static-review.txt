@@ -1,0 +1,17 @@
+# Static review evidence
+
+Method: Read-only review of frozen MainWindow.xaml and MainWindow.xaml.cs against the exact device-list PROMPT.md after the controlled build; generated source was not modified.
+
+Observed structure:
+- Native CommandBar with Refresh and Add device primary AppBarButton commands and Remove in CommandBar.SecondaryCommands.
+- Native ListView with SelectionMode="Single" and a typed DataTemplate showing device name, connection type, and status.
+- Required long Korean and English fixture names are present in the seeded Devices collection.
+- Separate EmptyState panel is present and code-behind toggles DeviceList/EmptyState from collection count.
+- RemoveButton starts disabled, becomes enabled from ListView selection, and removal updates empty state.
+- The typed x:Bind item model is a sealed DeviceItem class with ordinary public get/set properties for Name, ConnectionType, and Status.
+- No custom ControlTemplate or replacement interaction model is present.
+
+Build-critical observation:
+- Unlike the original v0.1 guided device-list result, this revised generated item model compiled successfully in the one controlled build; no CS8852 generated XAML metadata error occurred.
+
+Actual result: static source structure satisfies the fixed prompt at source level, but the later executable launch crashed in Microsoft.UI.Xaml.dll before a rendered screen appeared. Static review does not substitute for runtime, theme, width, selection, keyboard, overflow, or accessibility verification.

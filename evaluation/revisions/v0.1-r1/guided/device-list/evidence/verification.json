@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable crashed before a rendered UI was available; Accessibility Insights was not installed and installation was not authorized."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [{"path": "build.txt", "detail": "The one controlled evaluation build selected .NET SDK 9.0.313 and exited 0 with 0 warnings and 0 errors."}],
+      "reason": "The frozen generated project compiled successfully without source repair."
+    },
+    "commandbar_overflow": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Static source places Remove in CommandBar.SecondaryCommands, but the executable crashed before CommandBar overflow behavior could be exercised."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable exited before a top-level window appeared, so the fixed 520-DIP rendered-width condition could not be measured."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The OS app-theme preference was dark, but the generated app did not render, so Dark theme rendering was not exercised."
+    },
+    "empty_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable crashed before the Remove commands and resulting empty-state transition could be exercised."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required English long fixture is present in frozen source, but rendered long-content behavior could not be verified because the app crashed before rendering."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No rendered UI was available, so focus visuals could not be observed."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app did not render and changing the Windows contrast theme was not authorized."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable crashed before keyboard navigation could be exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required Korean long fixture is present in frozen source, but rendered long-content behavior could not be verified because the app crashed before rendering."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current app-theme preference was dark, the app did not render, and switching Windows theme was not authorized."
+    },
+    "listview_selection": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable crashed before selected and unselected ListView behavior could be exercised."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The executable crashed before a rendered UI was available, and Narrator was not launched."
+    },
+    "remove_command_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Source wires RemoveButton enabled state to ListView selection, but runtime enable/disable behavior could not be exercised because the app crashed before rendering."
+    },
+    "rendered_runtime": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-crash.txt", "detail": "After the successful controlled build, the frozen executable exited before a top-level UIA window appeared; Windows Application event 1000 reports Microsoft.UI.Xaml.dll with exception code 0xc000027b."}],
+      "reason": "The generated executable failed during WinUI runtime initialization before the target screen rendered."
+    },
+    "static_review": {
+      "status": "pass",
+      "evidence": [{"path": "static-review.txt", "detail": "Read-only source review found the required native CommandBar/ListView/empty-state structure, both long fixtures, selection-driven Remove state, no custom template, and a compile-safe public get/set DeviceItem model used by typed x:Bind."}],
+      "reason": "Static source inspection found no direct contradiction with the fixed prompt, and the revised item-model pattern compiled successfully."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app did not render and no text scale above 100 percent was exercised."
+    }
+  }
+}

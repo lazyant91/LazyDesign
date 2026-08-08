@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "prompt_sha256": "da6a5a51a50c1bba205352038197645747a13d9c6af81926e759fe951535c938",
+  "packet_sha256": "ef9356fbae35803ac4b1faee11c38c2c6a8ecf06ae923ae1b81d28e7160d698f",
+  "run_sha256": "8e466d73a52d319566dba8c9edfd8b1c85b7ae904e0a533fce246be2c8fe452d",
+  "generated_files": [],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "generation-failure.txt",
+      "sha256": "706aac9f1e19808ebfb2b451d468da819dd81bc145233881a77e8944432edc09"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "faf35b187631ea5034697120dce74ef13ba519cc93cdc166ed683cfe102fb274"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "bfe339aeb84c709f6da76615956e2a6da2d6858ae3a748d128f2736b109539a4"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7eb300520d323956dbb46c2416d1c755c1b1db00a0bf41a19e021e9992e8388e"
+    }
+  ]
+}

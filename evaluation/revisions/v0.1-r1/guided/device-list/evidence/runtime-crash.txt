@@ -1,0 +1,12 @@
+# Runtime crash evidence
+
+Method: After the one controlled build succeeded, launch the frozen generated WinUI 3 executable once for read-only UI Automation discovery. No generated source was modified before or after launch.
+
+Observed result:
+- The process exited before a top-level UIA window became available.
+- Process exit code: -1073741189.
+- Windows Application event 1000 at 2026-08-08 20:39:24 local time identified LazyDesign.EvaluationApp.exe from this exact packet path.
+- Faulting module: Microsoft.UI.Xaml.dll, version 3.2.0.0.
+- Exception code: 0xc000027b.
+
+Actual result: rendered runtime failed before the target screen appeared. No 520-DIP layout, CommandBar overflow, ListView selection, empty-state transition, long-content rendering, keyboard behavior, or theme rendering claim is made from this failed launch.

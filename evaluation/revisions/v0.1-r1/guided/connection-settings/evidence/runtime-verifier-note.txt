@@ -1,0 +1,7 @@
+# Runtime verifier selector note
+
+The first controller runtime attempt launched the frozen generated app at a measured 420-DIP client width, but the copied initial-experiment verifier stopped because it searched for the ToggleSwitch using an exact accessible-name match.
+
+A read-only UI Automation diagnostic then found AutomationId `AutoReconnectToggle` with `ControlType.Button` and `TogglePattern=True`. The generated XAML already assigned `x:Name="AutoReconnectToggle"`; no project source was changed.
+
+The controller preserved the first failed verifier log as `runtime-uia-selector-failure.txt`, changed only the evidence verifier selector from exact accessible-name matching to `AutomationId=AutoReconnectToggle`, and reran the same runtime interaction sequence. The rerun completed successfully. This correction is verifier-only and is not generation repair.
