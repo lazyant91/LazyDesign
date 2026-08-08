@@ -1,0 +1,12 @@
+# Verification environment evidence
+
+Method: Read-only observation after the controlled build failure. No OS-wide setting was changed, Narrator was not launched, and no tool was installed.
+
+Observed:
+- Windows: Microsoft Windows NT 10.0.19045.0
+- AppsUseLightTheme: 0
+- SystemParameters.HighContrast: False
+- Accessibility Insights executable found: False
+- Narrator process running: False
+
+Runtime verification was not attempted because the frozen generated project failed the controlled build and the evaluation contract forbids repair.

@@ -1,0 +1,18 @@
+﻿# Verification environment evidence
+
+Method: Read current Windows accessibility/theme state and installed-tool/process presence only. No OS-wide setting was changed, Narrator was not launched, and no tool was installed.
+
+Observed during runtime verification:
+- Windows: Microsoft Windows NT 10.0.19045.0
+- AppsUseLightTheme: 0
+- SystemParameters.HighContrast: False
+- TextScaleFactor registry value: 
+- Accessibility Insights executable found: False
+- Narrator process running: False
+
+Runtime screenshot analysis:
+- runtime.png exists: True
+- runtime UIA log records a 420x700 client at 96 DPI = 420 DIP wide.
+- runtime UIA screenshot sampling records 6 sampled colors, average RGB component 7.1, with black dominant and additional blue/white/gray UI colors.
+
+Observed result: the current dark app-theme preference was exercised without changing OS settings. Light theme switching, High Contrast switching, text scaling changes, Narrator launch, and Accessibility Insights execution were not performed.

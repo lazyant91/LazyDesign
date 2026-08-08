@@ -1,0 +1,16 @@
+# Static review evidence
+
+Method: Read-only review of the frozen packet source after the Temporary Chat returned. No generated source was modified.
+
+Observed source state:
+- MainWindow.xaml differs from the start project only by the Window Title value `Device settings`.
+- The page still contains only the starter `TextBlock Text="Evaluation start project"`.
+- No `InfoBar` exists.
+- No Retry action or dismissal implementation exists.
+- No required Korean failure message exists.
+- No `ContentDialog` exists.
+- No Remove, Cancel, close, focus, or accessible-name implementation for the requested confirmation flow exists.
+- No custom `ControlTemplate` was introduced.
+
+Actual result: the frozen partial source does not implement the fixed failure-confirmation prompt.
+Fail reason: generation was blocked before the required UI could be produced. This static review does not claim runtime behavior.

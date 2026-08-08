@@ -1,0 +1,12 @@
+# Frozen source hashes after controlled build and runtime attempt
+
+- app.manifest: edf3ad06fba5b2fb715db40ad2a5a520eaf7ea8aaa3c72e8b6a37d84c7dcd7d1
+- App.xaml: def5bda0b14a23f9eb411e764dcdee9b7ae666bceea59c8a2a04f87ecc81ffa3
+- App.xaml.cs: 6e604dcfa28cb4be3e1ab4732b6f05bbcffa8dfbf3c6176cc62f21de19ff6af7
+- global.json: 826c897f119b8f949f829b3fe57b54d1b14a55de8cec932266c8d76bc0280fb2
+- LazyDesign.EvaluationApp.csproj: 70dba0c48abb6a0fdbc3d3becbb5fadcf00d450fc4559171a202360fe3e9de0e
+- MainWindow.xaml: 32d2466b74d2823f0d5c05d7edd12547c5321c421cfc54333e81a45821178f54
+- MainWindow.xaml.cs: 3953ac874bef2e4eaf760eac5560d8bfab77b391be43e4c63f896d292b30fb52
+- README.md: 5995320df3c5654c23c3305751dc23cb8679de43bb15b1d50e64b6a3dd562b59
+
+These values match the frozen source hashes recorded immediately before the controlled build for MainWindow.xaml and MainWindow.xaml.cs. Generated source was not repaired after build or runtime failure.

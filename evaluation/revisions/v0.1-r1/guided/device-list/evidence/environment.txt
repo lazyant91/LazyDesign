@@ -1,0 +1,17 @@
+# Verification environment evidence
+
+Method: Read current Windows accessibility/theme state after the frozen runtime launch attempt. No OS-wide setting was changed, Narrator was not launched, and no tool was installed.
+
+Observed:
+- Windows: Microsoft Windows NT 10.0.19045.0
+- AppsUseLightTheme: 0
+- SystemParameters.HighContrast: False
+- TextScaleFactor registry value: not set / unavailable
+- Accessibility Insights executable found: False
+- Narrator process running: False
+
+Runtime result:
+- The generated executable exited before producing a top-level window, so no screenshot or rendered theme/content/input verification was possible.
+- Current dark app-theme preference was observed from the OS setting but was not counted as a successful dark-theme app check because the app did not render.
+
+Checks intentionally not performed: Light-theme switching, High Contrast switching, text scaling changes, Narrator launch, and Accessibility Insights execution.

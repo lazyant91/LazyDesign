@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen generated project failed the controlled build, so there was no runnable UI to inspect; Accessibility Insights was also not installed and no installation was authorized."
+    },
+    "build": {
+      "status": "fail",
+      "evidence": [{"path": "build.txt", "detail": "The controlled evaluation harness selected .NET SDK 9.0.313 and the pinned project, but dotnet build exited 1 with three CS8852 errors in generated XamlTypeInfo.g.cs for Device.Name, ConnectionType, and Status."}],
+      "reason": "The frozen generated project failed the one allowed controlled build and was preserved without repair."
+    },
+    "commandbar_overflow": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Source places Remove in CommandBar.SecondaryCommands, but runtime overflow could not be exercised because the frozen generated project failed the controlled build."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The 520-DIP rendered-width condition could not be measured because the frozen generated project did not build."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No rendered app was available after the controlled build failure, so Dark theme rendering was not exercised."
+    },
+    "empty_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The empty-state transition could not be exercised because the frozen generated project failed the controlled build."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required English long fixture is present in frozen source, but rendered long-content behavior could not be verified because the project failed to build."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No runnable UI was produced, so focus visuals could not be observed."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No runnable UI was produced; High Contrast was not changed or exercised."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Keyboard navigation could not be exercised because the frozen generated project failed the controlled build."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required Korean long fixture is present in frozen source, but rendered long-content behavior could not be verified because the project failed to build."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No rendered app was available after the controlled build failure, so Light theme rendering was not exercised."
+    },
+    "listview_selection": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "ListView selected/unselected runtime behavior could not be exercised because the frozen generated project failed the controlled build."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "There was no runnable UI after the build failure, and Narrator was not launched."
+    },
+    "remove_command_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Remove-command enable/disable behavior could not be exercised because the frozen generated project failed the controlled build."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The controlled build failed, so no generated executable was launched and no rendered-runtime claim is made."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [{"path": "static-review.txt", "detail": "Read-only review found the required native CommandBar/ListView/empty-state structure and fixtures, including Remove in SecondaryCommands, but also found the positional Device record used by typed x:Bind; the resulting init-only properties match the CS8852 build-blocking generated XAML metadata errors."}],
+      "reason": "Static review identified a build-critical XAML binding/model incompatibility in the frozen generated source."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No runnable UI was produced, so text scaling above 100 percent was not exercised."
+    }
+  }
+}

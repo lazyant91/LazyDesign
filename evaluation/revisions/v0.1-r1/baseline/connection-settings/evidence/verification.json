@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "scenario": "connection-settings",
+  "parameters": {
+    "content_width_dip": 420,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local environment and no installation or execution was authorized for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [
+        {
+          "path": "build.txt",
+          "detail": "Controlled revision-matrix build selected .NET SDK 9.0.313, built the pinned project, and exited 0 with 0 warnings and 0 errors."
+        }
+      ],
+      "reason": "The controlled build succeeded and frozen generated source hashes remained unchanged."
+    },
+    "combobox_popup": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The generated executable crashed before a top-level window rendered, so the ComboBox popup could not be exercised."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The generated executable crashed before a client window existed, so the 420-DIP runtime width and control bounds could not be measured."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "AppsUseLightTheme was 0, but the generated app crashed before rendering; OS preference alone is not counted as a rendered dark-theme check."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The fixed connection-settings prompt contains no English long-content fixture, and the frozen generated source was not modified to add one."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app crashed before a focusable rendered UI existed, so focus visual appearance could not be checked."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "SystemParameters.HighContrast was False and changing the Windows contrast theme was not authorized."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app crashed before a top-level rendered UI existed, so keyboard traversal could not be exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Required Korean strings exist in frozen source, but the app crashed before they rendered, so runtime fit/readability was not verified."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current app-theme preference was dark and switching Windows Light/Dark theme was not authorized; the app also failed before rendering."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and launching it was not authorized for this run."
+    },
+    "rendered_runtime": {
+      "status": "fail",
+      "evidence": [
+        {
+          "path": "runtime-uia.txt",
+          "detail": "The frozen executable was launched but exited before Process.MainWindowHandle became available; exit was -1073741189."
+        },
+        {
+          "path": "runtime-crash.txt",
+          "detail": "Windows Application Error event 1000 records LazyDesign.EvaluationApp.exe faulting in Microsoft.UI.Xaml.dll with exception code 0xc000027b."
+        }
+      ],
+      "reason": "The generated WinUI executable crashed before a top-level window rendered."
+    },
+    "save_button_activation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app crashed before a rendered Save button was available to UI Automation."
+    },
+    "static_review": {
+      "status": "pass",
+      "evidence": [
+        {
+          "path": "static-review.txt",
+          "detail": "Read-only review of frozen MainWindow.xaml and MainWindow.xaml.cs found the prompt-required native controls, Korean content, inline empty-name validation, and minimal supporting C#."
+        }
+      ],
+      "reason": "Static source inspection found no direct contradiction with the fixed prompt requirements; runtime validity is recorded separately."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No text scale above 100 percent was exercised and changing Windows text scaling was not authorized."
+    },
+    "textbox_validation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app crashed before the TextBox and validation message rendered, so runtime valid/empty transitions could not be exercised."
+    },
+    "toggleswitch_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The app crashed before the ToggleSwitch rendered, so its state transition could not be exercised."
+    }
+  }
+}

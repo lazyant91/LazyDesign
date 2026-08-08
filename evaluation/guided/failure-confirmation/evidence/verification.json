@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen generated project failed the controlled build, and Accessibility Insights was not installed or authorized for installation."
+    },
+    "build": {
+      "status": "fail",
+      "evidence": [{"path": "build.txt", "detail": "The controlled harness selected .NET SDK 9.0.313 and the pinned project, then the actual build exited 1 with CS4036 at MainWindow.xaml.cs awaiting ContentDialog.ShowAsync(), followed by cascading XAML compiler MSB3073."}],
+      "reason": "The frozen guided implementation did not compile and was preserved without repair."
+    },
+    "contentdialog_close_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The project did not build, so native Cancel/close behavior could not be exercised at runtime."
+    },
+    "contentdialog_default_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The project did not build, so ContentDialog default-button behavior could not be exercised at runtime."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current app-theme preference was dark, but the failed build prevented any rendered dark-theme verification."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The failed build prevented rendered English-content verification."
+    },
+    "focus_return": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The generated source contains intended focus return after the dialog closes, but the failed build prevented runtime verification."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The project did not build, so no runtime focus visual could be observed."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "High Contrast was not active, changing the Windows contrast theme was not authorized, and the project did not build."
+    },
+    "infobar_dismissal": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The generated InfoBar is closable in source, but the failed build prevented exercising dismissal at runtime."
+    },
+    "infobar_retry_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen source contains a Retry button but no activation handler, and the failed build prevented any runtime activation check."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The project did not build, so keyboard navigation could not be exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The exact required Korean failure message is present in frozen XAML, but the failed build prevented rendered long-content verification."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current app-theme preference was dark, switching Windows Light/Dark theme was not authorized, and the project did not build."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running, launching it was not authorized, and the project did not build."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen generated project failed the controlled build, so there was no runnable generated executable to verify."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [{"path": "static-review.txt", "detail": "Read-only review found the requested native InfoBar and ContentDialog structure, but also a compile-blocking await/WinRT projection defect and an unwired Retry button."}],
+      "reason": "The requested structure is substantially present, but the generated source contains a build blocker and the Retry action lacks generated behavior."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No text scale above 100 percent was activated, changing Windows text scaling was not authorized, and the project did not build."
+    }
+  }
+}

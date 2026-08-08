@@ -1,0 +1,15 @@
+# Static review evidence
+
+Method: Read-only review of frozen MainWindow.xaml and MainWindow.xaml.cs against the exact packet PROMPT.md and supplied packet-local LazyDesign context. Generated source was not modified.
+
+Observed source state:
+- Native TextBox, ComboBox, ToggleSwitch, and Button controls are present.
+- The TextBox uses Header for the persistent label, includes the required helper sentence, and has a separate inline validation TextBlock.
+- The ComboBox contains USB, Wi-Fi, and Bluetooth and exposes a Header.
+- The ToggleSwitch uses the required Korean reconnection text as Header and explicit On/Off content.
+- The save action uses a native Button with AccentButtonStyle.
+- Horizontal scrolling is disabled; the content StackPanel is constrained with MaxWidth=420 and growing text uses wrapping where applicable.
+- Validation is updated on TextBox lost focus and Save. Save does not programmatically return focus to the TextBox when the name is empty.
+- No custom ControlTemplate or replacement interaction model is introduced.
+
+Actual result: The frozen source implements the fixed prompt with native WinUI controls and minimal code-behind. Runtime evidence is required for interaction, width, theme, and keyboard claims.

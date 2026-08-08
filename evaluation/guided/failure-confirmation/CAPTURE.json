@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "prompt_sha256": "da6a5a51a50c1bba205352038197645747a13d9c6af81926e759fe951535c938",
+  "packet_sha256": "11f0a140c251f2d50332993e8c86abebe9af5706be38e8c65bda9aa70e9030b4",
+  "run_sha256": "66ebb213f9d395f396b182246f896f18ddf38f96d341b700d92928bab32d5074",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "25c6d46ad1ff310176715f53201a40bed0a23d98f3751f5c0f6de632ce61792c"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "1097481f30079fb056dbe59e9ddc0ac330fc839c870bfe36562d70d3731d9ff0"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "9eaf065376319676d9b09cc1470011f8f8e944099c7719350bf12e2aabe4ae34"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "a13e03bce6a8324b77c3fab324f247a6b540d2c3c88e4478de1f8b392895d9e7"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "b86a54659c74a978c75c52cecda70671961d2116857ad4a57726f2bbac1e39cf"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "46706256319de6d6f3b8baada0278abde2afe3f60044e3ec89c77d5ab840a262"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "98c06676226bab22888b11936a584c63c4c2589e1a96dab88639a8032928ab54"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7eb300520d323956dbb46c2416d1c755c1b1db00a0bf41a19e021e9992e8388e"
+    }
+  ]
+}

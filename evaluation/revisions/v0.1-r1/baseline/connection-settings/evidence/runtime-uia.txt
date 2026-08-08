@@ -1,0 +1,3 @@
+﻿METHOD: Launch frozen v0.1-r1 baseline WinUI 3 executable; use Windows UI Automation for control discovery, keyboard traversal, TextBox validation, ComboBox expansion/selection, ToggleSwitch state change, Save Button invoke; resize only the app window to a measured 420-DIP client width; capture the client screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r1/baseline/connection-settings/evidence/runtime-uia.ps1
+ERROR: app exited before top-level window appeared; exit=-1073741189

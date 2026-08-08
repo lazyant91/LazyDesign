@@ -1,0 +1,15 @@
+# Generation failure evidence
+
+Temporary Chat report:
+- Mandatory pre-generation inspect-packet command was blocked by the Remote tool safety filter before execution in that chat.
+- The chat reported generation did not begin and reported no successful source writes.
+- No web/network, build, runtime verification, RUN.md, verification.json, repair, or regeneration was performed by the generator.
+
+Controller reconciliation:
+- Before handoff, the controller had prepared this exact packet and observed status=ready, activity=[], errors=[], references=none.
+- After the Temporary Chat returned, controller inspect-packet reported status=in_progress with project files changed and no packet errors.
+- Disk comparison against PACKET.json showed exactly one changed source file: MainWindow.xaml.
+- The actual frozen MainWindow.xaml SHA-256 was 0992e9301867609a4b0335f616dd9ccfd1a48f0fde34bddc4d968264522d9504, while all other starting project file hashes still matched PACKET.json.
+- Read-only inspection showed the only visible source difference was the Window Title value `Device settings`; the requested InfoBar/ContentDialog implementation was not generated.
+
+Actual result: generation was blocked/incomplete, but a partial MainWindow.xaml change existed on disk despite the Temporary Chat report. The controller preserves the actual disk state and does not repair, revert, or regenerate it.

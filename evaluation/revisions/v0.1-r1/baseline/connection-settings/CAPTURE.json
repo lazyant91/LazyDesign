@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "connection-settings",
+  "prompt_sha256": "c98e93290fee0ddb973e5773d5116c73ce25987000199b1bcc94a121bc0d5184",
+  "packet_sha256": "30c105b77f6f79c8fe3ac1afa40478951a935a78a45adbaf3e002be57158ad23",
+  "run_sha256": "ba387bb3afd72c047244fbee47dbe53c17afc5ecaa6adf04e9d2f3fae1c82fb0",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "ef285a0eac9c16de7e4d3170918149c1dcce31718372e13252dc544c68e096c9"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "00b840425a421be7ad93a23d8a0b561c7e7738edc333c514ad706bc793cf820e"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "d4f3b5e2876a67e82c4df5dc98ab14aee314868785f9a15abc3ef421370b85d0"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "4cd212da50db940018a4003ee53d9dd72b557576b5eb4eb98c7746ca09446b63"
+    },
+    {
+      "path": "runtime-crash.txt",
+      "sha256": "9167898577e49b5769f8eeaf32561891f84055c957ae4600bd1a6a1ce4937ea0"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "9d79cbc1f77d0f2e6927a56811a50da12e72479bb12c049ed5b1f8c0c9870019"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "6c285f9cc0a323852f9ca08c90565417e9d321f9eeb3e42d0f711098ead53fee"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "5d23c19836e589e00ce1fcc3b76ae5fb3ba0f2dec7bbd6ecf6cd9c09ef758c1f"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "c6dd581932344dfe43e2316508c22ec2b52d0f9e3e227ff1aa4039e84ba98978"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "04d5a62ddd176cdc0cbb91f49ac5fd3fbc68f3733dbc398a1286acae493b63b6"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "ee3d0c5305280df39e9847317f60bd5d63ad3158b9c8a983bd8d79c99450e41c"
+    }
+  ]
+}

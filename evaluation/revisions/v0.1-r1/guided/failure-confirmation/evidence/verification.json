@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation never began, so there was no scenario UI to inspect with Accessibility Insights."
+    },
+    "build": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation never began and the starter project remained unchanged; the controller preserved the empty failed generation without running a build."
+    },
+    "contentdialog_close_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No ContentDialog was generated because generation did not begin."
+    },
+    "contentdialog_default_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No ContentDialog was generated because generation did not begin."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so Dark theme rendering was not exercised."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation did not begin, so no rendered content was available for English long-content verification."
+    },
+    "focus_return": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No ContentDialog interaction was generated or launched, so focus return was not exercised."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so focus visuals were not observed."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched; High Contrast was not changed or exercised."
+    },
+    "infobar_dismissal": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No InfoBar was generated because generation did not begin."
+    },
+    "infobar_retry_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No InfoBar or Retry action was generated because generation did not begin."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so keyboard navigation was not exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required Korean failure message was never generated, so rendered Korean long-content behavior could not be verified."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so Light theme rendering was not exercised."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so Narrator verification was not performed."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation never began and no scenario implementation existed to launch."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {
+          "path": "static-review.txt",
+          "detail": "Read-only controller review confirmed the packet remained the unchanged starter project and lacked every scenario-specific InfoBar/ContentDialog requirement because generation never began."
+        },
+        {
+          "path": "generation-failure.txt",
+          "detail": "The Temporary Chat was blocked at the mandatory pre-generation inspect command and no retry or workaround was performed."
+        }
+      ],
+      "reason": "The unchanged starter source does not implement the requested failure and confirmation UI."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No scenario UI was generated or launched, so text scaling above 100 percent was not exercised."
+    }
+  }
+}

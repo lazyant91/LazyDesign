@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "connection-settings",
+  "parameters": {
+    "content_width_dip": 420,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not installed and installation was not authorized for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [{"path": "build.txt", "detail": "Controlled evaluation harness build selected .NET SDK 9.0.313, used the pinned project, and exited 0 with 0 warnings and 0 errors."}],
+      "reason": "The controlled build succeeded without modifying frozen generated source."
+    },
+    "combobox_popup": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation ExpandCollapsePattern reached Expanded, exposed USB, Wi-Fi, and Bluetooth list items, and SelectionItemPattern selected the third item."}],
+      "reason": "The native ComboBox popup and item selection were actually exercised at runtime."
+    },
+    "content_width": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "The running app was resized to an exactly measured 420-DIP client width at 96 DPI; UIA bounds for target controls and visible text stayed within horizontal client bounds."}],
+      "reason": "The fixed 420-DIP condition was reproduced and measured target elements did not overflow horizontally."
+    },
+    "dark_theme": {
+      "status": "pass",
+      "evidence": [{"path": "environment.txt", "detail": "Current AppsUseLightTheme was 0 and no theme setting was changed; runtime screenshot sampling reported a predominantly dark capture with multiple UI colors."}, {"path": "runtime.png", "detail": "Client-area screenshot captured from the actually running app under the existing dark app-theme preference."}],
+      "reason": "The existing dark app-theme environment was actually exercised without changing OS-wide settings."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The fixed connection-settings prompt contains no English long-content fixture, and the frozen generated source was not modified to add one."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "UI Automation proved focus movement but did not objectively verify the visual appearance of the focus indicator, and no permitted visual accessibility tool was available."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "SystemParameters.HighContrast was False and changing the Windows contrast theme was not authorized."
+    },
+    "keyboard_navigation": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "Real Tab input starting from the TextBox moved focus in order to TransportComboBox, AutoReconnectToggle, and the Save Button."}],
+      "reason": "Keyboard traversal through the interactive controls was actually exercised."
+    },
+    "korean_long_content": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "Runtime UI Automation exposed the required Korean labels/helper/long reconnection text/save text; measured visible text bounds stayed inside the 420-DIP client width."}, {"path": "runtime.png", "detail": "Runtime client screenshot was captured while the Korean fixture was rendered."}],
+      "reason": "The required Korean fixture was actually rendered and objectively measured within the constrained client width."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current app-theme preference was dark and switching Windows Light/Dark theme was not authorized."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and launching it was not authorized for this run."
+    },
+    "rendered_runtime": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "The generated WinUI executable launched successfully, UI Automation found the target window and controls, and the runtime interaction sequence completed without script exception."}, {"path": "runtime.png", "detail": "A 420x700 client-area screenshot was captured from the actually running generated app."}],
+      "reason": "Direct runtime evidence confirms the generated target screen launched and rendered."
+    },
+    "save_button_activation": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation InvokePattern activated the Save Button with an empty name; validation remained visible and focus returned to ConnectionNameTextBox."}],
+      "reason": "Save activation and invalid-input focus/validation behavior were actually exercised."
+    },
+    "static_review": {
+      "status": "pass",
+      "evidence": [{"path": "static-review.txt", "detail": "Read-only review of frozen MainWindow.xaml and MainWindow.xaml.cs against the exact PROMPT.md found all required controls/content and minimal supporting C# with native WinUI controls."}],
+      "reason": "Static source inspection found no direct contradiction with the fixed prompt requirements."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No text scale above 100 percent was active, and changing Windows text scaling was not authorized."
+    },
+    "textbox_validation": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation ValuePattern showed validation absent for a non-empty value, visible for an empty value, and visible after invoking Save with the empty value."}],
+      "reason": "Both valid and empty TextBox validation states were actually exercised at runtime."
+    },
+    "toggleswitch_state": {
+      "status": "pass",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation TogglePattern changed AutoReconnectToggle from Off to On."}],
+      "reason": "The ToggleSwitch state transition was actually exercised and observed."
+    }
+  }
+}

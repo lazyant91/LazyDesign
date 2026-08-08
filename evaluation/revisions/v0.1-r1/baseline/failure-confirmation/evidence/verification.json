@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation was incomplete and no completed target UI was available for Accessibility Insights verification."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [{"path": "build.txt", "detail": "Controlled evaluation harness build selected .NET SDK 9.0.313, used the pinned project, and exited 0 with 0 warnings and 0 errors."}],
+      "reason": "The frozen partial source compiled successfully without source repair."
+    },
+    "contentdialog_close_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The incomplete generated source contains no ContentDialog, so there was no generated close action to exercise."
+    },
+    "contentdialog_default_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The incomplete generated source contains no ContentDialog, so there was no generated default action to exercise."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Runtime rendering was not performed because generation was incomplete and the requested target UI was absent."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed generated target UI existed for English long-content verification."
+    },
+    "focus_return": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The requested dialog flow was not generated, so focus-return behavior could not be exercised."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed target interaction flow existed for focus-visual verification."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed generated target UI existed for High Contrast verification, and no OS setting was changed."
+    },
+    "infobar_dismissal": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The incomplete generated source contains no InfoBar, so dismissal behavior could not be exercised."
+    },
+    "infobar_retry_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The incomplete generated source contains no InfoBar Retry action to exercise."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The requested target controls were not generated, so their keyboard navigation could not be exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required Korean failure message was not generated, so it could not be rendered or measured."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed generated target UI existed for Light theme verification, and no OS setting was changed."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed generated target UI existed for Narrator verification, and Narrator was not launched."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Generation was blocked/incomplete and the requested InfoBar/ContentDialog UI was absent; the partial starter-like page was not launched as target runtime verification."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [{"path": "static-review.txt", "detail": "Read-only review found only a partial Window Title change; the required InfoBar, Retry/dismissal behavior, Korean failure message, ContentDialog, and removal actions were absent."}, {"path": "generation-failure.txt", "detail": "Controller reconciliation records the Temporary Chat safety-filter blocker and the unexpected partial MainWindow.xaml disk change without repair or regeneration."}],
+      "reason": "The frozen partial source does not implement the fixed prompt."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No completed generated target UI existed for text-scaling verification, and the OS text scale was not changed."
+    }
+  }
+}

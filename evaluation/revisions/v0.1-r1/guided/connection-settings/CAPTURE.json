@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "connection-settings",
+  "prompt_sha256": "c98e93290fee0ddb973e5773d5116c73ce25987000199b1bcc94a121bc0d5184",
+  "packet_sha256": "518af90cf7b573c5cda5d9ce4032a64cafa304fe3c13b3e70f9b9b7bc016f60b",
+  "run_sha256": "499029d45fb7d7433481c2b1244d7d886912c885e91f351882d3ced9bddc6975",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "0fd93dea24322e04def9e3145ffba4a65cc34eb4770f353343cd7441e5cb4eaa"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "4466dd2bd88d22a082a452cb77b8da60f183b416cb44da53009e9dc349440570"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "81a9884a1b458d371d0b1e0759a0f9b9d5e3a1e7d14696b1ae3893f572e7fcde"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "b687c0e3fc67e92397fe52e7134ded692c03c832d08fb37a3971ef8eabab27dd"
+    },
+    {
+      "path": "runtime-uia-selector-failure.txt",
+      "sha256": "9b8e79030254962452f64bf3d5a01a3bdcf765125fc2af81f60e61b687098a4a"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "02c0c970fc436338423308b95740d60ec94b530a74ba15c1e77806ef89901325"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "f8f64518f5dde2f4ca38ead45b20425e6b2d115a0d33202783eccacb889a9a20"
+    },
+    {
+      "path": "runtime-verifier-note.txt",
+      "sha256": "91a871808033ac180ef7d2295f1894a2750ac8c8ac3917ee3412ffa87d15ffef"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "e51e579e4fab4d3eebcd5e2cd69bd96768651324be39be8de1d882baf2c8f0f5"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "d7f9d3e38b53340ed59d60ca5f9f0645b7210f1123176088b03e9642c20a210f"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "efb5ba8384bee9ce9e8033f8c3c44c011898c0a2ef1e61507007f03b40304a78"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "0a18d7f794ca2e5c8efd2f89922c3c69075449ac4247187e463c28cbe7b59f34"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "ee3d0c5305280df39e9847317f60bd5d63ad3158b9c8a983bd8d79c99450e41c"
+    }
+  ]
+}

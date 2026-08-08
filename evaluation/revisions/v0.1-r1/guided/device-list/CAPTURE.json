@@ -1,0 +1,49 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "fcd9440b9b5111f6b3105fafb9b19cec46ed1f284f4ede13572dfd6d20d96758",
+  "run_sha256": "142beea2db1254154e5852220be7b8dbac7387face7196a1ec6edeea5e587540",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "32d2466b74d2823f0d5c05d7edd12547c5321c421cfc54333e81a45821178f54"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "3953ac874bef2e4eaf760eac5560d8bfab77b391be43e4c63f896d292b30fb52"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "5744081637ef0756d2bc65677faee83f8fe4b4b453f60131bcf667e90b31cc9d"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "1e96e9c322ea08af2230a592dd1d9a43f7971300b55deda1c14bea38c6802c18"
+    },
+    {
+      "path": "runtime-crash.txt",
+      "sha256": "0128325bef01275709709e84d2563f6cee9d91a08dd1c0cca65e0b300e0e871e"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "4b6835d5f568e3d1615aa44a52ef04a2d5364c2da0f9cb14372789b6dd82ec78"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "5bcce90624f9f5b254adb7796c12c7a8f66eb0ad5bc59d4983ae2ed4a1c36b38"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "8178b453912e19ed5687d3001f2d8c9204240343aefbe874566e55de892e69ca"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}

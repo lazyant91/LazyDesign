@@ -1,0 +1,15 @@
+# Static review evidence
+
+Method: Read-only review of the frozen generated MainWindow.xaml and MainWindow.xaml.cs against the exact connection-settings PROMPT.md after generation; no source repair was performed.
+
+Observed:
+- MainWindow.xaml uses native TextBox, ComboBox, ToggleSwitch, and Button controls.
+- The connection name uses a persistent TextBox Header, a separate helper TextBlock, and a separate inline validation TextBlock.
+- ComboBox contains USB, Wi-Fi, and Bluetooth options and has a persistent Header.
+- ToggleSwitch exposes the required long Korean reconnection label through a wrapping Header and AutomationProperties.Name.
+- Save uses a native Button with AccentButtonStyle rather than a custom ControlTemplate.
+- The page uses wrapping text and does not introduce arbitrary fixed control widths; runtime verification separately measures the 420-DIP condition.
+- MainWindow.xaml.cs contains only validation visibility and invalid-save focus support required by the prompt.
+- No custom ControlTemplate is defined.
+
+Result: static source review found the required prompt structure and no direct source-level contradiction with the fixed task.

@@ -1,0 +1,4 @@
+﻿METHOD: Launch frozen guided WinUI 3 executable; use Windows UI Automation for control discovery, keyboard traversal, TextBox value changes, ComboBox expansion and selection, ToggleSwitch state change, Save Button invoke; resize only the app window to a measured 420-DIP client width; capture client screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r1/guided/connection-settings/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=42396 window='장치 연결 설정' dpi=96 client_px=420x700 client_width_dip=420
+ERROR: Auto reconnect ToggleSwitch not found by accessible name

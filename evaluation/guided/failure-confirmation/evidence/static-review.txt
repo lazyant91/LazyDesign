@@ -1,0 +1,18 @@
+# Static review evidence
+
+Method: Read-only review of frozen generated `MainWindow.xaml` and `MainWindow.xaml.cs` against the exact `PROMPT.md`, after the one-shot controlled build. No generated source was repaired.
+
+Observed source structure:
+- Native `InfoBar` is present with `Severity="Error"`, the exact required Korean failure message, `IsClosable="True"`, and a native Retry `Button` in `InfoBar.ActionButton`.
+- Native `ContentDialog` is defined as a `Grid.Resources` entry and identifies `Conference room display`; it provides `PrimaryButtonText="Remove"`, `CloseButtonText="Cancel"`, and `DefaultButton="Close"`.
+- The Remove button and Retry button have explicit `AutomationProperties.Name` values.
+- No custom `ControlTemplate` is defined.
+- Supporting C# retrieves the dialog, assigns its `XamlRoot`, calls `ShowAsync()`, and intends to return focus to the invoking control after the dialog closes.
+
+Static defects preserved as generated:
+- The Retry button has no `Click`, `Command`, or other activation handler in frozen XAML/C#, so the requested Retry action has no generated behavior beyond being a labeled button.
+- `MainWindow.xaml.cs` awaits `dialog.ShowAsync()` but imports only `Microsoft.UI.Xaml` and `Microsoft.UI.Xaml.Controls`.
+- The controlled compiler reports CS4036 because `IAsyncOperation<ContentDialogResult>` has no resolved `GetAwaiter` extension in this compilation context; the subsequent XAML compiler MSB3073 is a cascading build failure.
+- Because the evaluation contract forbids repair, these defects were not corrected and the app was not launched.
+
+Result: static review fails because the generated implementation contains a compile-blocking source defect and the supplied Retry control is not wired to an action, even though the requested native InfoBar/ContentDialog structure is otherwise present.

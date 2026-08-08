@@ -1,0 +1,22 @@
+# Generation failure evidence
+
+Controller verification after the fresh Temporary Chat generation attempt.
+
+Observed packet state:
+- inspect-packet status remained `ready`.
+- activity remained `[]` and errors remained `[]`.
+- `Reference files supplied` remained `none`.
+- `Generated file list` remained `{"changed":[],"deleted":[]}`.
+- MainWindow.xaml and MainWindow.xaml.cs are byte-identical to the starting fixture recorded in PACKET.json.
+- No build evidence, RUN.md, or verification.json existed when the generation attempt returned.
+
+Generator report:
+- Model: GPT-5.6 Sol; reasoning level not exposed by client; fresh context yes.
+- Generation completion status: blocked; incomplete.
+- User intervention: none.
+- Network/web: not used.
+- No LazyDesign references supplied or read.
+- Every attempted source write/edit was rejected by the Remote connector's OpenAI safety inspection before any modification occurred.
+- No build or runtime verification was performed by the generator.
+
+Actual result: generation did not produce source changes. The unchanged starter project is preserved as the failed/empty evaluation artifact; no retry, repair, or alternate write mechanism was used.

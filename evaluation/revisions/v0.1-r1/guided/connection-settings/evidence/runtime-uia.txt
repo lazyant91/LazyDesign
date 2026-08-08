@@ -1,0 +1,20 @@
+﻿METHOD: Launch frozen guided WinUI 3 executable; use Windows UI Automation for control discovery, keyboard traversal, TextBox value changes, ComboBox expansion and selection, ToggleSwitch state change, Save Button invoke; resize only the app window to a measured 420-DIP client width; capture client screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r1/guided/connection-settings/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=13052 window='장치 연결 설정' dpi=96 client_px=420x700 client_width_dip=420
+CONTROLS: textbox=True textbox_name='연결 프로필 이름' combo=True combo_name='전송 방식' toggle=True toggle_name='사용 가능한 장치에 자동으로 다시 연결 끔' save=True save_name='연결 설정 저장' validation_initial=False
+TEXTS: 장치 연결 설정 | 연결 프로필 이름 | 장치를 구분할 수 있는 이름을 입력하세요.
+BOUNDS: id='ConnectionNameTextBox' name='연결 프로필 이름' type='ControlType.Edit' left=112 right=484 client_left=88 client_right=508 within_horizontal=True
+BOUNDS: id='TransportComboBox' name='전송 방식' type='ControlType.ComboBox' left=112 right=182 client_left=88 client_right=508 within_horizontal=True
+BOUNDS: id='AutoReconnectToggle' name='사용 가능한 장치에 자동으로 다시 연결 끔' type='ControlType.Button' left=112 right=361 client_left=88 client_right=508 within_horizontal=True
+BOUNDS: id='' name='연결 설정 저장' type='ControlType.Button' left=112 right=226 client_left=88 client_right=508 within_horizontal=True
+TEXT_BOUND: name='장치 연결 설정' left=112 right=484 within_horizontal=True
+TEXT_BOUND: name='연결 프로필 이름' left=112 right=220 within_horizontal=True
+TEXT_BOUND: name='장치를 구분할 수 있는 이름을 입력하세요.' left=112 right=484 within_horizontal=True
+TEXTBOX_VALIDATION: nonempty_present=False nonempty_visible=False
+TEXTBOX_VALIDATION: empty_present=False empty_visible=False
+COMBOBOX: expanded_state=Expanded item_count=6 items=USB|Wi-Fi|Bluetooth|USB|Wi-Fi|Bluetooth bluetooth_selected=True combo_name='전송 방식'
+TOGGLE: before=Off after=On
+KEYBOARD_TAB_SEQUENCE: ControlType.ComboBox:TransportComboBox:전송 방식 -> ControlType.Button:AutoReconnectToggle:사용 가능한 장치에 자동으로 다시 연결 켬 -> ControlType.Button::연결 설정 저장
+SAVE_INVOKE: invoked=yes focused_after='연결 설정 저장' focused_id='' validation_visible=True
+SCREENSHOT: path=evidence/runtime.png size=420x700 sampled_unique_colors=6 avg_rgb_component=7.1 dominant=0,0,0:706;0,120,215:14;255,255,255:11;236,236,236:2;199,199,199:1;147,147,147:1
+RESULT: runtime UI Automation sequence completed without script exception.
