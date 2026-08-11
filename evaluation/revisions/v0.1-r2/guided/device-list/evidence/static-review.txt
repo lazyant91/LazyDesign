@@ -1,0 +1,18 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-09T14:57:35.636033+09:00
+CommandBar=True
+ListView=True
+EmptyState=True
+XamlBindsDevices=True
+XamlUsesDeviceItem=True
+RequiredEventHandlersReferenced=True
+CSharpDefinesDevices=False
+CSharpDefinesDeviceItem=False
+CSharpDefinesRefreshHandler=False
+CSharpDefinesAddHandler=False
+CSharpDefinesRemoveHandler=False
+CSharpDefinesSelectionHandler=False
+KoreanLongFixturePresent=False
+EnglishLongFixturePresent=False
+Result=FAIL
+Reason=The frozen XAML references model and event-handler members that are absent from the unchanged starter C#; required long-name fixtures are also absent.

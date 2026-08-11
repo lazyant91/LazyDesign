@@ -1,0 +1,10 @@
+﻿# Read-only static review of frozen source
+TextBox=False
+ComboBox=False
+ToggleSwitch=False
+SaveButton=False
+RequiredKoreanStrings=False
+ValidationMessage=False
+StarterOnly=True
+Result=FAIL
+Reason=The frozen packet is the unchanged evaluation starter and contains none of the requested connection-settings UI or behavior.

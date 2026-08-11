@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {"status": "not_run", "evidence": [], "reason": "The frozen project did not build, so no rendered accessibility inspection was performed."},
+    "build": {"status": "fail", "evidence": [{"path": "build.txt", "detail": "Controlled schema-2 build selected .NET SDK 9.0.313 and failed with CS4036 at MainWindow.xaml.cs line 27 because IAsyncOperation<ContentDialogResult> had no available GetAwaiter extension for the generated await expression."}, {"path": "source-hashes-after-build.txt", "detail": "Controller recorded the frozen eight-file project hashes after the failed build; no generated source repair occurred."}], "reason": "The generated code awaits ContentDialog.ShowAsync() without importing System, so the frozen project does not compile."},
+    "contentdialog_close_action": {"status": "not_run", "evidence": [], "reason": "The XAML defines a native Close/Cancel action, but the frozen project did not build, so ContentDialog close behavior was not exercised at runtime."},
+    "contentdialog_default_action": {"status": "not_run", "evidence": [], "reason": "Static XAML defines DefaultButton=Close, but the frozen project did not build, so the native default action was not verified at runtime."},
+    "dark_theme": {"status": "not_run", "evidence": [], "reason": "The current app-theme preference is dark, but no fresh runnable target existed after the build failure."},
+    "english_long_content": {"status": "not_run", "evidence": [], "reason": "The fixed failure-confirmation prompt contains no English long-content fixture and no runtime target was available."},
+    "focus_return": {"status": "not_run", "evidence": [], "reason": "Static code contains focus capture and return logic around the dialog, but the frozen project did not build, so focus return was not verified at runtime."},
+    "focus_visual": {"status": "not_run", "evidence": [], "reason": "The frozen project did not build, so focus visual appearance was not inspected."},
+    "high_contrast": {"status": "not_run", "evidence": [], "reason": "System high contrast was False and no runnable target existed after the build failure."},
+    "infobar_dismissal": {"status": "not_run", "evidence": [], "reason": "The XAML defines a closable InfoBar, but the frozen project did not build, so native dismissal was not exercised."},
+    "infobar_retry_action": {"status": "not_run", "evidence": [], "reason": "The Retry button and handler exist in frozen source, but the project did not build, so Retry behavior was not exercised at runtime."},
+    "keyboard_navigation": {"status": "not_run", "evidence": [], "reason": "The frozen project did not build, so no keyboard traversal or dialog default-key behavior was exercised."},
+    "korean_long_content": {"status": "not_run", "evidence": [], "reason": "The exact Korean failure message exists in frozen XAML, but rendered/runtime presence was not inferred from static source because the project did not build."},
+    "light_theme": {"status": "not_run", "evidence": [], "reason": "The current Windows app-theme preference was dark and no runnable target existed to test Light theme."},
+    "narrator": {"status": "not_run", "evidence": [], "reason": "Narrator was not running and no fresh runnable target existed after the build failure."},
+    "rendered_runtime": {"status": "not_run", "evidence": [], "reason": "The controlled build failed, so controller verification did not launch any executable and did not risk using a stale binary."},
+    "static_review": {"status": "fail", "evidence": [{"path": "static-review.txt", "detail": "Read-only review found the requested native InfoBar and ContentDialog, exact Korean failure message, Error severity, Retry action, dismissal, selected-device identification, Remove/Cancel labels, safe Close default, accessible names, and focus-return code; however SystemNamespaceImported=False and BuildCompatibility=False."}, {"path": "build.txt", "detail": "The controlled compiler independently confirmed the generated await expression fails CS4036 because the required GetAwaiter extension is unavailable."}], "reason": "The UI structure substantially matches the prompt, but the generated interaction code is not build-compatible and therefore the frozen implementation is not a complete valid WinUI page."},
+    "text_scaling": {"status": "not_run", "evidence": [], "reason": "No text-scale runtime verification was possible because the frozen project did not build."}
+  }
+}

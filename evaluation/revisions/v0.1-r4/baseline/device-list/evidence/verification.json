@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local environment, and the build failure prevented runtime accessibility verification."
+    },
+    "build": {
+      "status": "fail",
+      "evidence": [
+        {"path": "build.txt", "detail": "Controlled schema-2 build selected .NET SDK 9.0.313 and the frozen project exited 1 with CS8852 for DeviceItem.Name, ConnectionType, and Status in generated XamlTypeInfo.g.cs."},
+        {"path": "source-hashes-after-build.txt", "detail": "Controller recorded hashes for all eight frozen project files after the failed controlled build; generated source was not repaired."}
+      ],
+      "reason": "The frozen generated source does not compile because DeviceItem is a positional record with init-only properties while WinUI generated XAML metadata emits assignments to those properties."
+    },
+    "commandbar_overflow": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so CommandBar overflow was not exercised and no stale executable was launched."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so the rendered 520-DIP content width could not be measured."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so no rendered theme check was performed."
+    },
+    "empty_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so the empty-state transition was not exercised at runtime."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required English fixture is present in frozen source, but the build failure prevented rendered long-content verification at 520 DIP."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so focus visual appearance was not inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "High contrast was not enabled, and the build failure prevented runtime verification."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so keyboard traversal was not exercised."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The required Korean fixture is present in frozen source, but the build failure prevented rendered long-content verification at 520 DIP."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so no Light-theme runtime verification was performed."
+    },
+    "listview_selection": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so selected and unselected ListView behavior was not exercised."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running, and the build failure prevented runtime verification."
+    },
+    "remove_command_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current frozen source failed the controlled build, so selection-dependent Remove command state was not exercised."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The controlled build failed; controller policy forbids launching a stale executable for rendered verification."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only UTF-8 source review found the required CommandBar, ListView bindings, long fixtures, selection/remove logic, empty state, and native controls, but also found DeviceItem declared as a positional record whose init-only properties are incompatible with the generated WinUI XAML setters confirmed by the controlled build."},
+        {"path": "build.txt", "detail": "The static compatibility defect is confirmed by CS8852 errors for all three DeviceItem properties in XamlTypeInfo.g.cs."}
+      ],
+      "reason": "The prompt structure is represented in source, but the frozen implementation contains a compile-blocking WinUI/XAML data-type compatibility defect."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No runtime was available from the failed current build, so text scaling was not exercised."
+    }
+  }
+}

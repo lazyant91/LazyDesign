@@ -1,0 +1,9 @@
+# Generation infrastructure failure
+
+Condition: guided
+Scenario: failure-confirmation
+Blocker: remote_safety_inspection
+Stopping condition reached: false
+Observed project delta: changed=["MainWindow.xaml"], deleted=[]
+
+The fresh generation successfully wrote MainWindow.xaml, but the required MainWindow.xaml.cs write containing Retry and ContentDialog interaction support was blocked by the OpenAI Remote safety inspection. The generator did not bypass the blocked source operation. Controller reconciliation confirmed that MainWindow.xaml.cs remains byte-equivalent to the prepared starter and the fixed stopping condition was not reached.

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciled the packet filesystem and observed the reported source changes with the fixed stopping condition reached; the generation-time repository-state safety-inspection block did not materially interrupt source generation."
+}

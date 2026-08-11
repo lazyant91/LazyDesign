@@ -1,0 +1,26 @@
+# Evaluation Build Evidence
+
+Recorded at: 2026-08-10T21:52:10+09:00
+Packet: guided/device-list
+Pinned start: 2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90:evaluation/fixtures/winui-start
+Expected .NET SDK: 9.0.313
+Selected .NET SDK: 9.0.313
+Starting Windows App SDK package: 2.0.1
+Starting Windows SDK BuildTools: 10.0.26100.4948
+Harness command: python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/v0.1-r4/guided/device-list --matrix evaluation/revisions/v0.1-r4/run-matrix.json
+Command: dotnet build evaluation/.runs/v2/v0.1-r4/guided/device-list/project/LazyDesign.EvaluationApp.csproj -c Debug -p:Platform=x64
+Project state SHA-256: 16941c2ec589492ad24a338d99e20bd29bea1fc2b522d74733f76ed48debf6b6
+Project file count: 8
+Exit code: 0
+
+## Output
+
+  Determining projects to restore...
+  Restored Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\guided\device-list\project\LazyDesign.EvaluationApp.csproj (in 1.57 sec).
+  LazyDesign.EvaluationApp -> Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\guided\device-list\project\bin\x64\Debug\net9.0-windows10.0.22621.0\win-x64\LazyDesign.EvaluationApp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:17.62

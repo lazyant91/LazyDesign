@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "scenario": "connection-settings",
+  "parameters": {
+    "content_width_dip": 420,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local environment and was not installed for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [
+        {"path": "build.txt", "detail": "Controlled schema-2 pinned build selected .NET SDK 9.0.313 and the frozen project build exited 0."},
+        {"path": "source-hashes-after-build.txt", "detail": "Controller recorded the frozen eight-file project hashes after the controlled build; later verifier-only work preserved these hashes."}
+      ],
+      "reason": "The controlled pinned build succeeded against the frozen generated source."
+    },
+    "combobox_popup": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "UI Automation expanded the native transport ComboBox, observed USB, Wi-Fi, and Bluetooth list items, and selected Bluetooth successfully."}
+      ],
+      "reason": "The native ComboBox popup and selection behavior were exercised successfully."
+    },
+    "content_width": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The app client was resized to exactly 420 DIP wide; all observed major controls and visible text bounds remained inside the horizontal client bounds."}
+      ],
+      "reason": "The rendered page remained horizontally usable at the required 420-DIP content width."
+    },
+    "dark_theme": {
+      "status": "pass",
+      "evidence": [
+        {"path": "environment.txt", "detail": "Controller recorded AppsUseLightTheme=0 and HighContrast=False before runtime verification."},
+        {"path": "runtime-uia.txt", "detail": "The frozen app rendered successfully under the current dark app-theme preference and screenshot sampling was predominantly dark."},
+        {"path": "runtime.png", "detail": "Controller captured the rendered 420x700 client image during the dark-theme runtime session."}
+      ],
+      "reason": "Rendered runtime verification was completed under the current Windows dark app-theme preference."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The fixed connection-settings prompt contains no English long-content fixture and the frozen source was not modified to add one."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Keyboard traversal and focus return were exercised, but the visual appearance of the focus indicator was not independently inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "SystemParameters.HighContrast was False and the Windows contrast theme was not changed for this run."
+    },
+    "keyboard_navigation": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "Starting from ConnectionNameTextBox, Tab traversed to the transport ComboBox, AutomaticReconnectToggle, and Save button in order."}
+      ],
+      "reason": "Keyboard traversal through the generated native controls was exercised successfully."
+    },
+    "korean_long_content": {
+      "status": "pass",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Explicit UTF-8 static review found all four required Korean fixture strings and the Korean validation text in frozen XAML."},
+        {"path": "runtime-uia.txt", "detail": "UI Automation exposed the required Korean connection name, helper, automatic reconnect, save, and validation text in the rendered UI."}
+      ],
+      "reason": "The required Korean content was present in frozen source and exposed by the rendered runtime."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current Windows app-theme preference was dark and the system theme was not changed to Light for this run."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and was not launched for this run."
+    },
+    "rendered_runtime": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The frozen executable launched and completed the final UI Automation interaction sequence without script exception; leftover app process count was zero after verification."},
+        {"path": "runtime.png", "detail": "Controller captured a runtime screenshot from the frozen executable."}
+      ],
+      "reason": "The current frozen build rendered successfully and remained available through the automated interaction checks."
+    },
+    "save_button_activation": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "UI Automation invoked the Save button with an empty connection name, observed validation visible, and observed focus return to ConnectionNameTextBox."}
+      ],
+      "reason": "The generated Save action was invoked and its empty-name behavior executed successfully."
+    },
+    "static_review": {
+      "status": "pass",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only explicit UTF-8 review found the required TextBox, transport ComboBox options, ToggleSwitch, Save Button, persistent labels, helper sentence, inline validation, 420-DIP width constraint, native controls, and minimal code-behind support."}
+      ],
+      "reason": "Static source inspection found the fixed prompt requirements represented in the frozen implementation."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No text scale above 100 percent was exercised and Windows text scaling was not changed for this run."
+    },
+    "textbox_validation": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "UI Automation set a non-empty value and observed NameValidationInfoBar absent, then cleared the value and observed the validation InfoBar visible."}
+      ],
+      "reason": "Empty and non-empty connection-name validation behavior was exercised in the rendered UI."
+    },
+    "toggleswitch_state": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "UI Automation exercised the native TogglePattern and observed AutomaticReconnectToggle change from Off to On."}
+      ],
+      "reason": "The automatic reconnect ToggleSwitch state change was exercised successfully."
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "connection-settings",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Generation reported no source modifications, but controller reconciliation against PACKET.json hashes found MainWindow.xaml and MainWindow.xaml.cs changed with no deletions. Disk state is authoritative. Generation otherwise reported no timeout, safety inspection, transport failure, or other infrastructure interruption and reached the fixed stopping condition, so the attempt remains valid."
+}

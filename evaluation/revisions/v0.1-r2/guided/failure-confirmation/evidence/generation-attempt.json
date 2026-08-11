@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciled the filesystem delta with the fresh-context report. Two safety-inspection blocks occurred, but each was bypassed only through an allowed alternative read/edit path within scope, the implementation completed, and the fixed stopping condition was reached; no material infrastructure interruption remained."
+}

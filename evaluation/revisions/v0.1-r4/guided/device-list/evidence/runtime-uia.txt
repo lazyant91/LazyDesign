@@ -1,0 +1,18 @@
+﻿METHOD: Launch frozen v0.1-r4 guided device-list executable; verify 520-DIP layout, long Korean/English fixtures, native ListView selection, secondary Remove command state, keyboard traversal, CommandBar overflow at narrow width, empty-state transition, and rendered screenshot.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r4/guided/device-list/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=7492 window='Device list' dpi=96 client_px=520x720 client_width_dip=520
+CONTROLS: refresh=True add=True list=True english_long=True hangul_long_count=1 longest_hangul='회의실 디스플레이 무선 프레젠테이션 수신 장치'
+BOUNDS: id='' name='Refresh' left=337 right=426 within_horizontal=True
+BOUNDS: id='' name='Add device' left=426 right=536 within_horizontal=True
+BOUNDS: id='DeviceList' name='Devices' left=112 right=584 within_horizontal=True
+BOUNDS: id='' name='Portable conference-room presentation receiver' left=140 right=560 within_horizontal=True
+BOUNDS: id='' name='회의실 디스플레이 무선 프레젠테이션 수신 장치' left=140 right=560 within_horizontal=True
+CONTENT_WIDTH_RESULT: client_width_dip=520 all_observed_horizontal_bounds_inside=True
+LIST_INITIAL: item_count=2 first_selected=True names=회의실 디스플레이 무선 프레젠테이션 수신 장치|Portable conference-room presentation receiver
+LIST_SELECTION_CHANGE: first_selected_after_second=False second_selected=True
+REMOVE_STATE_SELECTED: more_present=True remove_present=True remove_enabled=True
+KEYBOARD_TAB_SEQUENCE: ControlType.Button::Add device -> ControlType.Button:MoreButton:기타 옵션 -> ControlType.ListItem::회의실 디스플레이 무선 프레젠테이션 수신 장치 -> ControlType.Button::Refresh
+SCREENSHOT: path=evidence/runtime.png size=520x720
+COMMANDBAR_NARROW: width_dip=300 more_present=True overflow_opened=True overflow_items=Remove selected device|Refresh|Add device|간단한 앱 바|Remove selected device
+EMPTY_STATE: remaining_items=0 no_devices_present=True no_devices_visible=True remove_disabled_after_empty=True
+RESULT: runtime UI Automation sequence completed without script exception.

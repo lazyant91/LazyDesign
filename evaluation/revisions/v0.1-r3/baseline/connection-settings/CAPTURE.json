@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "connection-settings",
+  "prompt_sha256": "c98e93290fee0ddb973e5773d5116c73ce25987000199b1bcc94a121bc0d5184",
+  "packet_sha256": "ad9b81535a8aa3c436baa43280a850ee362b454420b9097f5f0602b5923ea282",
+  "run_sha256": "b1f8cd8afca232d7df66c2a3de3c0d027ec53c2b04d2c8ab4c1c40723c618ace",
+  "generated_files": [],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "82a9bc784d343a5f03c74f9020e67a9ee7e9fd97d3f7454a1202d501f76cedca"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "4367a0d2f50f510c86d2ad03b4b4cf625d72f6b14661d5cddbcbd69bb9e3034f"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "6757bf5d0858c5f761f6fc1d57a90d834f27612f67288a4eb42cd947531f7e9e"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "dc4be2462576aa3aace35ea354e24f058a13de8c883ff53157f153d9dfed3227"
+    },
+    {
+      "path": "generation-failure.txt",
+      "sha256": "da6156923c66c96cd5f913cbe4bfbca790c725d5f3702b05494eac98dbb191a4"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "7a97028ff201416119a7268c09ac6d852e45445924244ec0e69badbe471eca7b"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "acd3870a05912af25ae81a1845422d40cfac92a931360a6e568ceba7bab6b155"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "159acce04c0820e27f851599393e99620d8f14c00d9ec63346250d8aa5c58532"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "b704cd6f747a5ae318228564e2ab6f3a1d9cd128d399807dafa4f9ab9ce65d2d"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "9ff381b70044284d65a250bbab885d781a0cc8e2bee6057c4585f655c39b20c2"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "7e74ec7317b00bc780097158b73c03544a431dfb0615a8c8f9f3fd8248db5d28"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "ee3d0c5305280df39e9847317f60bd5d63ad3158b9c8a983bd8d79c99450e41c"
+    }
+  ]
+}

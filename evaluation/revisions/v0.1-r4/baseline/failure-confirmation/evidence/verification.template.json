@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "build": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "contentdialog_close_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "contentdialog_default_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "focus_return": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "infobar_dismissal": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "infobar_retry_action": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "static_review": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "record why this check was not performed"
+    }
+  }
+}

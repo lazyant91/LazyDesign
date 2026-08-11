@@ -1,0 +1,83 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "input_commit": "d40d08504baf73cf80d8b4f16248a1ee86d8c252",
+  "start_project_commit": "2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90",
+  "start_project_path": "evaluation/fixtures/winui-start",
+  "content_width_dip": null,
+  "prompt_path": "evaluation/prompts/failure-confirmation.md",
+  "prompt_sha256": "da6a5a51a50c1bba205352038197645747a13d9c6af81926e759fe951535c938",
+  "references": [
+    {
+      "path": "DESIGN.md",
+      "sha256": "d90f449693babeb65ba39664f327af9c64c8249674489fc38c4bc7b8b6e3ecc4"
+    },
+    {
+      "path": "foundations/text-and-localization.md",
+      "sha256": "820540dc0c3b30212891c1ab41c0526eceb2f6e3f5d27deec17303ad6b26668a"
+    },
+    {
+      "path": "foundations/sizing-and-spacing.md",
+      "sha256": "91f55d3bec6dc56ddb27737aa5a8df70808de6046a8c2fee0c4acb5ee921a416"
+    },
+    {
+      "path": "foundations/icons.md",
+      "sha256": "f072a05cd08865eabc2fe1a3a83bbef1e7ac1f3669801d1aa83f18b17a30e5d4"
+    },
+    {
+      "path": "foundations/states-and-themes.md",
+      "sha256": "0a81b4a11cf31cd1071a002d1d3442df67e49ba570b3703100036c6ba27a4076"
+    },
+    {
+      "path": "foundations/accessibility-basics.md",
+      "sha256": "56d784e6ccc2b23a76d0c3575535ab692c61b64a463b079b745b13082a300f7e"
+    },
+    {
+      "path": "components/button.md",
+      "sha256": "d595b27abac998f7091632c175adb40e05b56dad7d4c84aae455ddae44d06b0e"
+    },
+    {
+      "path": "components/infobar.md",
+      "sha256": "9b83c784cf388862142e3962efd2ae60d6ad56bd50d2bcc3b7bf5b2ce4b612f8"
+    },
+    {
+      "path": "components/contentdialog.md",
+      "sha256": "51d933a085c2113aa88e6138b706aa779e1d1054bfe0421a6c00d050e3057c67"
+    }
+  ],
+  "project_files": [
+    {
+      "path": "app.manifest",
+      "sha256": "edf3ad06fba5b2fb715db40ad2a5a520eaf7ea8aaa3c72e8b6a37d84c7dcd7d1"
+    },
+    {
+      "path": "App.xaml",
+      "sha256": "9b1a67ff0d79780d2113c513936d485bc6a0bba12ed40a18a26f4152db573088"
+    },
+    {
+      "path": "App.xaml.cs",
+      "sha256": "6e604dcfa28cb4be3e1ab4732b6f05bbcffa8dfbf3c6176cc62f21de19ff6af7"
+    },
+    {
+      "path": "global.json",
+      "sha256": "826c897f119b8f949f829b3fe57b54d1b14a55de8cec932266c8d76bc0280fb2"
+    },
+    {
+      "path": "LazyDesign.EvaluationApp.csproj",
+      "sha256": "70dba0c48abb6a0fdbc3d3becbb5fadcf00d450fc4559171a202360fe3e9de0e"
+    },
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "e1d3bbe6a06fcd7cf2af5f6c439fcd5d96203dd9740a859dc97530853761e1b2"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "5989e97793f084830a651f8d10e12af5ff67fc13b3a1397ad910fd495c5ed464"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5995320df3c5654c23c3305751dc23cb8679de43bb15b1d50e64b6a3dd562b59"
+    }
+  ]
+}

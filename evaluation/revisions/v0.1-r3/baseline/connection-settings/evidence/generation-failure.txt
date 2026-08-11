@@ -1,0 +1,13 @@
+Generation was materially interrupted by OpenAI Remote safety inspection.
+
+Observed generator report:
+- Repository-state inspection command was blocked by safety inspection and was not bypassed.
+- MainWindow.xaml source write was blocked by safety inspection and was not bypassed.
+- No project source change was applied.
+- Fixed stopping condition was not reached.
+- No timeout or transport error occurred.
+
+Controller reconciliation:
+- Packet project delta is changed=[], deleted=[], added=[].
+- The packet remains byte-identical to the prepared starter project outside ignored build-output directories.
+- Because the required source modification could not be applied, the infrastructure event materially prevented generation completion.

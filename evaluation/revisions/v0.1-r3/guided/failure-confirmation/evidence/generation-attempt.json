@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "validity": "infrastructure_invalid",
+  "blocker": "remote_safety_inspection",
+  "stopping_condition_reached": false,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml"
+    ],
+    "deleted": []
+  },
+  "evidence": [
+    {
+      "path": "generation-failure.txt",
+      "detail": "Remote safety inspection blocked the required MainWindow.xaml.cs write after MainWindow.xaml had been applied; controller reconciliation confirmed only MainWindow.xaml changed and the fixed stopping condition was not reached."
+    }
+  ],
+  "reason": "A material Remote safety-inspection blocker prevented the required C# support for Retry and ContentDialog behavior from being applied, leaving the generation incomplete and preventing the fixed stopping condition from being reached."
+}

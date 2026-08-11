@@ -1,0 +1,17 @@
+﻿METHOD: Launch frozen v0.1-r2 guided failure-confirmation executable; exercise InfoBar Retry and dismissal plus ContentDialog keyboard/default/close and focus-return behavior with Windows UI Automation; capture a runtime screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r2/guided/failure-confirmation/evidence/runtime-uia.ps1
+RUNTIME1: launched=yes pid=16908 window='LazyDesign Evaluation' info_visible=True retry_enabled=True remove_visible=True required_message_present=True
+TEXTS_INITIAL: 장치 연결 | 저장된 장치의 연결 상태를 확인하거나 장치를 제거할 수 있습니다. | 오류 아이콘 | 거실 디스플레이에 연결할 수 없습니다. | 장치가 응답하지 않았습니다. 장치가 켜져 있고 동일한 네트워크에 연결되어 있는지 확인한 후 다시 시도하세요. | 선택된 저장 장치 | 선택된 장치: 거실 디스플레이
+BUTTONS_INITIAL: RetryButton:장치 연결 다시 시도:enabled=True|CloseButton:닫기:enabled=True|RemoveDeviceButton:저장된 장치 거실 디스플레이 제거:enabled=True
+KEYBOARD_TAB_SEQUENCE: ControlType.Button:CloseButton:닫기 -> ControlType.Button:RemoveDeviceButton:저장된 장치 거실 디스플레이 제거
+INFOBAR_RETRY: title_changed=True message_changed=True retry_enabled_after=False
+TEXTS_AFTER_RETRY: 장치 연결 | 저장된 장치의 연결 상태를 확인하거나 장치를 제거할 수 있습니다. | 정보 아이콘 | 거실 디스플레이에 다시 연결하는 중입니다. | 연결을 다시 시도하고 있습니다. | 선택된 저장 장치 | 선택된 장치: 거실 디스플레이
+SCREENSHOT: path=evidence/runtime.png size=1904x990 sampled_unique_colors=17 avg_rgb_component=1.7
+INFOBAR_CLOSE_DISCOVERY: candidate_present=True candidate_id='CloseButton' candidate_name='닫기'
+INFOBAR_DISMISSAL: invoked=yes info_visible_after=False
+DIALOG_TEXTS: 장치 연결 | 저장된 장치의 연결 상태를 확인하거나 장치를 제거할 수 있습니다. | 선택된 저장 장치 | 선택된 장치: 거실 디스플레이 | 저장된 장치를 제거할까요? | 저장된 장치 '거실 디스플레이'가 이 PC에서 제거됩니다. 다시 사용하려면 장치를 다시 추가해야 합니다.
+DIALOG_OPEN: primary_present=True cancel_present=True device_named=True
+DIALOG_DEFAULT_ACTION: enter_sent=yes dialog_visible_after=False focused_after_id='RemoveDeviceButton' focused_after_name='저장된 장치 거실 디스플레이 제거'
+DIALOG_CLOSE_ACTION: cancel_invoked=yes dialog_visible_after=False focused_after_id='RemoveDeviceButton' focused_after_name='저장된 장치 거실 디스플레이 제거'
+DIALOG_PRIMARY_ACTION: remove_invoked=yes dialog_visible_after=False focused_after_id='RemoveDeviceButton' focused_after_name='저장된 장치 거실 디스플레이 제거'
+RESULT: runtime UI Automation sequence completed without script exception.

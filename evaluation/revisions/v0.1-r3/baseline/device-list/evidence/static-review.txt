@@ -1,0 +1,19 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-09T20:05:01.697231+09:00
+CommandBar=True
+DynamicOverflow=True
+Refresh=True
+Add=True
+Remove=True
+RemoveInitiallyDisabled=True
+ListView=True
+NameBinding=True
+ConnectionBinding=True
+StatusBinding=True
+SingleSelection=True
+EmptyState=True
+SelectionChangesRemove=True
+KoreanLong=True
+EnglishLong=True
+NoControlTemplate=True
+Result=PASS

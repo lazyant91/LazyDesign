@@ -1,0 +1,53 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "b4a5dac0ced1e2b6f70407c91e3124ecacb4f58c580a5508e502e75d6ebe72d8",
+  "run_sha256": "b79f0835ddd8dfb53d0927057062453a7a5e1c2a5fedfd4cdfe737efba9cfe27",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "2a562790f4a4d422a419698079006c5b1df619e1e0680cb50d1f29aa854b47c4"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "e8b89e5fa219b85927d91de81b27d7b389ff8a0ca69857d302a20bba1748f70c"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "7af6dc993ef56e96a17a1ce05440c145faec6982f084c125e76a0fce156e8688"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "8cf14a065421e035094df096c5b929cc8b46f8bf0b29d41bf622feb35011d173"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "3d143a50015f20032df34c983d4a7a24b7b3058e8fae5cd9459b89b6abf710e1"
+    },
+    {
+      "path": "generation-failure.txt",
+      "sha256": "451425678bc3d96a8d2f589cee2e91b6d58c9326836a2153dca51a085778445c"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "0151b4f3acdb77c29610d800b48b60bba1d3a8cc1516827a021846076933a36e"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "986ee33968c49bd96f35f19ce6881a812b3fade3fd48bdee104cd22f09659799"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "af05121cb7f833e420bed8bd8387fa4b82ddfa738149b06063cb3956a740cc5d"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}

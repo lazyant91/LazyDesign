@@ -1,0 +1,20 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-09T02:46:00+09:00
+InfoBar=True
+InfoBarTitle=True
+InfoBarMessage=True
+InfoBarSeverityError=True
+InfoBarRetryAction=True
+InfoBarClosable=True
+RequiredKoreanFailureMessage=True
+ContentDialog=True
+SelectedDeviceIdentified=True
+PrimaryRemove=True
+CloseCancel=True
+SafeDefaultClose=True
+FocusReturnCode=True
+AccessibleNamesPresent=True
+CustomControlTemplate=False
+MinimalCodeBehind=True
+BuildBlockingIssue=MainWindow.xaml.cs awaits ContentDialog.ShowAsync without the required WinRT async await extension/import; controlled build records CS4036.
+Result=PASS_STATIC_STRUCTURE_BUILD_FAILURE_RECORDED_SEPARATELY

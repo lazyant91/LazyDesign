@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "failure-confirmation",
+  "validity": "infrastructure_invalid",
+  "blocker": "remote_safety_inspection",
+  "stopping_condition_reached": false,
+  "project_delta": {
+    "changed": [],
+    "deleted": []
+  },
+  "evidence": [
+    {
+      "path": "generation-failure.txt",
+      "detail": "Remote safety inspection blocked the required MainWindow.xaml source write; controller reconciliation found no project source delta and the fixed stopping condition was not reached."
+    }
+  ],
+  "reason": "A required MainWindow.xaml source write was blocked by the OpenAI safety inspection, leaving the packet project byte-equivalent to the starter and preventing the fixed generation stopping condition from being reached."
+}

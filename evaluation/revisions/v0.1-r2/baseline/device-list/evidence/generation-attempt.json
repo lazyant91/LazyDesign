@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciled the packet filesystem after generation: MainWindow.xaml and MainWindow.xaml.cs changed, no project files were deleted or added, the fixed stopping condition was reported reached, and no external infrastructure interruption was reported or observed."
+}

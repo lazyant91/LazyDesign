@@ -1,0 +1,8 @@
+﻿METHOD: Launch the frozen unchanged starter executable; inspect UIA for failure-confirmation text and interactive controls; capture the client without changing source or OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r3/baseline/failure-confirmation/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=57572 window='LazyDesign Evaluation'
+SCENARIO_CONTROLS: button_count=0 descendant_window_count=0
+BUTTONS: 
+TEXTS: Evaluation start project
+SCREENSHOT: path=evidence/runtime.png size=1904x990
+RESULT: starter runtime launched, but the requested failure-confirmation scenario UI and actions are absent.

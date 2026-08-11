@@ -1,0 +1,22 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T12:14:00.607900+09:00
+TextBox=True
+ComboBox=True
+USB=True
+WiFi=True
+Bluetooth=True
+ToggleSwitch=True
+SaveButton=True
+PersistentNameLabel=True
+PersistentTransportLabel=True
+HelperSentence=True
+InlineValidation=True
+KoreanToggle=True
+KoreanSave=True
+HorizontalScrollDisabled=True
+WidthConstraint420=True
+ValidationChangesWithText=True
+InvalidSaveFocusReturn=True
+NativeControlsNoCustomTemplate=True
+MinimalCodeBehind=True
+Result=PASS

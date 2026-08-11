@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen generated project did not build, so no target runtime was available for Accessibility Insights verification."
+    },
+    "build": {
+      "status": "fail",
+      "evidence": [
+        {"path": "build.txt", "detail": "The controlled pinned build selected .NET SDK 9.0.313; dotnet build exited 1 because the WinUI XamlCompiler exited with code 1."},
+        {"path": "symbol-enum-check.txt", "detail": "The installed WinUI 2.0.12 XML metadata contains zero exact matches for Microsoft.UI.Xaml.Controls.Symbol.Devices, while the frozen XAML uses SymbolIcon Symbol=Devices."},
+        {"path": "source-hashes-after-build.txt", "detail": "Controller recorded the frozen eight-file project hashes after the failed build; no generated source repair was performed."}
+      ],
+      "reason": "The frozen generation contains an invalid SymbolIcon Symbol value and did not produce a successful build."
+    },
+    "commandbar_overflow": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so CommandBar overflow could not be exercised against a fresh runnable target."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so the required 520-DIP rendered layout could not be measured."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so scenario-specific rendering under the current dark app-theme preference was not evaluated."
+    },
+    "empty_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so the empty-state transition could not be exercised at runtime."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The English fixture exists in frozen source, but the project did not build and the fixture was not rendered."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so focus visual appearance could not be inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build; HighContrast was False and no contrast-theme change was performed."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so keyboard traversal could not be exercised against a fresh target."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The Korean fixture exists in frozen source, but the project did not build and the fixture was not rendered."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build and the Windows app theme was not changed to Light."
+    },
+    "listview_selection": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so selected and unselected ListView behavior could not be exercised at runtime."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build; Narrator was not running and was not launched."
+    },
+    "remove_command_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build, so selection-dependent Remove command state could not be exercised."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The controlled build failed, so no fresh target binary was launched and no stale executable was used."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only review found the required CommandBar, ListView, selection state logic, empty state, Korean/English fixtures, and native controls, but also found the invalid SymbolIcon Symbol=Devices value."},
+        {"path": "symbol-enum-check.txt", "detail": "Installed WinUI 2.0.12 metadata has no Symbol.Devices enum member, consistent with the controlled XamlCompiler failure."}
+      ],
+      "reason": "The prompt structure is mostly represented, but the frozen XAML contains a compile-blocking invalid native Symbol value."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The frozen project did not build and no Windows text scale above 100 percent was exercised."
+    }
+  }
+}

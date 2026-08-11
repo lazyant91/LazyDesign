@@ -1,0 +1,20 @@
+# Read-only static review of frozen partial generated source
+Recorded at: 2026-08-09T22:12:00+09:00
+InfoBar=True
+InfoBarError=True
+InfoBarClosable=True
+RetryActionXaml=True
+RetryHandlerPresent=False
+ExactKoreanFailureMessage=True
+ContentDialog=True
+DialogNamesDevice=True
+PrimaryRemove=True
+CloseCancel=True
+SafeDefaultClose=True
+RemoveHandlerPresent=False
+FocusReturnSupport=False
+RetryStateChangeSupport=False
+NoCustomTemplate=True
+MainWindowCodeBehindStarterOnly=True
+Result=FAIL
+Reason=The frozen XAML contains the requested native InfoBar and ContentDialog structure, but the safety-inspection block left MainWindow.xaml.cs unchanged. The XAML references RetryConnection_Click and RemoveSavedDeviceButton_Click handlers that do not exist, so required interaction/focus behavior is incomplete and the project does not compile.

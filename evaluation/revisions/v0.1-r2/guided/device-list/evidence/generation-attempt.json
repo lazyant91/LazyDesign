@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "device-list",
+  "validity": "infrastructure_invalid",
+  "blocker": "remote_safety_inspection",
+  "stopping_condition_reached": false,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml"
+    ],
+    "deleted": []
+  },
+  "evidence": [
+    {
+      "path": "generation-failure.txt",
+      "detail": "Controller reconciliation confirms Remote safety inspection blocked both attempts to apply the required MainWindow.xaml.cs support, leaving only MainWindow.xaml changed and the fixed stopping condition unreached."
+    }
+  ],
+  "reason": "Remote safety inspection materially interrupted generation: XAML was written, but both attempts to apply the required C# support were blocked, leaving the frozen implementation incomplete."
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Generation completed the prompt requirements and reached the fixed stopping condition. Controller-recomputed MainWindow.xaml and MainWindow.xaml.cs start-to-final hashes exactly matched the generator report. Two safety/tool refusals were reported during generation: one Remote.write_file request for MainWindow.xaml.cs and one PowerShell Get-FileHash request. The generator completed the ordinary source edit through Remote.edit_block and completed read-only hash confirmation through CMD certutil without obfuscation or deceptive transformation. Neither event materially prevented completion, so the attempt remains valid with blocker none."
+}

@@ -1,0 +1,17 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-09T16:38:25.006193+09:00
+InfoBar=True
+InfoBarError=True
+InfoBarClosable=True
+RetryAction=True
+ExactKoreanFailureMessage=True
+ContentDialog=True
+DialogNamesDevice=True
+PrimaryRemove=True
+CloseCancel=True
+SafeDefaultClose=True
+FocusReturn=True
+RetryStateChange=True
+NoCustomTemplate=True
+MinimalCodeBehind=True
+Result=PASS

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": ["ko-KR", "en-US"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local environment and was not installed for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [
+        {"path": "build.txt", "detail": "Controlled schema-2 pinned build selected .NET SDK 9.0.313 and the frozen guided/device-list project exited 0 with zero warnings and zero errors."},
+        {"path": "source-hashes-after-build.txt", "detail": "Controller recorded all eight frozen project file hashes after build; later verifier-only changes preserved those source hashes."}
+      ],
+      "reason": "The frozen generated source compiled successfully without source repair."
+    },
+    "commandbar_overflow": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "At a 300-DIP client width UI Automation found and invoked the native More button and observed overflow content containing Remove selected device, Refresh, and Add device."}
+      ],
+      "reason": "Dynamic native CommandBar overflow behavior was exercised successfully against the frozen runtime."
+    },
+    "content_width": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The measured client width was exactly 520 DIP and observed Refresh, Add device, ListView, Korean long-name, and English long-name bounds remained horizontally inside the client."}
+      ],
+      "reason": "The rendered device list remained horizontally usable at the required 520-DIP content width."
+    },
+    "dark_theme": {
+      "status": "pass",
+      "evidence": [
+        {"path": "environment.txt", "detail": "Controller recorded AppsUseLightTheme=0 and HighContrast=False before runtime verification."},
+        {"path": "runtime.png", "detail": "A rendered 520x720 client screenshot was captured during the current dark app-theme preference."},
+        {"path": "runtime-uia.txt", "detail": "The frozen application rendered and completed its interaction sequence under the current dark app-theme preference."}
+      ],
+      "reason": "Rendered verification was completed under the current Windows dark app-theme preference without changing system settings."
+    },
+    "empty_state": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "UI Automation removed all runtime device items and then observed remaining_items=0 with No devices present and visible, while Remove selected device was disabled."}
+      ],
+      "reason": "The generated empty-state transition and post-empty command state were exercised successfully."
+    },
+    "english_long_content": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The required English long device name Portable conference-room presentation receiver was exposed at runtime and remained horizontally inside the 520-DIP client."}
+      ],
+      "reason": "The required en-US long-content fixture was observed in the rendered runtime."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Keyboard focus movement was exercised, but the visual appearance of the focus indicator was not independently inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "System high contrast was False and the Windows contrast theme was not changed for this evaluation run."
+    },
+    "keyboard_navigation": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "Starting from Refresh, Tab traversal reached Add device, the native More button, a ListView item, and returned to Refresh without script failure."}
+      ],
+      "reason": "Keyboard traversal through the generated native controls was exercised successfully."
+    },
+    "korean_long_content": {
+      "status": "pass",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Explicit UTF-8 static review found the required Korean long-name fixture in the frozen source."},
+        {"path": "runtime-uia.txt", "detail": "UI Automation exposed the exact Korean long device name 회의실 디스플레이 무선 프레젠테이션 수신 장치 and its bounds remained inside the 520-DIP client."}
+      ],
+      "reason": "The required ko-KR long-content fixture was present in frozen source and observed at runtime."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current Windows app-theme preference was dark and the system theme was not changed to Light for this run."
+    },
+    "listview_selection": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The ListView initially contained two items with the first selected; UI Automation selected the second item and observed first_selected_after_second=False and second_selected=True, then restored first-item selection."}
+      ],
+      "reason": "Native single-selection behavior, including selected and unselected item state transition, was exercised successfully."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and was not launched for this evaluation run."
+    },
+    "remove_command_state": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The secondary Remove selected device command was present and enabled while a ListView item was selected; after all devices were removed it was observed disabled."}
+      ],
+      "reason": "Selection-dependent Remove command availability was exercised in both enabled and disabled states."
+    },
+    "rendered_runtime": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The frozen executable launched a Device list window and completed the final UI Automation sequence without script exception; the controller observed zero leftover app processes."},
+        {"path": "runtime.png", "detail": "Controller captured a 520x720 rendered client screenshot from the frozen executable."}
+      ],
+      "reason": "The frozen generated WinUI page rendered and remained interactive throughout controller verification."
+    },
+    "static_review": {
+      "status": "pass",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only UTF-8 review found the required CommandBar commands, dynamic/secondary overflow structure, ListView bindings, both long fixtures, single selection, selection-driven Remove state, empty state, a valid native Symbol icon, mutable view-model properties, and no custom ControlTemplate."}
+      ],
+      "reason": "Static source inspection found the fixed prompt requirements represented in the frozen implementation with no direct source-level contradiction."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No Windows text scale above 100 percent was exercised and system text scaling was not changed for this run."
+    }
+  }
+}

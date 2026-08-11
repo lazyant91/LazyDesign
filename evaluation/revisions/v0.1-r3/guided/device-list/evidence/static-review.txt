@@ -1,0 +1,20 @@
+# Read-only static review of frozen generated source
+CommandBar=True
+RefreshCommand=True
+AddDeviceCommand=True
+RemoveCommand=True
+RemoveAsSecondaryCommand=True
+ListView=True
+NameBinding=True
+ConnectionTypeBinding=True
+StatusBinding=True
+SingleSelection=True
+SelectionDrivenRemoveState=True
+EmptyState=True
+KoreanLongFixture=True
+EnglishLongFixture=True
+NativeControlsNoCustomTemplate=True
+MinimalCodeBehind=True
+InvalidSymbolIconDevices=True
+Result=FAIL
+Reason=The frozen source represents the prompt structure, but EmptyState uses <SymbolIcon Symbol="Devices" />. The installed Microsoft Windows App SDK WinUI 2.0.12 XML metadata contains no Microsoft.UI.Xaml.Controls.Symbol.Devices member (exact count 0), and the controlled build fails in XamlCompiler. No source repair was performed.

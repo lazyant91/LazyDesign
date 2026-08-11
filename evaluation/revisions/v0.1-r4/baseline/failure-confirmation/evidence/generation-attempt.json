@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "failure-confirmation",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Generation completed the prompt requirements and reached the fixed stopping condition. No timeout, safety inspection, transport failure, or other material infrastructure interruption occurred. The configured write-limit notice did not block the successful source write and was confirmed by final readback."
+}

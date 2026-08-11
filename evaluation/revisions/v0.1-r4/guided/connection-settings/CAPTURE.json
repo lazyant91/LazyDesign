@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "condition": "guided",
+  "scenario": "connection-settings",
+  "prompt_sha256": "c98e93290fee0ddb973e5773d5116c73ce25987000199b1bcc94a121bc0d5184",
+  "packet_sha256": "4b27a1e50a11424c3297d1b43af84d4bed12e8ff2d29093ea38c16dfefa16267",
+  "run_sha256": "c4826b960e2bb6c2fef0bdf084a4a001230280dc9dacacb44c071d547b931f81",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "f8183b09b978362c7e25780a2163f9fa93e380c722f0e832f0e643e24777d1ff"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "cc536829feb44cdaf7bba41c0fed6565e2d4047802d3e45941066df207925c6a"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "5dbcf8c891fd09e21ff618d47aca4d9f3bffda1afb6f6c66ac5f790f452e6ac1"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "2f2ec2f40fd2f9e3a55178436dc9bcb08518dc616a5159d99c19403ba090723a"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "f777570dbc628e5e6609e5a8e049eabbc283da9ae602971ea1e21a8c9552569e"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "f910f5dacc5e1b19143323c0b8e70d5ecb26d7de2cdd600b11377a0219c79760"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "f8315abea63365be0b108787e69a346f1086a0a244536eeb3d788135aa9b2089"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "d5c14e2a80347179d412ea929529a8d603c29cc4ac3f76ac79e6b2eb2462b9ec"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "2afb309c9aeede146e3616decf8d08a3049be982ed4159c91d8f15a6daa74559"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "4e1ad077c187de6b74d445528aa50beecfad33f09ae6ab6e2cd1a4e54349f40e"
+    },
+    {
+      "path": "static-review.py",
+      "sha256": "6741dcf8071d24efe7b205e3d039703fe53ad991d6f65ac61f9d902671505fd7"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "1d386449578f373b151342f0278c93fe1ee112054a4815e95d125bc01384c438"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "e63605894bae7643f6d86da4a10bf94caf71cc41fef591159610746da80dd761"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "ee3d0c5305280df39e9847317f60bd5d63ad3158b9c8a983bd8d79c99450e41c"
+    }
+  ]
+}

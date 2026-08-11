@@ -1,0 +1,14 @@
+﻿METHOD: Launch frozen v0.1-r4 guided failure-confirmation executable; exercise InfoBar Retry and dismissal plus ContentDialog default/Cancel/Remove actions, keyboard traversal, and focus return with Windows UI Automation; capture a runtime screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r4/guided/failure-confirmation/evidence/runtime-uia.ps1
+RUNTIME1: launched=yes pid=37640 window='LazyDesign Evaluation' info_visible=True retry_present=True remove_present=True required_message_present=True
+BUTTONS_INITIAL: :장치 연결 다시 시도:enabled=True|CloseButton:닫기:enabled=True|:회의실 디스플레이 저장된 장치 제거:enabled=True
+KEYBOARD_TAB_SEQUENCE: ControlType.Button:CloseButton:닫기 -> ControlType.Button::회의실 디스플레이 저장된 장치 제거
+INFOBAR_RETRY: invoked=yes info_visible_after=True
+SCREENSHOT: path=evidence/runtime.png size=1904x990
+INFOBAR_CLOSE_DISCOVERY: candidate_present=True candidate_id='CloseButton' candidate_name='닫기'
+INFOBAR_DISMISSAL: invoked=yes info_visible_after=False
+DIALOG_OPEN: primary_present=True cancel_present=True device_named=True focused_id='CloseButton' focused_name='Cancel'
+DIALOG_DEFAULT_ACTION: enter_sent=yes dialog_actions_present_after=False focused_after_id='' focused_after_name='회의실 디스플레이 저장된 장치 제거' focus_returned_to_remove=True
+DIALOG_CLOSE_ACTION: cancel_invoked=yes dialog_actions_present_after=False focused_after_name='회의실 디스플레이 저장된 장치 제거' focus_returned_to_remove=True
+DIALOG_PRIMARY_ACTION: remove_invoked=yes dialog_actions_present_after=False focused_after_name='회의실 디스플레이 저장된 장치 제거' focus_returned_to_remove=True
+RESULT: runtime UI Automation sequence completed without script exception.

@@ -1,0 +1,30 @@
+# Evaluation Build Evidence
+
+Recorded at: 2026-08-10T14:19:01+09:00
+Packet: baseline/failure-confirmation
+Pinned start: 2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90:evaluation/fixtures/winui-start
+Expected .NET SDK: 9.0.313
+Selected .NET SDK: 9.0.313
+Starting Windows App SDK package: 2.0.1
+Starting Windows SDK BuildTools: 10.0.26100.4948
+Harness command: python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/v0.1-r4/baseline/failure-confirmation --matrix evaluation/revisions/v0.1-r4/run-matrix.json
+Command: dotnet build evaluation/.runs/v2/v0.1-r4/baseline/failure-confirmation/project/LazyDesign.EvaluationApp.csproj -c Debug -p:Platform=x64
+Project state SHA-256: 0a6803e0b2116dbcc7d5d2a929af9f046aafbb41c2647aca1bd9e37e2beec600
+Project file count: 8
+Exit code: 1
+
+## Output
+
+  Determining projects to restore...
+  Restored Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\LazyDesign.EvaluationApp.csproj (in 461 ms).
+Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\MainWindow.xaml.cs(27,9): error CS4036: 'IAsyncOperation<ContentDialogResult>' does not contain a definition for 'GetAwaiter' and no extension method 'GetAwaiter' accepting a first argument of type 'IAsyncOperation<ContentDialogResult>' could be found (are you missing a using directive for 'System'?) [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\LazyDesign.EvaluationApp.csproj]
+C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\Microsoft.UI.Xaml.Markup.Compiler.interop.targets(845,9): error MSB3073: The command ""C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\..\tools\net6.0\..\net472\XamlCompiler.exe" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\input.json" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\output.json"" exited with code 1. [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\LazyDesign.EvaluationApp.csproj]
+
+Build FAILED.
+
+Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\MainWindow.xaml.cs(27,9): error CS4036: 'IAsyncOperation<ContentDialogResult>' does not contain a definition for 'GetAwaiter' and no extension method 'GetAwaiter' accepting a first argument of type 'IAsyncOperation<ContentDialogResult>' could be found (are you missing a using directive for 'System'?) [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\LazyDesign.EvaluationApp.csproj]
+C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\Microsoft.UI.Xaml.Markup.Compiler.interop.targets(845,9): error MSB3073: The command ""C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\..\tools\net6.0\..\net472\XamlCompiler.exe" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\input.json" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\output.json"" exited with code 1. [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r4\baseline\failure-confirmation\project\LazyDesign.EvaluationApp.csproj]
+    0 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:09.36

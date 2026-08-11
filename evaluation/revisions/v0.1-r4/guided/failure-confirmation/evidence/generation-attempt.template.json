@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "failure-confirmation",
+  "validity": "record after generation",
+  "blocker": "record after generation",
+  "stopping_condition_reached": false,
+  "project_delta": {
+    "changed": [],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "record after generation"
+}

@@ -1,0 +1,22 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T20:48:26.627526+09:00
+TextBox=True
+ComboBox=True
+ToggleSwitch=True
+SaveButton=True
+KoreanHeader=True
+KoreanHelper=True
+KoreanToggle=True
+KoreanSave=True
+ValidationMessage=True
+HorizontalScrollDisabled=True
+NativeControlsNoCustomTemplate=True
+AccentSaveStyle=True
+TextBoxAccessibleName=True
+ComboAccessibleName=True
+ToggleAccessibleName=True
+ValidationLiveSetting=True
+InvalidFocusReturn=True
+ValidationChangesWithText=True
+MinimalCodeBehind=True
+Result=PASS

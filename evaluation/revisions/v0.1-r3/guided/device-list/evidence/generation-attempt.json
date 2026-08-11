@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "device-list",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciliation found exactly the reported two-file project delta. The repository-status query safety block did not prevent source generation; generation reached the fixed stopping condition with successful source writes and no timeout, transport error, or other material infrastructure interruption."
+}

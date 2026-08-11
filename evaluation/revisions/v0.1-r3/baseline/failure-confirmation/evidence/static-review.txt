@@ -1,0 +1,14 @@
+# Read-only static review of frozen source
+InfoBar=False
+RetryAction=False
+InfoBarDismissal=False
+RequiredKoreanFailureMessage=False
+ContentDialog=False
+DeviceIdentification=False
+RemoveAction=False
+CancelAction=False
+FocusReturn=False
+CustomControlTemplate=False
+StarterOnly=True
+Result=FAIL
+Reason=The frozen packet is the unchanged evaluation starter and contains none of the requested failure InfoBar, Retry/dismissal behavior, destructive-removal ContentDialog, required Korean failure message, or focus behavior.

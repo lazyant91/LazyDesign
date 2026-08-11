@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "failure-confirmation",
+  "prompt_sha256": "da6a5a51a50c1bba205352038197645747a13d9c6af81926e759fe951535c938",
+  "packet_sha256": "8586ace3e1aba2f7c0a48ca4c950a39ac4f537e0306fb5b537a3fbc6406ee87c",
+  "run_sha256": "6032478f674105e04916f91cde409918ff45fa52e5d2aa0aeb2c3dc2240191c6",
+  "generated_files": [],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "ff6750f03bf62ef83c04bed5de566762b1283bf7763879e9a8cc06075e93c960"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "90b82ed86e5268e2666f07b3e72a25764e44c74b5918781c29cecc1dedfc1083"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "276dedf747ec5f5bec8df6492f3297b2a16bcfd0b1b522de2c105e1c9666ff0c"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "0aac6254ff05253f1196e48ecd75273bfc87d0cb31b1d3e2d691b408a942cc4e"
+    },
+    {
+      "path": "generation-failure.txt",
+      "sha256": "643d66887210bc07a60b52936fb12a823afe52ee4ef30a32da825c44f7420772"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "accd4f4f50ae2084d87200c96272064d7a5b5a5f2da742c17571fb133d10c24c"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "16230d1b89cc7b463cb6668358bdb77f69037eda9b14a1f3d5b5657719bd05bd"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "f8a1a24cc6a8b5e6e06b609219ca39a1671109cd134f0c2a50917089fe1418b1"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "64a1ffcab12179eeda129a50a11cf680bd219bd65448f28004b9c18e4980450a"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "0d9567075df5810cce4b8df17888a99f0ecd5bfa0f903fe81bf910fa248c4053"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "9798b6f462cd894928ac2d71bc29f43adc80cde74fdcdbf9a210455d1d851f83"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7eb300520d323956dbb46c2416d1c755c1b1db00a0bf41a19e021e9992e8388e"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "connection-settings",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciled the packet filesystem and found only MainWindow.xaml and MainWindow.xaml.cs changed with no deletions. The generator reported the fixed stopping condition reached and no Remote/tool timeout, safety inspection, transport error, or external infrastructure interruption."
+}

@@ -1,0 +1,20 @@
+﻿METHOD: Launch frozen v0.1-r2 baseline device-list executable; exercise Windows UI Automation at a measured 520-DIP client width, ListView selection, Remove enabled state, keyboard traversal, dynamic CommandBar overflow under a narrower client width, and empty-state transition; capture a screenshot without changing OS settings.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r2/baseline/device-list/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=12668 window='Devices' dpi=96 client_px=520x720 client_width_dip=520
+CONTROLS: refresh=True add=True remove=True remove_initial_enabled=False list=True
+TEXTS: Devices | Manage devices and review their current connection status. | Device | Connection | Status | 회의실 디스플레이 무선 프레젠테이션 수신 장치 | Wi-Fi | Connected | Portable conference-room presentation receiver | Ethernet | Available | Lobby signage player | Bluetooth | Disconnected
+LONG_CONTENT_DISCOVERY: english_present=True non_ascii_long_count=1 longest_non_ascii='회의실 디스플레이 무선 프레젠테이션 수신 장치'
+BOUNDS: id='' name='Refresh' type='ControlType.Button' left=332 right=400 within_horizontal=True
+BOUNDS: id='' name='Add device' type='ControlType.Button' left=400 right=468 within_horizontal=True
+BOUNDS: id='RemoveButton' name='Remove' type='ControlType.Button' left=468 right=536 within_horizontal=True
+BOUNDS: id='DeviceList' name='' type='ControlType.List' left=112 right=584 within_horizontal=True
+BOUNDS: id='' name='Portable conference-room presentation receiver' type='ControlType.Text' left=140 right=360 within_horizontal=True
+BOUNDS: id='' name='회의실 디스플레이 무선 프레젠테이션 수신 장치' type='ControlType.Text' left=140 right=360 within_horizontal=True
+CONTENT_WIDTH_RESULT: client_width_dip=520 all_observed_horizontal_bounds_inside=True
+LIST_INITIAL: item_count=3 names=LazyDesign.Evaluation.DeviceItem|LazyDesign.Evaluation.DeviceItem|LazyDesign.Evaluation.DeviceItem remove_enabled=False
+LIST_SELECTION: selected=True selected_name='LazyDesign.Evaluation.DeviceItem' remove_enabled_after_selection=True
+KEYBOARD_TAB_SEQUENCE: ControlType.Button::Add device -> ControlType.Button:RemoveButton:Remove -> ControlType.Button:MoreButton:기타 옵션 -> ControlType.ListItem::LazyDesign.Evaluation.DeviceItem
+SCREENSHOT: path=evidence/runtime.png size=520x720 sampled_unique_colors=14 avg_rgb_component=11.8
+COMMANDBAR_NARROW: width_dip=300 buttons=:Refresh:enabled=True|:Add device:enabled=True|MoreButton:기타 옵션:enabled=True more_present=True overflow_opened=True overflow_items=Remove|Refresh|Add device|간단한 앱 바|Remove
+EMPTY_STATE: remaining_items=0 no_devices_present=True no_devices_visible=True
+RESULT: runtime UI Automation sequence completed without script exception.

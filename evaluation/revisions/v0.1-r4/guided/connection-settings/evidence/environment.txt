@@ -1,0 +1,8 @@
+﻿# Controller environment evidence
+Recorded at: 2026-08-10T20:49:02.2233877+09:00
+OS=Microsoft Windows NT 10.0.19045.0
+dotnet_sdk=10.0.302
+AppsUseLightTheme=0
+HighContrast=False
+NarratorRunning=False
+AccessibilityInsightsCommandFound=False

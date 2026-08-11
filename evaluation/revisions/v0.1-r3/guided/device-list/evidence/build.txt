@@ -1,0 +1,28 @@
+# Evaluation Build Evidence
+
+Recorded at: 2026-08-09T20:58:30+09:00
+Packet: guided/device-list
+Pinned start: 2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90:evaluation/fixtures/winui-start
+Expected .NET SDK: 9.0.313
+Selected .NET SDK: 9.0.313
+Starting Windows App SDK package: 2.0.1
+Starting Windows SDK BuildTools: 10.0.26100.4948
+Harness command: python scripts/evaluation_harness.py build --packet evaluation/.runs/v2/v0.1-r3/guided/device-list --matrix evaluation/revisions/v0.1-r3/run-matrix.json
+Command: dotnet build evaluation/.runs/v2/v0.1-r3/guided/device-list/project/LazyDesign.EvaluationApp.csproj -c Debug -p:Platform=x64
+Project state SHA-256: 9fd8ef2588a81312f88e96fe4dd0d6e271acaf0a4c3e029916de810d664c31e4
+Project file count: 8
+Exit code: 1
+
+## Output
+
+  Determining projects to restore...
+  Restored Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r3\guided\device-list\project\LazyDesign.EvaluationApp.csproj (in 1.65 sec).
+C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\Microsoft.UI.Xaml.Markup.Compiler.interop.targets(594,9): error MSB3073: The command ""C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\..\tools\net6.0\..\net472\XamlCompiler.exe" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\input.json" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\output.json"" exited with code 1. [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r3\guided\device-list\project\LazyDesign.EvaluationApp.csproj]
+
+Build FAILED.
+
+C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\Microsoft.UI.Xaml.Markup.Compiler.interop.targets(594,9): error MSB3073: The command ""C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12\buildTransitive\..\tools\net6.0\..\net472\XamlCompiler.exe" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\input.json" "obj\x64\Debug\net9.0-windows10.0.22621.0\win-x64\\output.json"" exited with code 1. [Z:\workspace\LazyDesign\evaluation\.runs\v2\v0.1-r3\guided\device-list\project\LazyDesign.EvaluationApp.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:06.14

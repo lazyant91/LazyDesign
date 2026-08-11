@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "connection-settings",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciliation found the complete expected two-file project delta and confirmed the fixed stopping condition was reached. Two generation-time safety inspections rejected individual write/edit calls without applying changes, but generation completed in the same fresh context with no timeout, transport failure, or material external interruption."
+}

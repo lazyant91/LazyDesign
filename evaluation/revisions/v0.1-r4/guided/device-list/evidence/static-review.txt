@@ -1,0 +1,22 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T21:54:06.391733+09:00
+CommandBar=True
+DynamicOverflow=True
+RefreshCommand=True
+AddDeviceCommand=True
+RemoveCommand=True
+RemoveAsSecondaryCommand=True
+ListView=True
+NameBinding=True
+ConnectionTypeBinding=True
+StatusBinding=True
+SingleSelection=True
+SelectionDrivenRemoveState=True
+EmptyState=True
+KoreanLongFixture=True
+EnglishLongFixture=True
+NativeControlsNoCustomTemplate=True
+ValidEmptyStateIcon=True
+MutableViewModelProperties=True
+MinimalCodeBehind=True
+Result=PASS

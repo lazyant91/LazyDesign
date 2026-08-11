@@ -1,0 +1,56 @@
+{
+  "schema_version": 2,
+  "input_commit": "d40d08504baf73cf80d8b4f16248a1ee86d8c252",
+  "start_project": {
+    "commit": "2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90",
+    "path": "evaluation/fixtures/winui-start"
+  },
+  "scenarios": {
+    "connection-settings": {
+      "prompt": "evaluation/prompts/connection-settings.md",
+      "content_width_dip": 420,
+      "guided_references": [
+        "DESIGN.md",
+        "foundations/text-and-localization.md",
+        "foundations/sizing-and-spacing.md",
+        "foundations/states-and-themes.md",
+        "foundations/accessibility-basics.md",
+        "components/button.md",
+        "components/textbox.md",
+        "components/toggleswitch.md",
+        "components/combobox.md"
+      ]
+    },
+    "device-list": {
+      "prompt": "evaluation/prompts/device-list.md",
+      "content_width_dip": 520,
+      "guided_references": [
+        "DESIGN.md",
+        "foundations/text-and-localization.md",
+        "foundations/sizing-and-spacing.md",
+        "foundations/icons.md",
+        "foundations/states-and-themes.md",
+        "foundations/accessibility-basics.md",
+        "components/button.md",
+        "components/commandbar.md",
+        "components/listview.md"
+      ]
+    },
+    "failure-confirmation": {
+      "prompt": "evaluation/prompts/failure-confirmation.md",
+      "content_width_dip": null,
+      "guided_references": [
+        "DESIGN.md",
+        "foundations/text-and-localization.md",
+        "foundations/sizing-and-spacing.md",
+        "foundations/icons.md",
+        "foundations/states-and-themes.md",
+        "foundations/accessibility-basics.md",
+        "components/button.md",
+        "components/infobar.md",
+        "components/contentdialog.md"
+      ]
+    }
+  },
+  "execution_contract": "controller-reconciled-v1"
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {"status": "not_run", "evidence": [], "reason": "Accessibility Insights was not found in the local environment and was not installed for this run."},
+    "build": {"status": "pass", "evidence": [{"path": "build.txt", "detail": "Controlled schema-2 build selected .NET SDK 9.0.313 and the frozen project build exited 0 with 0 warnings and 0 errors."}, {"path": "source-hashes-after-build.txt", "detail": "Controller recorded all eight frozen project file hashes after the controlled build; later verifier-only work preserved these hashes."}], "reason": "The controlled pinned build succeeded against the frozen generated source."},
+    "contentdialog_close_action": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation reopened the ContentDialog, invoked the native Cancel close button, observed the dialog action buttons disappear, and observed focus return to the invoking Remove saved device button."}], "reason": "The native ContentDialog close/Cancel action was exercised successfully."},
+    "contentdialog_default_action": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "On ContentDialog open, UI Automation observed Cancel focused as the Close default button; sending Enter closed the dialog and returned focus to the invoking Remove saved device button."}], "reason": "The safe Close default action was exercised through keyboard Enter."},
+    "dark_theme": {"status": "pass", "evidence": [{"path": "environment.txt", "detail": "Controller recorded AppsUseLightTheme=0 and HighContrast=False before runtime verification."}, {"path": "runtime.png", "detail": "Controller captured the rendered frozen application during the current dark app-theme preference."}], "reason": "The frozen application rendered successfully under the current Windows dark app-theme preference."},
+    "english_long_content": {"status": "not_run", "evidence": [], "reason": "The fixed failure-confirmation prompt contains no English long-content fixture and the frozen source was not modified to add one."},
+    "focus_return": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "After the dialog default Enter action, explicit Cancel action, and primary Remove action, UI Automation observed focus return to the invoking saved-device Remove button in all three cases."}], "reason": "Native ContentDialog focus restoration was exercised successfully for all tested close paths."},
+    "focus_visual": {"status": "not_run", "evidence": [], "reason": "Keyboard focus movement and return were exercised, but the visual appearance of the focus indicator was not independently inspected."},
+    "high_contrast": {"status": "not_run", "evidence": [], "reason": "System high contrast was False and the Windows contrast theme was not changed for this run."},
+    "infobar_dismissal": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation discovered the InfoBar CloseButton, invoked it, and observed ConnectionErrorInfoBar no longer visible."}], "reason": "Native InfoBar dismissal was exercised successfully."},
+    "infobar_retry_action": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation invoked the accessible Retry action and observed the InfoBar remain open without script exception, confirming the wired Retry handler executed on the frozen runtime."}], "reason": "The generated Retry action was invoked successfully through the native Button."},
+    "keyboard_navigation": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "Starting from the Retry action, Tab traversed to the InfoBar Close button and then to the saved-device Remove button; Enter also activated the dialog default Close action."}], "reason": "Keyboard traversal and activation were exercised across the generated interactive controls."},
+    "korean_long_content": {"status": "pass", "evidence": [{"path": "static-review.txt", "detail": "Explicit UTF-8 static review found the exact required Korean failure message in frozen XAML."}, {"path": "runtime-uia.txt", "detail": "UI Automation found the complete required Korean failure message in the rendered runtime."}], "reason": "The required Korean failure fixture was present in frozen source and rendered UI."},
+    "light_theme": {"status": "not_run", "evidence": [], "reason": "The current Windows app-theme preference was dark and the system theme was not changed to Light for this run."},
+    "narrator": {"status": "not_run", "evidence": [], "reason": "Narrator was not running and was not launched for this run."},
+    "rendered_runtime": {"status": "pass", "evidence": [{"path": "runtime-uia.txt", "detail": "The frozen executable launched twice and completed the InfoBar and ContentDialog UI Automation sequences without script exception; leftover application process count was zero after verification."}, {"path": "runtime.png", "detail": "Controller captured a rendered runtime screenshot from the frozen executable."}], "reason": "The frozen build rendered and remained interactive throughout the controller verification sequence."},
+    "static_review": {"status": "pass", "evidence": [{"path": "static-review.txt", "detail": "Read-only UTF-8 review found the required native InfoBar and ContentDialog, exact Korean message, Error severity, dismissible InfoBar, Retry action, selected-device identification, Remove/Cancel actions, safe Close default, accessible names, native templates, handlers, XamlRoot assignment, and required System import."}], "reason": "Static source inspection found the fixed prompt requirements represented in the frozen implementation without a custom ControlTemplate."},
+    "text_scaling": {"status": "not_run", "evidence": [], "reason": "No text scale above 100 percent was exercised and Windows text scaling was not changed for this run."}
+  }
+}

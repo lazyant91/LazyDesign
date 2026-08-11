@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "failure-confirmation",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller observed the expected two-file project delta and completed generation. One initial MainWindow.xaml.cs write_file request was blocked by Remote safety inspection, but the same intended change was successfully applied with edit_block in the fresh generation context, no material interruption remained, and the fixed stopping condition was reached."
+}

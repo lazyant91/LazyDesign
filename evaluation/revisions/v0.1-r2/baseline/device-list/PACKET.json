@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "input_commit": "d40d08504baf73cf80d8b4f16248a1ee86d8c252",
+  "start_project_commit": "2ffa7d4dcfe76d4ed7671e116bbdbe5d62528e90",
+  "start_project_path": "evaluation/fixtures/winui-start",
+  "content_width_dip": 520,
+  "prompt_path": "evaluation/prompts/device-list.md",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "references": [],
+  "project_files": [
+    {
+      "path": "app.manifest",
+      "sha256": "edf3ad06fba5b2fb715db40ad2a5a520eaf7ea8aaa3c72e8b6a37d84c7dcd7d1"
+    },
+    {
+      "path": "App.xaml",
+      "sha256": "9b1a67ff0d79780d2113c513936d485bc6a0bba12ed40a18a26f4152db573088"
+    },
+    {
+      "path": "App.xaml.cs",
+      "sha256": "6e604dcfa28cb4be3e1ab4732b6f05bbcffa8dfbf3c6176cc62f21de19ff6af7"
+    },
+    {
+      "path": "global.json",
+      "sha256": "826c897f119b8f949f829b3fe57b54d1b14a55de8cec932266c8d76bc0280fb2"
+    },
+    {
+      "path": "LazyDesign.EvaluationApp.csproj",
+      "sha256": "70dba0c48abb6a0fdbc3d3becbb5fadcf00d450fc4559171a202360fe3e9de0e"
+    },
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "e1d3bbe6a06fcd7cf2af5f6c439fcd5d96203dd9740a859dc97530853761e1b2"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "5989e97793f084830a651f8d10e12af5ff67fc13b3a1397ad910fd495c5ed464"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5995320df3c5654c23c3305751dc23cb8679de43bb15b1d50e64b6a3dd562b59"
+    }
+  ]
+}

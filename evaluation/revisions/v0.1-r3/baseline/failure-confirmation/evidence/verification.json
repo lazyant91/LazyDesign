@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local controller environment and was not installed for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [
+        {"path": "build.txt", "detail": "Controlled schema-2 build selected .NET SDK 9.0.313 and the unchanged frozen starter project built successfully."},
+        {"path": "source-hashes-after-build.txt", "detail": "All eight frozen project-file hashes still matched PACKET.json after build and runtime verification."}
+      ],
+      "reason": "The unchanged frozen starter project compiled successfully; this does not indicate prompt implementation success."
+    },
+    "contentdialog_close_action": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero Button controls and zero descendant Window controls in the rendered starter; no confirmation dialog or Cancel/close action existed."}],
+      "reason": "The required destructive-removal ContentDialog and close behavior were never generated."
+    },
+    "contentdialog_default_action": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "The rendered starter exposed no Remove/Cancel buttons and no descendant dialog window, so no native default confirmation action existed."}],
+      "reason": "The required ContentDialog default action was never generated."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The controller environment used the dark app-theme preference, but the requested failure-confirmation scenario UI was absent, so scenario-specific Dark theme behavior was not evaluated."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The fixed failure-confirmation prompt does not provide an English long-content fixture and generation never created the requested scenario UI."
+    },
+    "focus_return": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "No confirmation trigger or dialog controls existed at runtime, so there was no dialog-close path from which keyboard focus could return."}],
+      "reason": "The prompt-required focus preservation/return behavior could not exist because the scenario controls were never generated."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No requested interactive scenario controls existed, so focus visual appearance was not separately inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "SystemParameters.HighContrast was False and the Windows contrast theme was not changed."
+    },
+    "infobar_dismissal": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero Button controls in the rendered starter, including no InfoBar close/dismiss control."}],
+      "reason": "The required dismissible connection-failure InfoBar was never generated."
+    },
+    "infobar_retry_action": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero Button controls in the rendered starter, including no Retry action."}],
+      "reason": "The required InfoBar Retry action and resulting state change were never generated."
+    },
+    "keyboard_navigation": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "The rendered starter contained no requested interactive buttons or dialog controls to traverse by keyboard."}],
+      "reason": "The prompt-required keyboard interaction path could not exist because the scenario UI was absent."
+    },
+    "korean_long_content": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only source review found the required Korean connection-failure message absent."},
+        {"path": "runtime-uia.txt", "detail": "Rendered UIA text contained only 'Evaluation start project'."}
+      ],
+      "reason": "The prompt-required Korean failure message was absent from both frozen source and rendered runtime."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current Windows app-theme preference was dark and the system theme was not changed to Light."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and was not launched for this evaluation run."
+    },
+    "rendered_runtime": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The frozen starter executable launched successfully, exposed a top-level window, and completed the read-only UIA inspection."},
+        {"path": "runtime.png", "detail": "Controller captured the rendered unchanged starter client."}
+      ],
+      "reason": "The frozen application runtime itself rendered successfully even though generation never produced the requested failure-confirmation UI."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Frozen source is the unchanged starter and contains none of the required InfoBar, Retry/dismissal, ContentDialog, device identification, Remove/Cancel, Korean failure message, or focus behavior."},
+        {"path": "generation-failure.txt", "detail": "Remote safety inspection materially blocked the required source write and generation did not reach the stopping condition."}
+      ],
+      "reason": "The frozen source does not implement the failure-confirmation prompt."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Windows text scaling was not changed above 100 percent."
+    }
+  }
+}

@@ -1,0 +1,5 @@
+﻿# Installed WinUI Symbol enum metadata check
+Package root: C:\Users\lky57\.nuget\packages\microsoft.windowsappsdk.winui\2.0.12
+Exact member searched: F:Microsoft.UI.Xaml.Controls.Symbol.Devices
+Exact match count: 0
+Conclusion: Symbol.Devices is not present in the installed WinUI 2.0.12 XML metadata.

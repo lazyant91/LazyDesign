@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "scenario": "device-list",
+  "parameters": {
+    "content_width_dip": 520,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "build": {
+      "status": "fail",
+      "evidence": [
+        {
+          "path": "build.txt",
+          "detail": "Controlled pinned build ran against the frozen partial source; dotnet build exited 1 and the XAML compiler failed."
+        }
+      ],
+      "reason": "The frozen partial generation did not build successfully; no source repair or generation rerun was performed."
+    },
+    "commandbar_overflow": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "content_width": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "empty_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "keyboard_navigation": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "korean_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "listview_selection": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "remove_command_state": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "rendered_runtime": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {
+          "path": "static-review.txt",
+          "detail": "Read-only review found CommandBar/ListView/empty-state XAML, but its Devices/DeviceItem bindings and four event handlers have no supporting C# definitions and both required long-name fixtures are absent."
+        },
+        {
+          "path": "generation-failure.txt",
+          "detail": "Controller reconciliation records the two Remote safety-inspection blocks that prevented MainWindow.xaml.cs support from being applied and left the stopping condition unreached."
+        }
+      ],
+      "reason": "The infrastructure-interrupted frozen source is incomplete and cannot satisfy the fixed device-list prompt."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The infrastructure-invalid generation attempt did not produce a completed buildable target UI, so this runtime check was not performed."
+    }
+  }
+}

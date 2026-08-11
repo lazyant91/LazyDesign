@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "dcc8f6443f7a01a7d23b42b854a59daad7afda024b5bcfde11945db9406d13b0",
+  "run_sha256": "8f4149101f80a064e8e270636a5db2be2495e9a0019026b72404e52f4b96042c",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "d3ab15d2bfa8b16d3d6be23050573b7b0f1eadbf73e85c0e6cf6fc29cdfe22af"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "5dd50cbf942ab0540b0f5439ac8c0bd5fcfd478403b0579166c5d6b01734f300"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "95d16465f85689a9ce2f35a9aa6cf2d8d09d577bce11ab451b86e5a4318a23fa"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "bbefb58d57096bf001be9c37d5dc57738350bfe028f0e77f1f2d8adb4eb2c690"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "e23ff672383322d557affca0075511959caa3d9cfa8fa9b4c0ef93fba40bc5f7"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "1da80ece7657780f8f7975c1d40d542da361f5d314374ae92f5aefd83e0ffe16"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "70764039881fda2107d5c10cefd6cf930f004341ef9bb62e5e06925bfe713854"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "814932c474a6fb6efc85229ef9a9fb5a2d09980f2ecdfcaef377f490006f6855"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "0c80dd1643cd32f05db53cd26795d5ddfbaaa38ce5200a5ae849af85f05e9daa"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "3d40b4f417983ac9a443f17796740cba68c07168670a6930ba9838bc2407a07d"
+    },
+    {
+      "path": "static-review.py",
+      "sha256": "718e79bd4916500e343bd3d28b745082546e8ae33bc4a49f6bab083d4e0c5e2c"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "dedbdf54047558074a361c5f3abb410bfa7d834bd5c533c40da09e03128b9eec"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "6df067fa0b937a8f80bf450c87f8b763a5dcf94c78a08260b0360471a6cf5afd"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}

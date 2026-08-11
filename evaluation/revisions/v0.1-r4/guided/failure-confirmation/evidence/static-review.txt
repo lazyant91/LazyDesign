@@ -1,0 +1,21 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T22:53:45.076597+09:00
+InfoBar=True
+ErrorSeverity=True
+InfoBarClosable=True
+RetryAction=True
+ExactKoreanFailureMessage=True
+ContentDialog=True
+DialogIdentifiesSelectedDevice=True
+PrimaryRemove=True
+CloseCancel=True
+SafeDefaultClose=True
+RetryAccessibleName=True
+RemoveAccessibleName=True
+NoControlTemplate=True
+RetryHandlerImplemented=True
+RemoveHandlerImplemented=True
+DialogXamlRootAssigned=True
+SystemNamespaceImported=True
+MinimalCodeBehind=True
+Result=PASS

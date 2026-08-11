@@ -1,0 +1,7 @@
+﻿METHOD: Launch the frozen unchanged starter executable, resize client to 420 DIP, inspect UIA tree for required connection-settings controls/text, and capture the client. No source or OS setting is changed.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r3/baseline/connection-settings/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=10112 window='LazyDesign Evaluation' dpi=96 client_width_dip=420
+SCENARIO_CONTROLS: textbox_count=0 combobox_count=0 button_count=0 all_required_interactive_controls_absent=True
+TEXTS: Evaluation start project
+SCREENSHOT: path=evidence/runtime.png size=420x700
+RESULT: starter runtime launched, but requested connection-settings scenario controls/content are absent.

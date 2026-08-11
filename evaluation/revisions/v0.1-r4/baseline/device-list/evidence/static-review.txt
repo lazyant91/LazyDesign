@@ -1,0 +1,22 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T13:55:11.378002+09:00
+CommandBar=True
+DynamicOverflow=True
+Refresh=True
+AddDevice=True
+Remove=True
+RemoveInitiallyDisabled=True
+ListView=True
+NameBinding=True
+ConnectionBinding=True
+StatusBinding=True
+SingleSelection=True
+EmptyState=True
+SelectionChangesRemove=True
+KoreanLong=True
+EnglishLong=True
+NoControlTemplate=True
+RecordWithInitOnlyProperties=True
+BuildCompatibility=False
+BuildCompatibilityDetail=DeviceItem is a positional record, so Name/ConnectionType/Status are init-only; controlled WinUI XAML generation emitted setters in XamlTypeInfo.g.cs and failed with CS8852 for all three properties.
+Result=FAIL

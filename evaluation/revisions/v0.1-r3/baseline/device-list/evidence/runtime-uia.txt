@@ -1,0 +1,20 @@
+﻿METHOD: Launch frozen r3 baseline device-list executable; verify 520-DIP layout, long fixtures, single selection and Remove state, keyboard traversal, CommandBar overflow at 300 DIP, empty-state transition, and capture a screenshot.
+COMMAND: powershell.exe -File evaluation/.runs/v2/v0.1-r3/baseline/device-list/evidence/runtime-uia.ps1
+RUNTIME: launched=yes pid=51336 window='Device list' dpi=96 client_px=520x720 client_width_dip=520
+CONTROLS: refresh=True add=True remove=True remove_initial_enabled=False list=True
+TEXTS: Devices | Manage available presentation and meeting-room devices. | 3 devices • Select a device to remove it | Fixture status | 회의실 디스플레이 무선 프레젠테이션 수신 장치 | Connection | Wi-Fi | Status | Connected | Portable conference-room presentation receiver | Connection | USB-C | Status | Available | Studio speaker | Connection | Bluetooth | Status | Offline
+LONG_CONTENT: english_present=True hangul_long_count=1 longest_hangul='회의실 디스플레이 무선 프레젠테이션 수신 장치'
+BOUNDS: id='RefreshButton' name='Refresh' left=287 right=376 within_horizontal=True
+BOUNDS: id='AddButton' name='Add device' left=376 right=486 within_horizontal=True
+BOUNDS: id='RemoveButton' name='Remove' left=486 right=578 within_horizontal=True
+BOUNDS: id='DeviceListView' name='' left=112 right=584 within_horizontal=True
+BOUNDS: id='' name='Portable conference-room presentation receiver' left=124 right=572 within_horizontal=True
+BOUNDS: id='' name='회의실 디스플레이 무선 프레젠테이션 수신 장치' left=124 right=572 within_horizontal=True
+CONTENT_WIDTH_RESULT: client_width_dip=520 all_observed_horizontal_bounds_inside=True
+LIST_INITIAL: item_count=3 remove_enabled=False names=DeviceInfo { Name = 회의실 디스플레이 무선 프레젠테이션 수신 장치, ConnectionType = Wi-Fi, Status = Connected }|DeviceInfo { Name = Portable conference-room presentation receiver, ConnectionType = USB-C, Status = Available }|DeviceInfo { Name = Studio speaker, ConnectionType = Bluetooth, Status = Offline }
+LIST_SELECTION: selected=True remove_enabled_after_selection=True
+KEYBOARD_TAB_SEQUENCE: ControlType.Button:AddButton:Add device -> ControlType.Button:RemoveButton:Remove -> ControlType.ListItem::DeviceInfo { Name = 회의실 디스플레이 무선 프레젠테이션 수신 장치, ConnectionType = Wi-Fi, Status = Connected } -> ControlType.Button:RefreshButton:Refresh
+SCREENSHOT: path=evidence/runtime.png size=520x720
+COMMANDBAR_NARROW: width_dip=300 buttons=RefreshButton:Refresh:enabled=True|AddButton:Add device:enabled=True|MoreButton:기타 옵션:enabled=True more_present=True overflow_opened=True overflow_items=Remove|Refresh|Add device|간단한 앱 바|Remove
+EMPTY_STATE: remaining_items=0 no_devices_present=True no_devices_visible=True
+RESULT: runtime UI Automation sequence completed without script exception.

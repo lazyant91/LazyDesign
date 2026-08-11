@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scenario": "failure-confirmation",
+  "parameters": {
+    "content_width_dip": null,
+    "text_scale_percent": [],
+    "languages": [],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {"status": "not_run", "evidence": [], "reason": "The current frozen generated project did not produce a successful build, so Accessibility Insights was not run."},
+    "build": {"status": "fail", "evidence": [{"path": "build.txt", "detail": "The controlled harness build selected .NET SDK 9.0.313 and exited 1; MainWindow.xaml.cs reports CS4036 while awaiting ContentDialog.ShowAsync."}], "reason": "The frozen generated source failed the controlled build without source repair."},
+    "contentdialog_close_action": {"status": "not_run", "evidence": [], "reason": "The controlled build failed, so the generated ContentDialog Cancel/close behavior was not executed."},
+    "contentdialog_default_action": {"status": "not_run", "evidence": [], "reason": "The controlled build failed, so the generated ContentDialog default-button behavior was not executed."},
+    "dark_theme": {"status": "not_run", "evidence": [], "reason": "No current generated executable was available after the failed build, so rendered dark-theme behavior was not checked."},
+    "english_long_content": {"status": "not_run", "evidence": [], "reason": "The fixed failure-confirmation prompt does not provide a required English long-content fixture, and no runtime localization check was performed."},
+    "focus_return": {"status": "not_run", "evidence": [], "reason": "The generated project did not build, so focus return after dialog/retry interactions could not be exercised."},
+    "focus_visual": {"status": "not_run", "evidence": [], "reason": "The generated project did not build, so rendered focus visuals could not be observed."},
+    "high_contrast": {"status": "not_run", "evidence": [], "reason": "The generated project did not build and the Windows contrast theme was not changed."},
+    "infobar_dismissal": {"status": "not_run", "evidence": [], "reason": "The generated project did not build, so InfoBar dismissal could not be exercised."},
+    "infobar_retry_action": {"status": "not_run", "evidence": [], "reason": "The generated project did not build, so the Retry action could not be exercised."},
+    "keyboard_navigation": {"status": "not_run", "evidence": [], "reason": "The generated project did not build, so keyboard navigation through the target controls could not be exercised."},
+    "korean_long_content": {"status": "not_run", "evidence": [], "reason": "The required Korean failure message is present in frozen source, but the build failure prevented rendered fit/readability verification."},
+    "light_theme": {"status": "not_run", "evidence": [], "reason": "No current generated executable was available after the failed build, and the Windows theme was not changed."},
+    "narrator": {"status": "not_run", "evidence": [], "reason": "The generated project did not build and Narrator was not launched."},
+    "rendered_runtime": {"status": "not_run", "evidence": [], "reason": "The controlled build failed with CS4036, so no executable from the frozen generated source was launched; stale binaries were not used."},
+    "static_review": {"status": "pass", "evidence": [{"path": "static-review.txt", "detail": "Read-only review found the required InfoBar, exact Korean failure message, Retry and closable behavior, ContentDialog with device identity, Remove/Cancel actions, safe close default, focus-return code, accessible names, and no custom control template; compile failure is recorded separately."}], "reason": "Static structure satisfies the prompt requirements visible in source; build validity is a separate failed check."},
+    "text_scaling": {"status": "not_run", "evidence": [], "reason": "No current generated executable was available and no Windows text-scale change was performed."}
+  }
+}

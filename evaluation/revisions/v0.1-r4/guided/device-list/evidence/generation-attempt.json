@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "guided",
+  "scenario": "device-list",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Generation completed the prompt requirements and reached the fixed stopping condition. Controller-recomputed project hashes exactly matched the generator-reported MainWindow.xaml and MainWindow.xaml.cs start-to-final hashes. No timeout, safety inspection, transport failure, or other material infrastructure interruption occurred."
+}

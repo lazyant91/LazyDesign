@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "prompt_sha256": "5839871c00fc5df6eacdd550a4dbef74c80d9be03a58b6b6254aa6b194ee2c1c",
+  "packet_sha256": "dcc8f6443f7a01a7d23b42b854a59daad7afda024b5bcfde11945db9406d13b0",
+  "run_sha256": "a80c8b95516a793787e3b133924968167b9947213c5ee1b13329800ff534977c",
+  "generated_files": [
+    {
+      "path": "MainWindow.xaml",
+      "sha256": "0a4cb447f2bfb6b78ca166723aabf1a39309e85472e01b52ff60d767bc7403d6"
+    },
+    {
+      "path": "MainWindow.xaml.cs",
+      "sha256": "8b0f69395b9f74b1f49a45008f44cf932ef10e879c33c440142ceb3b02b28a6a"
+    }
+  ],
+  "deleted_files": [],
+  "evidence_files": [
+    {
+      "path": "build.txt",
+      "sha256": "fb61591b6d2884bec4737f3b3a209e8395ab589ecd52bb3eded5e96450b135d3"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "6951c61a6730998107c33d7ea2529c7e529010567cc33732439e139c0f765039"
+    },
+    {
+      "path": "generation-attempt.json",
+      "sha256": "84cb7ea23044bf29cc62a2f34505a8d6f746dcb72b015741849fadfc91aa5a97"
+    },
+    {
+      "path": "generation-attempt.template.json",
+      "sha256": "1da80ece7657780f8f7975c1d40d542da361f5d314374ae92f5aefd83e0ffe16"
+    },
+    {
+      "path": "runtime-uia.ps1",
+      "sha256": "22149c7eaa49137b660dc3861b0aedd515523801e2946fa633ebb98b990037ea"
+    },
+    {
+      "path": "runtime-uia.txt",
+      "sha256": "1630fbaaaaf3cd77de6d9f313ceba7e8b2e9d0c62d76b71da091ab50b43da85e"
+    },
+    {
+      "path": "runtime.png",
+      "sha256": "73f70488ce6f84097cb9bb13a6c16995f38cbf743aae5a6827084359a6b8566c"
+    },
+    {
+      "path": "source-hashes-after-build.txt",
+      "sha256": "074b5d9c7a37869b28742d4818a43ec9cc79e4391c5a0365db214ea9d7135977"
+    },
+    {
+      "path": "static-review.txt",
+      "sha256": "df8f445e0230c82134c8dee50bdaaead3a8fa45af38ccdf8eeac05e0312d77f0"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "94d4cb5d0609051ea25c364896d745c052ae61d0abdeb295ef70023c93cc751b"
+    },
+    {
+      "path": "verification.template.json",
+      "sha256": "7bccbb5ee2686c549d3cf4a0d30765bef35c60ad5de0da58e0c39d298b99b618"
+    }
+  ]
+}

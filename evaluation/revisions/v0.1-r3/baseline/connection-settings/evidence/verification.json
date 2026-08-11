@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "scenario": "connection-settings",
+  "parameters": {
+    "content_width_dip": 420,
+    "text_scale_percent": [],
+    "languages": ["ko-KR"],
+    "contrast_theme": ""
+  },
+  "checks": {
+    "accessibility_insights": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Accessibility Insights was not found in the local controller environment and was not installed for this run."
+    },
+    "build": {
+      "status": "pass",
+      "evidence": [
+        {"path": "build.txt", "detail": "Controlled schema-2 build selected .NET SDK 9.0.313 and the unchanged frozen starter project built successfully."},
+        {"path": "source-hashes-after-build.txt", "detail": "Controller recorded the frozen eight-file source hashes after build; no generated source repair occurred."}
+      ],
+      "reason": "The unchanged frozen starter project compiled successfully; this does not indicate prompt implementation success."
+    },
+    "combobox_popup": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero ComboBox controls in the rendered frozen starter."}],
+      "reason": "The required transport ComboBox was never generated."
+    },
+    "content_width": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "The frozen app was rendered at a measured 420-DIP client width, but the requested connection-settings controls/content were absent."}],
+      "reason": "The requested connection-settings screen did not exist, so its required 420-DIP layout could not satisfy the scenario."
+    },
+    "dark_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The controller environment used the dark app-theme preference, but the requested scenario UI was absent, so scenario-specific Dark theme behavior was not evaluated."
+    },
+    "english_long_content": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The fixed connection-settings prompt does not provide an English long-content fixture, and source was not modified after generation."
+    },
+    "focus_visual": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "No requested interactive scenario controls existed, so focus visual appearance was not inspected."
+    },
+    "high_contrast": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "SystemParameters.HighContrast was False and the contrast theme was not changed."
+    },
+    "keyboard_navigation": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero TextBox, ComboBox, and Button controls in the unchanged starter, leaving no required interactive sequence to traverse."}],
+      "reason": "The prompt-required keyboard navigation path could not exist because the scenario controls were never generated."
+    },
+    "korean_long_content": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Read-only source review found none of the required Korean connection-settings strings."},
+        {"path": "runtime-uia.txt", "detail": "Rendered UIA text contained only 'Evaluation start project'."}
+      ],
+      "reason": "The required Korean scenario content was absent from both frozen source and rendered runtime."
+    },
+    "light_theme": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "The current Windows app-theme preference was dark and the system theme was not changed to Light."
+    },
+    "narrator": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Narrator was not running and was not launched."
+    },
+    "rendered_runtime": {
+      "status": "pass",
+      "evidence": [
+        {"path": "runtime-uia.txt", "detail": "The frozen starter executable launched successfully, exposed a top-level window, and completed the read-only UIA inspection."},
+        {"path": "runtime.png", "detail": "Controller captured the 420x700 rendered starter client."}
+      ],
+      "reason": "The frozen application runtime itself rendered successfully even though generation never produced the requested scenario UI."
+    },
+    "save_button_activation": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero Button controls, including no connection-settings Save button."}],
+      "reason": "The required Save button was never generated and therefore could not be activated."
+    },
+    "static_review": {
+      "status": "fail",
+      "evidence": [
+        {"path": "static-review.txt", "detail": "Frozen source is the unchanged starter and contains none of the requested connection-settings controls, Korean content, or validation behavior."},
+        {"path": "generation-failure.txt", "detail": "Remote safety inspection materially blocked the required source write and generation did not reach the stopping condition."}
+      ],
+      "reason": "The frozen source does not implement the connection-settings prompt."
+    },
+    "text_scaling": {
+      "status": "not_run",
+      "evidence": [],
+      "reason": "Windows text scaling was not changed above 100 percent."
+    },
+    "textbox_validation": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "UI Automation found zero Edit/TextBox controls in the rendered starter."}],
+      "reason": "The required connection-name TextBox and its empty-name validation behavior were never generated."
+    },
+    "toggleswitch_state": {
+      "status": "fail",
+      "evidence": [{"path": "runtime-uia.txt", "detail": "No requested automatic-reconnect ToggleSwitch was present in the rendered frozen starter."}],
+      "reason": "The required ToggleSwitch was never generated and no state transition could be exercised."
+    }
+  }
+}

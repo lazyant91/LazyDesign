@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "connection-settings",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Controller reconciliation found exactly the reported two-file project delta. Generation reached the fixed stopping condition. One Remote.write_file safety refusal occurred for MainWindow.xaml.cs, but generation completed the same ordinary source edit through the independently permitted Remote.edit_block interface; the interruption was non-material and did not prevent completion."
+}

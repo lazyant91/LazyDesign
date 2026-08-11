@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "connection-settings",
+  "validity": "infrastructure_invalid",
+  "blocker": "remote_safety_inspection",
+  "stopping_condition_reached": false,
+  "project_delta": {
+    "changed": [],
+    "deleted": []
+  },
+  "evidence": [
+    {
+      "path": "generation-failure.txt",
+      "detail": "Remote safety inspection blocked the required MainWindow.xaml source write; controller reconciliation found no project source delta and the fixed stopping condition was not reached."
+    }
+  ],
+  "reason": "A concrete Remote safety-inspection blocker materially prevented the required source modification, leaving the prepared starter project unchanged and preventing generation completion."
+}

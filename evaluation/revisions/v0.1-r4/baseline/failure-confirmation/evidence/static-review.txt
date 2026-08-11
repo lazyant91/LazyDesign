@@ -1,0 +1,22 @@
+# Read-only static review of frozen generated source
+Recorded at: 2026-08-10T14:21:21.699069+09:00
+InfoBar=True
+ErrorSeverity=True
+Closable=True
+RetryAction=True
+ExactKoreanFailureMessage=True
+ContentDialog=True
+DialogIdentifiesDevice=True
+PrimaryRemove=True
+CloseCancel=True
+SafeDefaultClose=True
+AccessibleNames=True
+NoControlTemplate=True
+RetryHandlerImplemented=True
+RemoveHandlerImplemented=True
+FocusReturnLogic=True
+ShowAsyncAwaited=True
+SystemNamespaceImported=False
+BuildCompatibility=False
+BuildCompatibilityDetail=ContentDialog.ShowAsync() returns IAsyncOperation<ContentDialogResult>; generated code awaits it without importing System, and the controlled build failed CS4036 because GetAwaiter was unavailable.
+Result=FAIL

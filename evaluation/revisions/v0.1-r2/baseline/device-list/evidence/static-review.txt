@@ -1,0 +1,22 @@
+﻿# Read-only static review of frozen generated source
+Recorded at: 2026-08-09T02:26:42.403355+09:00
+Literal transport: ASCII-safe Unicode escape for Korean fixture
+CommandBar=True
+Refresh=True
+AddDevice=True
+Remove=True
+DynamicOverflow=True
+ListView=True
+NameBinding=True
+ConnectionBinding=True
+StatusBinding=True
+EmptyState=True
+KoreanLong=True
+EnglishLong=True
+SingleSelection=True
+RemoveInitiallyDisabled=True
+SelectionChangesRemove=True
+EmptyStateTransition=True
+NativeControlsNoCustomTemplate=True
+MinimalCodeBehind=True
+Result=PASS

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "condition": "baseline",
+  "scenario": "device-list",
+  "validity": "valid",
+  "blocker": "none",
+  "stopping_condition_reached": true,
+  "project_delta": {
+    "changed": [
+      "MainWindow.xaml",
+      "MainWindow.xaml.cs"
+    ],
+    "deleted": []
+  },
+  "evidence": [],
+  "reason": "Generation completed the prompt requirements and reached the fixed stopping condition. The generator reported no timeout, transport failure, safety inspection, or other material infrastructure interruption; configured write-limit notices did not prevent successful writes and were confirmed by readback."
+}
